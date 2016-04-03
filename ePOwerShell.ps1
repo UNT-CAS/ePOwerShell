@@ -78,4 +78,9 @@ class ePO {
     [PSCustomObject] SystemFind([string] $SearchText) {
         return $this.Request('system.find', @{'searchText'=$SearchText})
     }
+
+
+    [PSCustomObject] SystemFindComputerName([string] $SearchText) {
+        return $this.SystemFind($SearchText) | ?{ $_.'EPOComputerProperties.ComputerName' -eq $SearchText }
+    }
 }
