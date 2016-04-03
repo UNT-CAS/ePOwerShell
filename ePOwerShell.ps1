@@ -75,7 +75,7 @@ class ePO {
     }
 
 
-    [PSCustomObject] CoreHelp([string] $SearchText) {
+    [PSCustomObject] CoreHelp() {
         return $this.Request('core.help')
     }
 
@@ -85,7 +85,7 @@ class ePO {
     }
 
 
-    [PSCustomObject] SystemFindComputerName([string] $SearchText) {
-        return $this.SystemFind($SearchText) | ?{ $_.'EPOComputerProperties.ComputerName' -eq $SearchText }
+    [PSCustomObject] SystemFindComputerName([string] $ComputerName) {
+        return $this.SystemFind($ComputerName) | ?{ $_.'EPOComputerProperties.ComputerName' -eq $ComputerName }
     }
 }
