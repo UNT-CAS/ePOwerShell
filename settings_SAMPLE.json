@@ -1,0 +1,8 @@
+{
+    "api": {
+        "server": "epo.example.com",
+        "port": "8443",
+        "username": "jdoe",
+        "password": "4TMmslJDWfRTKRSi2!%dJQ!1g&s5ss"
+    }
+}
