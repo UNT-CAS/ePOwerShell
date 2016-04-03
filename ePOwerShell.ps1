@@ -75,6 +75,11 @@ class ePO {
     }
 
 
+    [PSCustomObject] CoreHelp([string] $SearchText) {
+        return $this.Request('core.help')
+    }
+
+
     [PSCustomObject] SystemFind([string] $SearchText) {
         return $this.Request('system.find', @{'searchText'=$SearchText})
     }
