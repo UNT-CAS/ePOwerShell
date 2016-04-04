@@ -54,7 +54,7 @@ class ePO {
 
 
     [PSCustomObject] Request([string] $Name, [hashtable] $Query) {
-        if (-not $Query.ContainsKey(':output')) {
+        if ((-not $Query.ContainsKey(':output')) -and ($this.Output)) {
             $Query.Add(':output', $this.Output)
         }
 
