@@ -74,9 +74,17 @@ class ePO {
         return ConvertFrom-Json $response.Substring(3)
     }
 
+    ##################################################
+    ## This Starts the *Core Methods*, alphabetically 
+    ##################################################
 
     [PSCustomObject] CoreHelp() {
         return $this.Request('core.help')
+    }
+
+
+    [PSCustomObject] DetectedSystemFind([string] $SearchText) {
+        return $this.Request('detectedsystem.find', @{'searchText'=$SearchText})
     }
 
 
