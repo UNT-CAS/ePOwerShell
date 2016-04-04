@@ -130,8 +130,19 @@ class ePO {
 
 
     [PSCustomObject] SystemFindTag([string] $Tag) {
-        return $this.SystemFind($Tag.Replace('*', '')) | 
-            ?{ $_.'EPOLeafNode.Tags' -ilike $Tag }
+        $systems = $this.SystemFind($Tag.Replace('*', ''))
+
+        [System.Collections.ArrayList] $return = @()
+        foreach ($system in $systems) {
+            $tags = $system.'EPOLeafNode.Tags'.Split(',').Trim()
+            foreach ($t in $tags) {
+                if ($t -ilike $Tag) {
+                    $return.Add($system) | Out-Null
+                }
+            }
+        }
+
+        return $return
     }
 
 
