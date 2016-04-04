@@ -3,6 +3,7 @@ class ePO {
     [string]                $ePO_Server = $Null
     [string]                $Username = $Null
     [SecureString]          $Password = $Null
+    [string]                $Output = 'json'
     [System.Net.WebClient]  $WebClient = (New-Object System.Net.WebClient)
 
 
@@ -48,13 +49,13 @@ class ePO {
 
     [PSCustomObject] Request([string] $Name) {
         $url = "$($this.epo_Server)/remote/${Name}"
-        return $this.Request($Name, @{':output'='json'})
+        return $this.Request($Name, @{':output'=$this.Output})
     }
 
 
     [PSCustomObject] Request([string] $Name, [hashtable] $Query) {
         if (-not $Query.ContainsKey(':output')) {
-            $Query.Add(':output', 'json')
+            $Query.Add(':output', $this.Output)
         }
 
         $url = "$($this.epo_Server)/remote/${Name}"
@@ -71,7 +72,14 @@ class ePO {
             Throw $response
         }
 
-        return ConvertFrom-Json $response.Substring(3)
+        if ($Query.':output' -eq 'json') {
+            return ConvertFrom-Json $response.Substring(3).Trim()
+        } elseif ($Query.':output' -eq 'xml') {
+            return [xml]($response.Substring(3).Trim())
+        } else {
+            return $response
+        }
+
     }
 
     ##################################################
