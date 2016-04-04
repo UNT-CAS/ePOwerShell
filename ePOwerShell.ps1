@@ -78,6 +78,12 @@ class ePO {
     ## This Starts the *Core Methods*, alphabetically 
     ##################################################
 
+
+    [PSCustomObject] ClientTaskFind([string] $SearchText) {
+        return $this.Request('clienttask.find', @{'searchText'=$SearchText})
+    }
+
+
     [PSCustomObject] CoreHelp() {
         return $this.Request('core.help')
     }
