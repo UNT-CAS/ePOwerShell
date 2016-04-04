@@ -104,7 +104,17 @@ class ePO {
     }
 
 
+    [PSCustomObject] SystemFindAgentGUID([string] $AgentGUID) {
+        return $this.SystemFind($AgentGUID.Replace('*', '')) | ?{ $_.'EPOComputerProperties.AgentGUID' -ilike $AgentGUID }
+    }
+
+
     [PSCustomObject] SystemFindComputerName([string] $ComputerName) {
-        return $this.SystemFind($ComputerName) | ?{ $_.'EPOComputerProperties.ComputerName' -eq $ComputerName }
+        return $this.SystemFind($ComputerName.Replace('*', '')) | ?{ $_.'EPOComputerProperties.ComputerName' -ilike $ComputerName }
+    }
+
+
+    [PSCustomObject] SystemFindIP([string] $IP) {
+        return $this.SystemFind($IP.Replace('*', '')) | ?{ $_.'EPOComputerProperties.IPAddress' -ilike $IP }
     }
 }
