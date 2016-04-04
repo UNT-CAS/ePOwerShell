@@ -105,7 +105,7 @@ class ePO {
 
 
     [PSCustomObject] SystemFindAgentGUID([string] $AgentGUID) {
-        return $this.SystemFind($AgentGUID.Replace('*', '')) | ?{ $_.'EPOComputerProperties.AgentGUID' -ilike $AgentGUID }
+        return $this.SystemFind($AgentGUID.Replace('*', '')) | ?{ $_.'EPOLeafNode.AgentGUID' -ilike $AgentGUID }
     }
 
 
@@ -116,5 +116,21 @@ class ePO {
 
     [PSCustomObject] SystemFindIP([string] $IP) {
         return $this.SystemFind($IP.Replace('*', '')) | ?{ $_.'EPOComputerProperties.IPAddress' -ilike $IP }
+    }
+
+
+    [PSCustomObject] SystemFindMAC([string] $MAC) {
+        $MAC = $MAC -replace '[^a-zA-Z\d]+', ''
+        return $this.SystemFind($MAC.Replace('*', '')) | ?{ $_.'EPOComputerProperties.NetAddress' -ilike $MAC }
+    }
+
+
+    [PSCustomObject] SystemFindTag([string] $Tag) {
+        return $this.SystemFind($Tag.Replace('*', '')) | ?{ $_.'EPOLeafNode.Tags' -ilike $Tag }
+    }
+
+
+    [PSCustomObject] SystemFindUserName([string] $UserName) {
+        return $this.SystemFind($UserName.Replace('*', '')) | ?{ $_.'EPOComputerProperties.UserName' -ilike $UserName }
     }
 }
