@@ -1,90 +1,89 @@
 function Find-ePOwerShellComputerSystem {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParametersetname = 'ComputerName')]
     [Alias("Find-ePOComputerSystem")]
     [OutputType([System.Collections.ArrayList])]
     param (
-        [Parameter(Mandatory = $True, ParameterSetName = 'AgentGuid')]
+        [Parameter(ParameterSetName = 'AgentGuid')]
         [String]
         $AgentGuid,
 
-        [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName')]
+        [Parameter(ParameterSetName = 'ComputerName', Position = 1)]
         [String]
         $ComputerName,
 
-        [Parameter(Mandatory = $True, ParameterSetName   = 'MACAddress')]
+        [Parameter(ParameterSetName = 'MACAddress')]
         [String]
         $MACAddress,
 
-        [Parameter(Mandatory = $True, ParameterSetName = 'IPAddress')]
+        [Parameter(ParameterSetName = 'IPAddress')]
         [String]
         $IPAddress,
 
-        [Parameter(Mandatory = $True, ParameterSetName = 'Tag')]
+        [Parameter(ParameterSetName = 'Tag')]
         [String]
         $Tag,
 
-        [Parameter(Mandatory = $True, ParameterSetName = 'Username')]
+        [Parameter(ParameterSetName = 'Username')]
         [String]
         $Username,
 
-        [Parameter(Mandatory = $True, ParameterSetName = 'All')]
+        [Parameter(ParameterSetName = 'All')]
         [Switch]
-        $All,
-
-        [Hashtable]
-        $Request = @{
-            Name = 'system.find'
-            searchText = ''
-        }
+        $All
     )
 
-    begin {}
+    begin {
+        $Request = @{
+            Name  = 'system.find'
+            Query = @{
+                searchText = ''
+            }
+        }
+    }
 
     process {
         $Response = Invoke-ePOwerShellRequest @Request
         [System.Collections.ArrayList] $Found = @()
 
-        foreach ($item in $Response) {
-            switch ($PSBoundParameters.Keys) {
-                'ComputerName' {
-                    if ($item.'EPOComputerProperties.ComputerName' -ilike $ComputerName) {
-                        $Found.Add($item) | Out-Null
+        foreach ($System in $Response) {
+            switch ($PSCmdlet.ParameterSetName) {
+                "ComputerName" {
+                    if ($System.'EPOComputerProperties.ComputerName' -ieq $ComputerName) {
+                        $Found += $System
                     }
                 }
-                'MACAddress' {
-                    if ($item.'EPOComputerProperties.NetAddress' -ilike $MACAddress) {
-                        $Found.Add($item) | Out-Null
+                "MACAddress" {
+                    if ($System.'EPOComputerProperties.NetAddress' -ieq $MACAddress) {
+                        $Found += $System
                     }
                 }
-                'IPAddress' {
-                    if ($item.'EPOComputerProperties.IPAddress' -ilike $IPAddress) {
-                        $Found.Add($item) | Out-Null
+                "IPAddress" {
+                    if ($System.'EPOComputerProperties.IPAddress' -ieq $IPAddress) {
+                        $Found += $System
                     }
                 }
-                'Tag' {
-                    $tags = $item.'EPOLeafNode.Tags'.Split(',').Trim()
+                "Tag" {
+                    $tags = $System.'EPOLeafNode.Tags'.Split(',').Trim()
+
                     foreach ($tag in $tags) {
-                        if ($tag -ilike $Tag) {
-                            $Found.Add($item) | Out-Null
+                        if ($tag -ieq $Tag) {
+                            $Found += $System
                             break
                         }
                     }
                 }
-                'AgentGuid' {
-                    if ($item.'EPOLeafNode.AgentGUID' -ilike $AgentGUID) {
-                        $Found.Add($item) | Out-Null
+                "AgentGuid" {
+                    if ($System.'EPOLeafNode.AgentGUID' -ieq $AgentGUID) {
+                        $Found += $System
                     }
                 }
-                'Username' {
-                    if ($item.'EPOComputerProperties.UserName' -ilike $UserName) {
-                        $Found.Add($item) | Out-Null
+                "Username" {
+                    if ($System.'EPOComputerProperties.UserName' -ieq $UserName) {
+                        $Found += $System
                     }
                 }
-                'All' {
-                    $Found.Add($item) | Out-Null
-                }
-                default {
-                    $Found.Add($item) | Out-Null
+                "All" {
+                    $Found += $System
                 }
             }
         }

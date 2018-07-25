@@ -9,8 +9,7 @@ $private = @( Get-ChildItem -Path "${PSScriptRoot}\Private\*.ps1" -ErrorAction S
 foreach ($import in @($public + $private)) {
     try {
         . $import.FullName
-    }
-    catch {
+    } catch {
         Write-Error -Message "Failed to import function: $($import.FullName): $_"
     }
 }

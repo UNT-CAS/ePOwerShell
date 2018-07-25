@@ -7,7 +7,8 @@ function Get-ePOwerShellCoreHelp {
 
         [Hashtable]
         $Request = @{
-            Name = 'core.help'
+            Name        = 'core.help'
+            SkipOutput  = $True
         }
     )
 
