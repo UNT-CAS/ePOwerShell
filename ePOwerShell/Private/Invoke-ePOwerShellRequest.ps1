@@ -8,8 +8,9 @@ function Invoke-ePOwerShellRequest {
         [Hashtable]
         $Query,
 
-        [Switch]
-        $SkipOutput,
+        [String]
+        [ValidateSet('json', 'xml', 'terse', 'verbose')]
+        $CustomOutput,
 
         [System.Net.WebClient]
         $WebClient = (New-Object System.Net.WebClient)
@@ -25,14 +26,18 @@ function Invoke-ePOwerShellRequest {
             $ePOwerShell.Output = 'json'
         }
 
-        if (-not ($SkipOutput)) {
-            if (-not ($Query)) {
-                $Query = @{
-                    ':output' = $ePOwerShell.Output
-                }
-            } elseif (-not ($Query.ContainsKey(':Output'))) {
-                $Query.Add(':output', $ePOwerShell.Output)
+        if ($CustomOutput) {
+            $CurrentOutput = $CustomOutput
+        } else {
+            $CurrentOutput = $ePOwerShell.Output
+        }
+
+        if (-not ($Query)) {
+            $Query = @{
+                ':output' = $CurrentOutput
             }
+        } elseif (-not ($Query.ContainsKey(':Output'))) {
+            $Query.Add(':output', $CurrentOutput)
         }
 
         # Force TLS 1.2
@@ -71,7 +76,7 @@ Add-Type @"
 
         Write-Debug "Request Url: $RequestUrl"
         try {
-            $response = $WebClient.DownloadString($RequestUrl)
+            $Response = $WebClient.DownloadString($RequestUrl)
         } catch [System.Security.Authentication.AuthenticationException] {
             Throw [System.Security.Authentication.AuthenticationException] ('Failed to authenticate to ePO server [{0}]: {1}' -f $ePOwerShell.Server, $_.Exception.Message)
         } catch {
@@ -79,18 +84,20 @@ Add-Type @"
         }
 
         Write-Debug "Response: $($Response | Out-String)"
-        if (-not ($response.StartsWith('OK:'))) {
-            Throw $response
+        if (-not ($Response.StartsWith('OK:'))) {
+            Throw $Response
         }
     }
 
     end {
+        $Response = $Response.Substring(3).Trim()
+
         if ($Query.':output' -eq 'json') {
-            return ($response.SubString(3).Trim() | ConvertFrom-Json)
+            return ($Response | ConvertFrom-Json)
         } elseif ($Query.':output' -eq 'xml') {
-            return ([xml]($response.Substring(3).Trim()))
+            return ([xml]$Response)
         } else {
-            return $response
+            return $Response
         }
     }
 }
