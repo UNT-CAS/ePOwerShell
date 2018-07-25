@@ -39,7 +39,7 @@ class ePO {
         $this.Connect()
     }
 
-    
+
     [void] Connect() {
         $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($this.Password)
         $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
