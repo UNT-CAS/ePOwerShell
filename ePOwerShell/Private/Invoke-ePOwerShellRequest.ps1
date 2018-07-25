@@ -40,7 +40,7 @@ function Invoke-ePOwerShellRequest {
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         }
 
-add-type @"
+Add-Type @"
     using System.Net;
     using System.Security.Cryptography.X509Certificates;
     public class TrustAllCertsPolicy : ICertificatePolicy {
@@ -61,18 +61,15 @@ add-type @"
     process {
         $URL = "$($ePOwerShell.Server):$($ePOwerShell.Port)/remote/${Name}"
 
-        if ($Query) {
-            [System.Collections.ArrayList] $qs = @()
-            foreach ($q in $Query.GetEnumerator()) {
-                $qs.Add("$($q.Name)=$($q.Value)")
-            }
-            $query_string = $qs -join '&'
-
-            $RequestUrl = ('{0}?{1}' -f $Url, $query_string)
-        } else {
-            $RequestUrl = $URL
+        [System.Collections.ArrayList] $qs = @()
+        foreach ($q in $Query.GetEnumerator()) {
+            $qs.Add("$($q.Name)=$($q.Value)") | Out-Null
         }
+        $query_string = $qs -join '&'
 
+        $RequestUrl = ('{0}?{1}' -f $Url, $query_string)
+
+        Write-Debug "Request Url: $RequestUrl"
         try {
             $response = $WebClient.DownloadString($RequestUrl)
         } catch [System.Security.Authentication.AuthenticationException] {
@@ -81,6 +78,7 @@ add-type @"
             Throw ('Failed with unknown error: {0}' -f $_.Exception.Message)
         }
 
+        Write-Debug "Response: $($Response | Out-String)"
         if (-not ($response.StartsWith('OK:'))) {
             Throw $response
         }

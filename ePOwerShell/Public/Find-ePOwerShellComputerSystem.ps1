@@ -42,6 +42,7 @@ function Find-ePOwerShellComputerSystem {
     }
 
     process {
+        Write-Debug "[Find-ePOwerShellComputerSystem] Request: $($Request | ConvertTo-Json)"
         $Response = Invoke-ePOwerShellRequest @Request
         [System.Collections.ArrayList] $Found = @()
 
@@ -87,6 +88,7 @@ function Find-ePOwerShellComputerSystem {
                 }
             }
         }
+        Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Found | Out-String)"
     }
 
     end {
