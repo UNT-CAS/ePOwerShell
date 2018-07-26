@@ -2,16 +2,16 @@ function Get-ePOwerShellCoreHelp {
     [CmdletBinding()]
     [Alias('Get-ePOCoreHelp')]
     param (
+        [Parameter(Position = 1)]
         [String]
-        $Command,
-
-        [Hashtable]
-        $Request = @{
-            Name = 'core.help'
-        }
+        $Command
     )
 
     begin {
+        $Request = @{
+            Name = 'core.help'
+        }
+
         if ($Command) {
             $Request.Add('Query', @{})
             $Request.Query.Add('Command', $Command)
