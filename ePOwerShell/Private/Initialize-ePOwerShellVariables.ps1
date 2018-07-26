@@ -3,11 +3,6 @@ function Initialize-ePOwerShellVariables {
     [Alias('Initialize-ePOVariables')]
     param(
         [Parameter(Mandatory=$True)]
-        [ValidateSet("json", "xml", "terse", "verbose")]
-        [String]
-        $Output,
-
-        [Parameter(Mandatory=$True)]
         [Int]
         $Port,
 
@@ -20,16 +15,9 @@ function Initialize-ePOwerShellVariables {
         $Credentials
     )
 
-    begin {}
-
-    process {}
-
-    end {
-        $Script:ePOwerShell = @{
-            Output = $Output
-            Port = $Port
-            Server = $Server
-            Credentials = $Credentials
-        }
+    $Script:ePOwerShell = @{
+        Port        = $Port
+        Server      = $Server
+        Credentials = $Credentials
     }
 }

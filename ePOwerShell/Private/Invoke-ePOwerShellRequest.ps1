@@ -8,9 +8,8 @@ function Invoke-ePOwerShellRequest {
         [Hashtable]
         $Query,
 
-        [String]
-        [ValidateSet('json', 'xml', 'terse', 'verbose')]
-        $CustomOutput,
+        [Switch]
+        $PassThru,
 
         [System.Net.WebClient]
         $WebClient = (New-Object System.Net.WebClient)
@@ -21,23 +20,10 @@ function Invoke-ePOwerShellRequest {
             Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOwerShellServer first!'
         }
 
-        if (-not ($Script:ePOwerShell.Output)) {
-            Write-Host 'Output not set. Defualting to Json'
-            $Script:ePOwerShell.Output = 'json'
-        }
-
-        if ($CustomOutput) {
-            $CurrentOutput = $CustomOutput
+        if ($PassThru) {
+            $Query.Add(':output', 'terse')
         } else {
-            $CurrentOutput = $Script:ePOwerShell.Output
-        }
-
-        if (-not ($Query)) {
-            $Query = @{
-                ':output' = $CurrentOutput
-            }
-        } elseif (-not ($Query.ContainsKey(':Output'))) {
-            $Query.Add(':output', $CurrentOutput)
+            $Query.Add(':output', 'json')
         }
 
         # Force TLS 1.2
@@ -92,12 +78,10 @@ Add-Type @"
     end {
         $Response = $Response.Substring(3).Trim()
 
-        if ($Query.':output' -eq 'json') {
-            return ($Response | ConvertFrom-Json)
-        } elseif ($Query.':output' -eq 'xml') {
-            return ([xml]$Response)
-        } else {
+        if ($PassThru) {
             return $Response
+        } else {
+            return ($Response | ConvertFrom-Json)
         }
     }
 }

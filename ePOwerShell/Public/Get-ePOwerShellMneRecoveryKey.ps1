@@ -15,7 +15,7 @@ function Get-ePOwerShellMneRecoveryKey {
     begin {
         $Request = @{
             Name            = 'mne.recoverMachine'
-            CustomOutput    = 'terse'
+            PassThru        = $True
             Query           = @{}
         }
 

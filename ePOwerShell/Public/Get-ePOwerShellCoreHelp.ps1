@@ -4,12 +4,16 @@ function Get-ePOwerShellCoreHelp {
     param (
         [Parameter(Position = 1)]
         [String]
-        $Command
+        $Command,
+
+        [Switch]
+        $PassThru
     )
 
     begin {
         $Request = @{
-            Name = 'core.help'
+            Name        = 'core.help'
+            PassThru    = $PassThru
         }
 
         if ($Command) {

@@ -5,7 +5,10 @@ function Find-ePOwerShellGroups {
     param (
         [Parameter(Position = 1)]
         [String]
-        $GroupName
+        $GroupName,
+
+        [Switch]
+        $PassThru
     )
 
     begin {
@@ -14,6 +17,7 @@ function Find-ePOwerShellGroups {
             Query   = @{
                 searchText = $GroupName
             }
+            PassThru = $PassThru
         }
     }
 

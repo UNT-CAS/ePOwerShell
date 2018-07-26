@@ -11,11 +11,6 @@ function Set-ePOwerShellServer {
         $Port,
 
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
-        [ValidateSet("json", "xml", "terse", "verbose")]
-        [String]
-        $Output,
-
-        [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
@@ -68,17 +63,15 @@ function Set-ePOwerShellServer {
                 $Credentials = New-Object @GetCredentials
 
                 $ePOwerShellVariables = @{
-                    Output      = $Settings.Output
-                    Port        = $Settings.Port
                     Server      = $Settings.Server
+                    Port        = $Settings.Port
                     Credentials = $Credentials
                 }
             }
             'ManualEntry' {
                 $ePOwerShellVariables = @{
-                    Output      = $Output
-                    Port        = $Port
                     Server      = $Server
+                    Port        = $Port
                     Credentials = $Credentials
                 }
             }
