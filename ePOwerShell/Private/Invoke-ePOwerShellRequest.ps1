@@ -17,19 +17,19 @@ function Invoke-ePOwerShellRequest {
     )
 
     begin {
-        if (-not ($ePOwerShell)) {
+        if (-not ($Script:ePOwerShell)) {
             Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOwerShellServer first!'
         }
 
-        if (-not ($ePOwerShell.Output)) {
+        if (-not ($Script:ePOwerShell.Output)) {
             Write-Host 'Output not set. Defualting to Json'
-            $ePOwerShell.Output = 'json'
+            $Script:ePOwerShell.Output = 'json'
         }
 
         if ($CustomOutput) {
             $CurrentOutput = $CustomOutput
         } else {
-            $CurrentOutput = $ePOwerShell.Output
+            $CurrentOutput = $Script:ePOwerShell.Output
         }
 
         if (-not ($Query)) {
