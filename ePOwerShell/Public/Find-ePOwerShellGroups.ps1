@@ -3,8 +3,8 @@ function Find-ePOwerShellGroups {
     [Alias('Find-ePOGroups')]
     [OutputType([System.Collections.ArrayList])]
     param (
-        [Parameter(Position = 1)]
-        [String]
+        [Parameter(Position = 1, ValueFromPipeline = $True)]
+        [String[]]
         $GroupName,
 
         [Switch]
@@ -12,21 +12,31 @@ function Find-ePOwerShellGroups {
     )
 
     begin {
-        $Request = @{
-            Name    = 'system.findGroups'
-            Query   = @{
-                searchText = $GroupName
-            }
-            PassThru = $PassThru
+        [System.Collections.ArrayList] $Found = @()
+
+        if (-not ($GroupName)) {
+            $GroupName = ''
         }
     }
 
     process {
-        Write-Debug "[Find-ePOwerShellGroups] Request: $($Request | ConvertTo-Json)"
-        $Groups = Invoke-ePOwerShellRequest @Request
+        foreach ($Group in $GroupName) {
+            $Request = @{
+                Name     = 'system.findGroups'
+                Query    = @{
+                    searchText = $Group
+                }
+                PassThru = $PassThru
+            }
+
+            Write-Debug "[Find-ePOwerShellGroups] Request: $($Request | ConvertTo-Json)"
+            $ePOGroups = Invoke-ePOwerShellRequest @Request
+
+            $Found.Add($ePOGroups) | Out-Null
+        }
     }
 
     end {
-        return $Groups
+        return $Found
     }
 }

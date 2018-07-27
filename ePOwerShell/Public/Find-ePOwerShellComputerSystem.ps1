@@ -7,8 +7,8 @@ function Find-ePOwerShellComputerSystem {
         [String]
         $AgentGuid,
 
-        [Parameter(ParameterSetName = 'ComputerName', Position = 1)]
-        [String]
+        [Parameter(ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True)]
+        [String[]]
         $ComputerName,
 
         [Parameter(ParameterSetName = 'MACAddress')]
@@ -39,59 +39,63 @@ function Find-ePOwerShellComputerSystem {
                 searchText = ''
             }
         }
+
+        [System.Collections.ArrayList] $Found = @()
+
+        Write-Debug "[Find-ePOwerShellComputerSystem] Request: $($Request | ConvertTo-Json)"
+        $Response = Invoke-ePOwerShellRequest @Request
     }
 
     process {
-        Write-Debug "[Find-ePOwerShellComputerSystem] Request: $($Request | ConvertTo-Json)"
-        $Response = Invoke-ePOwerShellRequest @Request
-        [System.Collections.ArrayList] $Found = @()
-
-        foreach ($System in $Response) {
-            switch ($PSCmdlet.ParameterSetName) {
-                "ComputerName" {
-                    if ($System.'EPOComputerProperties.ComputerName' -ieq $ComputerName) {
-                        $Found += $System
-                    }
-                }
-                "MACAddress" {
-                    if ($System.'EPOComputerProperties.NetAddress' -ieq $MACAddress) {
-                        $Found += $System
-                    }
-                }
-                "IPAddress" {
-                    if ($System.'EPOComputerProperties.IPAddress' -ieq $IPAddress) {
-                        $Found += $System
-                    }
-                }
-                "Tag" {
-                    $tags = $System.'EPOLeafNode.Tags'.Split(',').Trim()
-
-                    foreach ($tag in $tags) {
-                        if ($tag -ieq $Tag) {
+        foreach ($Computer in $ComputerName) {
+            Write-Debug ('[Find-ePOwerShellComputerSystem]: {0}' -f $ComputerName)
+            foreach ($System in $Response) {
+                switch ($PSCmdlet.ParameterSetName) {
+                    "ComputerName" {
+                        if ($System.'EPOComputerProperties.ComputerName' -ieq $ComputerName) {
                             $Found += $System
-                            break
                         }
                     }
-                }
-                "AgentGuid" {
-                    if ($System.'EPOLeafNode.AgentGUID' -ieq $AgentGUID) {
+                    "MACAddress" {
+                        if ($System.'EPOComputerProperties.NetAddress' -ieq $MACAddress) {
+                            $Found += $System
+                        }
+                    }
+                    "IPAddress" {
+                        if ($System.'EPOComputerProperties.IPAddress' -ieq $IPAddress) {
+                            $Found += $System
+                        }
+                    }
+                    "Tag" {
+                        $tags = $System.'EPOLeafNode.Tags'.Split(',').Trim()
+
+                        foreach ($tag in $tags) {
+                            if ($tag -ieq $Tag) {
+                                $Found += $System
+                                break
+                            }
+                        }
+                    }
+                    "AgentGuid" {
+                        if ($System.'EPOLeafNode.AgentGUID' -ieq $AgentGUID) {
+                            $Found += $System
+                        }
+                    }
+                    "Username" {
+                        if ($System.'EPOComputerProperties.UserName' -ieq $UserName) {
+                            $Found += $System
+                        }
+                    }
+                    "All" {
                         $Found += $System
                     }
-                }
-                "Username" {
-                    if ($System.'EPOComputerProperties.UserName' -ieq $UserName) {
-                        $Found += $System
-                    }
-                }
-                "All" {
-                    $Found += $System
                 }
             }
         }
-        Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Found | Out-String)"
     }
 
     end {
+        Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Found | Out-String)"
         return $Found
     }
 }

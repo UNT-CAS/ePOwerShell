@@ -3,41 +3,65 @@ function Get-ePOwerShellMneRecoveryKey {
     [Alias('Get-ePOMneRecoveryKey')]
     [OutputType([String])]
     param (
-        [Parameter(Mandatory = $True, ParameterSetName = 'LeafNode', Position = 1)]
-        [String]
+        [Parameter(Mandatory = $True, ParameterSetName = 'LeafNode', Position = 1, ValueFromPipeline = $True)]
+        [String[]]
         $LeafNodeId,
 
         [Parameter(Mandatory = $True, ParameterSetName = 'SerialNumber')]
-        [String]
+        [String[]]
         $SerialNumber
     )
 
     begin {
         $Request = @{
-            Name            = 'mne.recoverMachine'
-            PassThru        = $True
-            Query           = @{}
+            Name        = 'mne.recoverMachine'
+            PassThru    = $True
+            Query       = @{}
         }
 
-        switch ($PSCmdlet.ParameterSetName) {
-            'LeafNode' {
-                $Request.Query.Add('epoLeafNodeId', $LeafNodeId) | Out-Null
-            }
-            'SerialNumber' {
-                $Request.Query.Add('serialNumber', $SerialNumber) | Out-Null
-            }
-        }
+        [System.Collections.ArrayList] $Found = @()
     }
 
     process {
-        try {
-            $Key = Invoke-ePOwerShellRequest @Request
-        } catch {
-            Throw "Failed to find detect recovery key: $($_.Exception.Message)"
+        switch ($PSCmdlet.ParameterSetName) {
+            'LeafNode' {
+                foreach ($LeafNode in $LeafNodeId) {
+                    $Request.Query.epoLeafNodeId = $LeafNode
+                    $Result = @{
+                        'LeafNodeId' = $LeafNode
+                    }
+
+                    try {
+                        $Key = Invoke-ePOwerShellRequest @Request
+                    } catch {
+                        Write-Error "Failed to find detect recovery key: $($_.Exception.Message)"
+                    }
+
+                    $Result.Add('Key', $Key) | Out-Null
+                    $Found.Add($Result) | Out-Null
+                }
+            }
+            'SerialNumber' {
+                foreach ($SN in $SerialNumber) {
+                    $Request.Query.serialNumber = $SN
+                    $Result = @{
+                        'SerialNumber' = $SN
+                    }
+
+                    try {
+                        $Key = Invoke-ePOwerShellRequest @Request
+                    } catch {
+                        Write-Error "Failed to find detect recovery key: $($_.Exception.Message)"
+                    }
+
+                    $Result.Add('Key', $Key) | Out-Null
+                    $Found.Add($Result) | Out-Null
+                }
+            }
         }
     }
 
     end {
-        return $Key
+        return ($Found | % { [PSCustomObject]$_ })
     }
 }
