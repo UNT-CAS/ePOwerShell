@@ -6,7 +6,7 @@ function Invoke-ePOwerShellRequest {
         $Name,
 
         [Hashtable]
-        $Query,
+        $Query = @{},
 
         [Switch]
         $PassThru,
@@ -21,9 +21,9 @@ function Invoke-ePOwerShellRequest {
         }
 
         if ($PassThru) {
-            $Query.Add(':output', 'terse')
+            $Query.Add(':output', 'terse') | Out-Null
         } else {
-            $Query.Add(':output', 'json')
+            $Query.Add(':output', 'json') | Out-Null
         }
 
         # Force TLS 1.2
