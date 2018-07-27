@@ -21,9 +21,13 @@ function Invoke-ePOwerShellRequest {
         }
 
         if ($PassThru) {
-            $Query.Add(':output', 'terse') | Out-Null
+            if (-not ($Query.':output' -eq 'terse')) {
+                $Query.Add(':output', 'terse') | Out-Null
+            }
         } else {
-            $Query.Add(':output', 'json') | Out-Null
+            if (-not ($Query.':output' -eq 'json')) {
+                $Query.Add(':output', 'json') | Out-Null
+            }
         }
 
         # Force TLS 1.2
