@@ -10,54 +10,58 @@ function Get-ePOwerShellCoreHelp {
         $PassThru
     )
 
-    begin {
-        $Request = @{
-            Name        = 'core.help'
-            PassThru    = $PassThru
-        }
-
-        if ($Command) {
-            $Request.Add('Query', @{})
-            $Request.Query.Add('Command', $Command)
-        }
+    $Request = @{
+        Name        = 'core.help'
+        PassThru    = $PassThru
     }
 
-    process {
-        $Response = Invoke-ePOwerShellRequest @Request
-        [System.Collections.ArrayList] $Help = @()
+    if ($Command) {
+        $Request.Add('Query', @{})
+        $Request.Query.Add('Command', $Command)
+    }
 
-        foreach ($Item in $Response) {
-            $Line = ($Item -Replace '\r\n', ' ')
-            $FirstOutcome = [Regex]::Match($Item, '(\S+\.\S+)(.*)')
-            $Command = $FirstOutcome.Groups[1].Value.Trim()
+    $Response = Invoke-ePOwerShellRequest @Request
+
+    if ($PassThru) {
+        return $Response
+    }
+
+    [System.Collections.ArrayList] $Commands = @()
+
+    foreach ($Item in $Response) {
+        $Item = $Item -replace '\r\n', ' '
+        $FirstRegexProduct = [Regex]::Match($Item, '^(\S+)\s(.*)$')
+        $LocalCommand = $FirstRegexProduct.Groups[1].Value
+        $Remainder = $FirstRegexProduct.Groups[2].Value
+
+        if ($Remainder -match '^\-.*') {
+            $Remainder = $Remainder.TrimStart('- ')
+        }
+
+        if ($Remainder -match '\s\-\s') {
+            $SecondRegexProduct = [Regex]::Match($Remainder, '(^\S+.{0,})\s\-\s(\S+.{0,})$')
 
             [System.Collections.ArrayList] $Parameters = @()
-            $PartTwo = $FirstOutcome.Groups[2].Value.Trim()
 
-            if ($PartTwo -match ' - ') {
-                $SecondOutcome = [Regex]::Match($PartTwo, '(\S+.*) - (\S+.*)')
-
-                foreach ($item in ($SecondOutcome.Groups[1].Value -Split ' ')) {
-                    $Parameters += $item.Trim()
-                }
-
-                $ContextMessage = ($SecondOutcome.Groups[2].Value -Replace ' - ', '').Trim()
-            } else {
-                $ContextMessage = ($FirstOutcome.Groups[2].Value -Replace ' - ', '').Trim()
+            foreach ($Parameter in ($SecondRegexProduct.Groups[1].Value -Split ' ')) {
+                $Parameters.Add($Parameter) | Out-Null
             }
 
-
-            [Hashtable] $HelpItem = @{
-                Command = $Command
-                Parameters = $Parameters
-                Context = $ContextMessage
-            }
-
-            $Help += $HelpItem
+            $Description = $SecondRegexProduct.Groups[2].Value
         }
+        else {
+            $Parameters = $null
+            $Description = $Remainder
+        }
+
+        $Commands.Add(
+            @{
+                Command     = $LocalCommand
+                Parameters  = $Parameters
+                Description = $Description
+            }
+        ) | Out-Null
     }
 
-    end {
-        return ($Help | % { [PSCustomObject]$_ } | Format-Table -Property Command, Parameters, Context)
-    }
+    return ($Commands | % { [PSCustomObject]$_ } | Format-Table -Property Command, Parameters, Description)
 }
