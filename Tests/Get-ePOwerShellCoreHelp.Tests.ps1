@@ -27,7 +27,7 @@ foreach ($example in $examples) {
 Describe $testFile.Name {
     foreach ($test in $tests) {
         Mock Invoke-ePOwerShellRequest {
-            $File = Get-ChildItem (Join-Path -Path $projectRoot -ChildPath 'Examples' -Resolve) -Filter $test.File -File
+            $File = Get-ChildItem (Join-Path -Path $projectRoot -ChildPath 'Examples\References' -Resolve) -Filter $test.File -File
             $Content = (Get-Content $File.FullName | Out-String).SubString(3)
             if ($test.Output.Type -eq 'System.String') {
                 return $Content
