@@ -32,7 +32,11 @@ function Find-ePOwerShellGroups {
             Write-Debug "[Find-ePOwerShellGroups] Request: $($Request | ConvertTo-Json)"
             $ePOGroups = Invoke-ePOwerShellRequest @Request
 
-            $Found.Add($ePOGroups) | Out-Null
+            if ($PassThru) {
+                $Found.Add($ePOGroups) | Out-Null
+            } else {
+                $Found.Add(($ePOGroups | ConvertFrom-Json)) | Out-Null
+            }
         }
     }
 

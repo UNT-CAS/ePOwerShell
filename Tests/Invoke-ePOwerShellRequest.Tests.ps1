@@ -2,13 +2,14 @@
 [IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
 [IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
 [IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
+[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
 [IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
 . $testFile
 
 . $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePOwerShellWebClient.ps1') -Resolve)
 
 [System.Collections.ArrayList] $tests = @()
-$examples = Get-ChildItem (Join-Path -Path $projectRoot -ChildPath 'Examples' -Resolve) -Filter "$($testFile.BaseName).*.psd1" -File
+$examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
 
 foreach ($example in $examples) {
     [hashtable] $test = @{
@@ -27,7 +28,7 @@ foreach ($example in $examples) {
 Describe $testFile.Name {
     foreach ($test in $tests) {
         Mock Invoke-ePOwerShellWebClient {
-            $File = Get-ChildItem (Join-Path -Path $projectRoot -ChildPath 'Examples\References' -Resolve) -Filter $test.File -File
+            $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter $test.File -File
             return (Get-Content $File.FullName | Out-String)
         }
 

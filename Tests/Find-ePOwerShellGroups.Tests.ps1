@@ -12,7 +12,6 @@
 $examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
 
 foreach ($example in $examples) {
-    Write-Host "Example: $example"
     [hashtable] $test = @{
         Name = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
     }
@@ -29,13 +28,25 @@ foreach ($example in $examples) {
 Describe $testFile.Name {
     foreach ($test in $tests) {
         Mock Invoke-ePOwerShellRequest {
-            $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter $test.File -File
-            $Content = (Get-Content $File.FullName | Out-String).SubString(3)
-            if ($test.Output.Type -eq 'System.String') {
-                return $Content
+            if (
+                ($test.Parameters.GroupName) -and
+                (-not ($test.Parameters.PassThru))
+            ) {
+                $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}_Json.html' -f $Test.Parameters.GroupName) -File
+            } elseif (
+                ($test.Parameters.GroupName) -and
+                ($test.Parameters.PassThru)
+            ) {
+                $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}_Terse.html' -f $Test.Parameters.GroupName) -File
+            } elseif (
+                (-not ($test.Parameters.GroupName)) -and
+                ($test.Parameters.PassThru)
+            ) {
+                $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter 'AllGroups_Terse.html' -File
             } else {
-                return $Content | ConvertFrom-Json
+                $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter 'AllGroups_Json.html' -File
             }
+            return (Get-Content $File.FullName | Out-String).Substring(3).Trim()
         }
 
         Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
@@ -44,14 +55,30 @@ Describe $testFile.Name {
             [hashtable] $parameters = $test.Parameters
 
             if ($Test.Output.Throws) {
-                It "Get-ePOwerShellCoreHelp Throws" {
-                    { $script:RequestResponse = Get-ePOwerShellCoreHelp @parameters } | Should Throw
+                It "Find-ePOwerShellGroups Throws" {
+                    { $script:RequestResponse = Find-ePOwerShellGroups @parameters } | Should Throw
                 }
                 continue
             }
 
-            It "Get-ePOwerShellCoreHelp" {
-                { $script:RequestResponse = Get-ePOwerShellCoreHelp @parameters } | Should Not Throw
+            if (
+                ($Test.Pipeline) -and
+                (-not ($parameters.PassThru))
+            ) {
+                It "Find-ePOwerShellGroups through pipeline" {
+                    { $script:RequestResponse = $Parameters.GroupName | Find-ePOwerShellGroups } | Should Not Throw
+                }
+            } elseif (
+                ($Test.Pipeline) -and
+                ($parameters.PassThru)
+            ) {
+                It "Find-ePOwerShellGroups through pipeline" {
+                    { $script:RequestResponse = $Parameters.GroupName | Find-ePOwerShellGroups -PassThru } | Should Not Throw
+                }
+            } else {
+                It "Find-ePOwerShellGroups" {
+                    { $script:RequestResponse = Find-ePOwerShellGroups @parameters } | Should Not Throw
+                }
             }
 
             It "Output Type: $($test.Output.Type)" {
@@ -62,18 +89,8 @@ Describe $testFile.Name {
                 }
             }
 
-            if ($test.Output.Type -eq 'System.Object[]') {
-                It 'Should contain commands' {
-                    ($script:RequestResponse | Select-Object Command ) | Should Not BeNullOrEmpty
-                }
-
-                It 'Should contain Parameters' {
-                    ( $script:RequestResponse | Select-Object Parameters ) | Should Not BeNullOrEmpty
-                }
-
-                It 'Should contain Description' {
-                    ( $script:RequestResponse | Select-Object Description ) | Should Not BeNullOrEmpty
-                }
+            It "Correct Count: $($test.Output.Count)" {
+                $script:RequestResponse.Count | Should Be $test.Output.Count
             }
         }
     }
