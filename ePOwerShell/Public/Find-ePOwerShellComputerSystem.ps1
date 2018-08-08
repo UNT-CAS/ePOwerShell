@@ -4,7 +4,7 @@ function Find-ePOwerShellComputerSystem {
     [OutputType([System.Collections.ArrayList])]
     param (
         [Parameter(ParameterSetName = 'AgentGuid')]
-        [String]
+        [String[]]
         $AgentGuid,
 
         [Parameter(ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True)]
@@ -12,19 +12,19 @@ function Find-ePOwerShellComputerSystem {
         $ComputerName,
 
         [Parameter(ParameterSetName = 'MACAddress')]
-        [String]
+        [String[]]
         $MACAddress,
 
         [Parameter(ParameterSetName = 'IPAddress')]
-        [String]
+        [String[]]
         $IPAddress,
 
         [Parameter(ParameterSetName = 'Tag')]
-        [String]
+        [String[]]
         $Tag,
 
         [Parameter(ParameterSetName = 'Username')]
-        [String]
+        [String[]]
         $Username,
 
         [Parameter(ParameterSetName = 'All')]
@@ -35,66 +35,126 @@ function Find-ePOwerShellComputerSystem {
     begin {
         $Request = @{
             Name  = 'system.find'
-            Query = @{
-                searchText = ''
-            }
+            Query = @{}
         }
 
         [System.Collections.ArrayList] $Found = @()
-
-        Write-Debug "[Find-ePOwerShellComputerSystem] Request: $($Request | ConvertTo-Json)"
-        $Response = Invoke-ePOwerShellRequest @Request
     }
 
     process {
-        foreach ($Computer in $ComputerName) {
-            Write-Debug ('[Find-ePOwerShellComputerSystem]: {0}' -f $ComputerName)
-            foreach ($System in $Response) {
-                switch ($PSCmdlet.ParameterSetName) {
-                    "ComputerName" {
-                        if ($System.'EPOComputerProperties.ComputerName' -ieq $ComputerName) {
-                            $Found += $System
-                        }
-                    }
-                    "MACAddress" {
-                        if ($System.'EPOComputerProperties.NetAddress' -ieq $MACAddress) {
-                            $Found += $System
-                        }
-                    }
-                    "IPAddress" {
-                        if ($System.'EPOComputerProperties.IPAddress' -ieq $IPAddress) {
-                            $Found += $System
-                        }
-                    }
-                    "Tag" {
-                        $tags = $System.'EPOLeafNode.Tags'.Split(',').Trim()
+        switch ($PSCmdlet.ParameterSetName) {
+            "ComputerName" {
+                $ComputerName = $ComputerName.Split(',').Trim()
+                foreach ($Computer in $ComputerName) {
+                    $CurrentRequest = $Request
+                    $CurrentRequest.Query.searchText = $Computer
 
-                        foreach ($tag in $tags) {
-                            if ($tag -ieq $Tag) {
-                                $Found += $System
-                                break
-                            }
-                        }
-                    }
-                    "AgentGuid" {
-                        if ($System.'EPOLeafNode.AgentGUID' -ieq $AgentGUID) {
-                            $Found += $System
-                        }
-                    }
-                    "Username" {
-                        if ($System.'EPOComputerProperties.UserName' -ieq $UserName) {
-                            $Found += $System
-                        }
-                    }
-                    "All" {
-                        $Found += $System
-                    }
+                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                    $Found.Add($ComputerSystems) | Out-Null
                 }
+            }
+            "MACAddress" {
+                $MACAddress = $MACAddress.Split(',').Trim()
+                foreach ($Address in $MACAddress) {
+                    $Address = $Address.ToUpper()
+
+                    switch -Regex ($Address) {
+                       '^([0-9a-f]{2}:){5}([0-9a-f]{2})$' {
+                            Write-Verbose 'Delimiter: Colons'
+                            $Address = $Address.Replace(':', '')
+                            break
+                        }
+
+                        '^([0-9a-f]{2}-){5}([0-9a-f]{2})$' {
+                            Write-Verbose 'Delimiter: Dashs'
+                            $Address = $Address.Replace('-', '')
+                            break
+                        }
+
+                        '^([0-9a-f]{2}\.){5}([0-9a-f]{2})$' {
+                            Write-Verbose 'Delimiter: Periods'
+                            $Address = $Address.Replace('.', '')
+                            break
+                        }
+
+                        '^([0-9a-f]{2}\s){5}([0-9a-f]{2})$' {
+                            Write-Verbose 'Delimiter: Spaces'
+                            $Address = $Address.Replace(' ', '')
+                            break
+                        }
+
+                        '^([0-9a-f]{12})$' {
+                            Write-Verbose 'Delimiter: None'
+                            break
+                        }
+
+                        default {
+                            Throw ('MAC Address does not match known format: {0}' -f $Address)
+                        }
+                    }
+
+                    $CurrentRequest = $Request
+                    $CurrentRequest.Query.searchText = $Address
+
+                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                    $Found.Add($ComputerSystems) | Out-Null
+                }
+            }
+            "IPAddress" {
+                $IPAddress = $IPAddress.Split(',').Trim()
+                foreach ($Address in $IPAddress) {
+                    $CurrentRequest = $Request
+                    $CurrentRequest.Query.searchText = $Address
+
+                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                    $Found.Add($ComputerSystems) | Out-Null
+                }
+            }
+            "Tag" {
+                $Tag = $Tag.Split(',').Trim()
+                foreach ($T in $Tag) {
+                    $CurrentRequest = $Request
+                    $CurrentRequest.Query.searchText = $T
+
+                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                    $Found.Add($ComputerSystems) | Out-Null
+                }
+            }
+            "AgentGuid" {
+                $AgentGuid = $AgentGuid.Split(',').Trim()
+                foreach ($Guid in $AgentGuid) {
+                    $CurrentRequest = $Request
+                    $CurrentRequest.Query.searchText = $Guid
+
+                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                    $Found.Add($ComputerSystems) | Out-Null
+                }
+            }
+            "Username" {
+                $Username = $Username.Split(',').Trim()
+                foreach ($User in $Username) {
+                    $CurrentRequest = $Request
+                    $CurrentRequest.Query.searchText = $User
+
+                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                    $Found.Add($ComputerSystems) | Out-Null
+                }
+            }
+            "All" {
+                $CurrentRequest = $Request
+                $CurrentRequest.Query.searchText = ''
+
+                $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
+                $Found.Add($ComputerSystems) | Out-Null
             }
         }
     }
 
     end {
+        if (-not ($Found)) {
+            Throw "[Find-ePOwerShellComputerSystem] Failed to find any ePO Systems"
+        }
+        
         Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Found | Out-String)"
         return $Found
     }
