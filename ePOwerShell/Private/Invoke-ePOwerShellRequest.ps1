@@ -16,7 +16,11 @@ function Invoke-ePOwerShellRequest {
     )
 
     if (-not ($Script:ePOwerShell)) {
-        Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOwerShellServer first!'
+        try {
+            Set-ePOwerShellServer
+        } catch {
+            Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOwerShellServer first!'
+        }
     }
 
     if ($PassThru) {
