@@ -1,3 +1,25 @@
+<#
+.SYNOPSIS
+
+    Builds the request URL to the ePO server, and calls Invoke-ePOwerShellWebClient with the URL query
+
+.PARAMETER Name
+
+    Specifies the function name to be used
+
+.PARAMETER Query
+
+    Specifies the query parameters to be used against the ePO server
+
+.PARAMETER PassThru
+
+    If specified, returns the raw content from the ePO server. Otherwise, returns the content as a hashtable
+
+.PARAMETER BlockSelfSignedCerts
+
+    By default, the script allows self signed certs applied to your ePO server. Specifying this flag will block self signed certs
+#>
+
 function Invoke-ePOwerShellRequest {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
@@ -49,7 +71,7 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
     }
 }
 "@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+        [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
     }
 
     $URL = "$($ePOwerShell.Server):$($ePOwerShell.Port)/remote/${Name}"

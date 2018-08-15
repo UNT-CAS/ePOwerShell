@@ -1,3 +1,57 @@
+<#
+.SYNOPSIS
+
+    Finds available computer system on the ePO server
+
+.DESCRIPTION
+
+    Finds all available computer systems from the ePO server. If a computer system name is specifed, it searches for only
+    the one computer system from the server. If a computer system is not specified, then it will return a list of all
+    available computer systems on the ePO server. You can search for a computer using the Agent Guid, Computer Name,
+    MAC Address, IP Address, Tags, and Usernames.
+
+.PARAMETER AgentGuid
+
+    Specifies the computers Agent Guid to be found on the ePO server
+
+.PARAMETER ComputerName
+
+    Specifies a computer system to be found on the ePO server
+
+.PARAMETER MACAddress
+
+    Specifies the computers MAC Address to be found on the ePO server
+
+.PARAMETER IPAddress
+
+    Specifies the computers IPAddress to be found on the ePO server
+
+.PARAMETER Tag
+
+    Specifies the tag a computer might have applied to be found on the ePO server
+
+.PARAMETER Username
+
+    Specifies the computers Username to be found on the ePO server
+
+.PARAMETER All
+
+    Returns all computers in the ePO server
+
+.EXAMPLE
+
+    Find-ePOwerShellcomputerSystem -All
+
+.EXAMPLE
+
+    Find-ePOwerShellcomputerSystem 'computer1'
+
+.EXAMPLE
+
+    Find-ePOwerShellcomputerSystem 'computer1'
+
+#>
+
 function Find-ePOwerShellComputerSystem {
     [CmdletBinding(DefaultParametersetname = 'ComputerName')]
     [Alias("Find-ePOComputerSystem")]

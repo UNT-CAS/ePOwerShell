@@ -1,3 +1,28 @@
+<#
+.SYNOPSIS
+
+    Finds available tags on the ePO server
+
+.DESCRIPTION
+
+    Finds all available tags from the ePO server. If a tag name is specifed, it searches for only
+    the one tag from the server. If a tag is not specified, then it will return a list of all
+    available tags on the ePO server. Each tag contains a Tag ID, Tag Name, and Description.
+
+.PARAMETER Tag
+
+    Specifies a tag to be found on the ePO server
+
+.EXAMPLE
+
+    Find-ePOwerShellTag
+
+.EXAMPLE
+
+    Find-ePOwerShellTag 'Tag1'
+
+#>
+
 function Find-ePOwerShellTag {
     [CmdletBinding()]
     [Alias('Find-ePOTag')]

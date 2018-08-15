@@ -1,3 +1,42 @@
+<#
+.SYNOPSIS
+
+    Required command. Sets the necessary parameters to successfully communicate with an ePO server
+
+.DESCRIPTION
+
+    This function sets up all information necessary to communicate with your ePO server.
+
+    There are three ways to utilize this command: By manually specifying the variables each time you
+    load the module, saving a json file on your computer with the necessary information, or saving the
+    json as an environment variable, $env:ePOwerShell.
+
+.PARAMETER Server
+
+    URL to the ePO server
+
+.PARAMETER Port
+
+    Specifies the port necessary to communicate with the ePO server
+
+.PARAMETER Credentials
+
+    Credentials with access to the ePO server
+
+.PARAMETER ePOwerShellSettings
+
+    Specifies a path to a json containing all information necessary to connect to an ePO server
+
+.EXAMPLE
+
+    Set-ePOwerShellServer
+
+.EXAMPLE
+
+    Set-ePOwerShellServer -Server 'My-ePO-Server.domain.com' -Port 1234 -Credentials (Get-Credential)
+
+#>
+
 function Set-ePOwerShellServer {
     [CmdletBinding(DefaultParameterSetName = 'Env')]
     [Alias('Set-ePOServer')]

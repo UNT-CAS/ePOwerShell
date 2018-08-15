@@ -1,3 +1,36 @@
+<#
+.SYNOPSIS
+
+    Fetchs and returns the content from ePOs core.help menu
+
+.DESCRIPTION
+
+    Fetches all commands from the ePOs core.help menu. If PassThru is specifed, it returns the
+    raw content from the server. If PassThru is not specified, then each command is broken down
+    into 3 sections: Command, Parameters, and Description. The function will then return an array
+    containing all commands and additional information.
+
+.PARAMETER Command
+
+    Specifies a command the be queried from the ePO server
+
+.PARAMETER Passthru
+
+    If called, function returns the raw content from the ePO server
+
+.EXAMPLE
+
+    Get-ePOwerShellCoreHelp
+
+.EXAMPLE
+
+    Get-ePOwerShellCoreHelp 'system.find'
+
+.EXAMPLE
+
+    Get-ePOwerShellCoreHelp -PassThru
+#>
+
 function Get-ePOwerShellCoreHelp {
     [CmdletBinding()]
     [Alias('Get-ePOCoreHelp')]

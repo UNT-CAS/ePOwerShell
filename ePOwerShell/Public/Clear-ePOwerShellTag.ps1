@@ -1,3 +1,27 @@
+<#
+.SYNOPSIS
+
+    Removes a tag from a specified computer system
+
+.DESCRIPTION
+
+    Ensures that a tag is cleared from the specicied computer system, whether
+    that means it wasn't applied to begin with, or it removes it from the system.
+
+.PARAMETER ComputerName
+
+    Specifies a computer system the tag will be removed from.
+
+.PARAMETER TagName
+
+    Specifies a tag to be removed from the specified computer system
+
+.EXAMPLE
+
+    Clear-ePOwerShellTag Computer1 Tag1
+
+#>
+
 function Clear-ePOwerShellTag {
     [CmdletBinding()]
     [Alias('Clear-ePOTag')]

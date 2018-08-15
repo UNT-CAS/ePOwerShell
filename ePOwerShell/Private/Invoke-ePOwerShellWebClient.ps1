@@ -1,3 +1,14 @@
+<#
+.SYNOPSIS
+
+    Communicates with the ePO server and returns its response
+
+.PARAMETER URL
+
+    Called only from Invoke-ePOwerSehllRequest, this parameter specifies the
+    formatted query URL to the ePO server.
+#>
+
 function Invoke-ePOwerShellWebClient {
     param (
         [Parameter(Position = 1, Mandatory = $True)]

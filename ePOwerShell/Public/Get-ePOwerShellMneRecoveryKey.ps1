@@ -1,3 +1,29 @@
+<#
+.SYNOPSIS
+
+    Returns the MNE Recovery Key for specified encrypted systems
+
+.DESCRIPTION
+
+    Returns the MNE Recovery Key for specified encrypted systems. If no key is found, throws a warning    
+
+.PARAMETER LeafNodeId
+
+    Specifies the unique Leaf Node ID for each individual computer
+
+.PARAMETER SerialNumber
+
+    Specifies the unique Serial Number for each individual computer
+
+.EXAMPLE
+
+    Get-ePOwerShellMneRecoveryKey '12345'
+
+.EXAMPLE
+
+    Get-ePOwerShellMneRecoveryKey -SerialNumber 'C035406KHV5K'
+#>
+
 function Get-ePOwerShellMneRecoveryKey {
     [CmdletBinding(DefaultParametersetname = 'LeafNode')]
     [Alias('Get-ePOMneRecoveryKey')]

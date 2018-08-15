@@ -11,7 +11,6 @@ Import-Module ePOwerShell
 $ePOwerShellServer = @{
     Server = 'your-epo-server.com'
     Port = 1234
-    Output = 'json'
     Credentials = (Get-Credential)
 }
 
