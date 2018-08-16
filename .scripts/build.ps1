@@ -183,6 +183,7 @@ Task TestModule -Description "Run Pester Tests and CoeCoverage" -Depends Install
         PassThru = $true
         OutputFormat = 'NUnitXml'
         OutputFile   = ([IO.FileInfo] '{0}\dev\CodeCoverage.xml' -f $PSScriptRootParent)
+        EnableExit = $True
     }
     Write-Host "[BUILD TestModule] Invoke-Pester $($invokePester | ConvertTo-Json)" -ForegroundColor Magenta
     $res = Invoke-Pester @invokePester
