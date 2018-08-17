@@ -12,7 +12,7 @@ Deploy Module {
         To PSGallery
         # Tagged Testing
         WithOptions @{
-            NuGetApiKey = $env:PSGalleryApiKey
+            ApiKey = $env:NuGetApiKey
         }
     }
 }
