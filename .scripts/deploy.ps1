@@ -8,11 +8,10 @@ Write-Host "[Deploy] APPVEYOR_PROJECT_NAME: ${env:APPVEYOR_PROJECT_NAME}" -Foreg
 
 Deploy Module {
     By PSGalleryModule {
-        FromSource "${PSScriptRootParent}\dev\BuildOutput\ePOwerShell"
+        FromSource ePOwerShell
         To PSGallery
-        # Tagged Testing
         WithOptions @{
-            ApiKey = $env:ApiKey
+            ApiKey = $ENV:ApiKey
         }
     }
 }
