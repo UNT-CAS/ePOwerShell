@@ -7,12 +7,12 @@ Write-Host "[Deploy] PSScriptRootParent: ${PSScriptRootParent}" -Foregroundcolor
 Write-Host "[Deploy] APPVEYOR_PROJECT_NAME: ${env:APPVEYOR_PROJECT_NAME}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
 
 Deploy Module {
-    By PSGalleryModule ePOwerShell {
+    By PSGalleryModule {
         FromSource "${PSScriptRootParent}\dev\BuildOutput\ePOwerShell"
         To PSGallery
         # Tagged Testing
         WithOptions @{
-            ApiKey = $env:NuGetApiKey
+            ApiKey = $env:ApiKey
         }
     }
 }

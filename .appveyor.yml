@@ -8,7 +8,7 @@ skip_commits:
   message: /update(?:|d|s) readme\..*/
 
 environment:
-  NuGetApiKey:
+  ApiKey:
     secure: 19uAs7mfu9YRkwTvHIymJuSyXGjUUXCR+jsaRvo3ST44NmgZG2HZkOjuabTe/Cyu
   CODECOV_TOKEN:
     secure: 2zRKXm7Sw+GlVonpMOerfEBjeYc05cJinePPX8nJl7c7j1PzNAbrNHAbi7y1RALU
