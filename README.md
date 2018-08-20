@@ -1,18 +1,26 @@
-This [PowerShell Class](https://technet.microsoft.com/en-us/library/dn820211.aspx) allows you to easily connect to and work with your McAfee ePO Server in PowerShell 5.0+.
-
-If you've got a script that's using this, feel free to use a `settings.json` file to store your ePO settings. You can use the [settings_SAMPLE.json](settings_SAMPLE.json) as a guide.
+[![Build status](https://ci.appveyor.com/api/projects/status/t3kx0sy41ouw7cry?svg=true)](https://ci.appveyor.com/project/UNT-CAS/ePOwerShell)
+[![codecov](https://codecov.io/gh/UNT-CAS/ePOwerShell/branch/master/graph/badge.svg)](https://codecov.io/gh/UNT-CAS/ePOwerShell)
+[![version](https://img.shields.io/powershellgallery/v/ePOwerShell.svg)](https://www.powershellgallery.com/packages/ePOwerShell)
+[![downloads](https://img.shields.io/powershellgallery/dt/ePOwerShell.svg?label=downloads)](https://www.powershellgallery.com/packages/ePOwerShell)
 
 # Quick Start
 
 ```powershell
-. .\ePOwerShell.ps1
-$ePO = [ePO]::new()
+Import-Module ePOwerShell
+
+$ePOwerShellServer = @{
+    Server = 'your-epo-server.com'
+    Port = 1234
+    Credentials = (Get-Credential)
+}
+
+Set-ePOwerShellServer @ePOwershellServer
 ```
 
-Now you can do something, like search for your current computer in ePO:
+From here, you're able to use the rest of the functions:
 
 ```powershell
-$ePO.SystemFind($env:ComputerName)
+$Computer = Find-ePOwerShellComputerSystem $env:ComputerName
 ```
 
-See [the wiki](../../wiki) for more details.
+The rest of the functions are detailed further in [the wiki](../../wiki).
