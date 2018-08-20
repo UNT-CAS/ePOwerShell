@@ -11,7 +11,7 @@ Deploy Module {
         FromSource "${PSScriptRootParent}\dev\BuildOutput\ePOwerShell"
         To PSGallery
         WithOptions @{
-            ApiKey = "${ENV:PSGalleryApiKey}"
+            ApiKey = $env:PSGalleryApiKey
         }
     }
 }
