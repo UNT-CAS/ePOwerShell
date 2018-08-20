@@ -9,7 +9,7 @@ skip_commits:
 
 environment:
   PSGalleryApiKey:
-    secure: Xpt1sogACnm41S2/1LmhjIl1zn/s1u1dcwNdhLcUh8RA8eOSGaMGB8Ce8B5svBzg
+    secure: 19uAs7mfu9YRkwTvHIymJuSyXGjUUXCR+jsaRvo3ST44NmgZG2HZkOjuabTe/Cyu
   CODECOV_TOKEN:
     secure: 2zRKXm7Sw+GlVonpMOerfEBjeYc05cJinePPX8nJl7c7j1PzNAbrNHAbi7y1RALU
 
