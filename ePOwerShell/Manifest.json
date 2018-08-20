@@ -5,7 +5,7 @@
     "Author": "Michael Arranaga, Raymond Piller",
     "CompanyName": "Computing for Arts + Sciences, University of North Texas",
     "Copyright": "(c) {0} University of North Texas. All rights reserved.",
-    "GUID": "5d6f5c02-3a3d-457e-a20b-49e356bbdd44",
+    "GUID": "{0}",
     "RootModule": "ePOwerShell.psm1",
     "PowerShellVersion": "5.0",
     "HelpInfoURI": "https://github.com/UNT-CAS/ePOwerShell"

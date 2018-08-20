@@ -65,6 +65,7 @@ Properties {
     # Manipulate the Parameters for usage:
     
     $script:Manifest.Copyright = $script:Manifest.Copyright -f [DateTime]::Now.Year
+    $script:Manifest.GUID = (New-Guid).Guid
 
     $script:Manifest_ModuleName = $script:Manifest.ModuleName
     $script:Manifest.Remove('ModuleName')
