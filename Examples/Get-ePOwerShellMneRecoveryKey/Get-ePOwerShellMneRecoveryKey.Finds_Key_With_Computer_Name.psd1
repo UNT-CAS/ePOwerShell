@@ -1,6 +1,6 @@
 @{
     Parameters = @{
-        LeafNodeId = 'LeafNodeId1'
+        ComputerName = 'Computer1'
     }
     Output = @{
         Type  = 'System.Management.Automation.PSCustomObject'

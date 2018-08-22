@@ -5,7 +5,6 @@
         )
     }
     Output     = @{
-        Type  = 'System.Object[]'
-        Count = 1
+        Type  = 'System.Management.Automation.PSCustomObject'
     }
 }

@@ -25,11 +25,15 @@
 #>
 
 function Get-ePOwerShellMneRecoveryKey {
-    [CmdletBinding(DefaultParametersetname = 'LeafNode')]
+    [CmdletBinding(DefaultParametersetname = 'ComputerName')]
     [Alias('Get-ePOMneRecoveryKey')]
     [OutputType([String])]
     param (
-        [Parameter(Mandatory = $True, ParameterSetName = 'LeafNode', Position = 1)]
+        [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 1)]
+        [String[]]
+        $ComputerName,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'LeafNode')]
         [String[]]
         $LeafNodeId,
 
@@ -47,11 +51,17 @@ function Get-ePOwerShellMneRecoveryKey {
     [System.Collections.ArrayList] $Found = @()
 
     switch ($PSCmdlet.ParameterSetName) {
+        'ComputerName' {
+            $ComputerName = ($ComputerName -Split ',').Trim()
+            foreach ($Computer in $ComputerName) {
+                $ComputerInformation = Find-ePOwerShellComputerSystem -ComputerName $Computer
+                return (Get-ePOwerShellMneRecoveryKey -LeafNodeId $ComputerInformation.ParentID)
+            }
+        }
         'LeafNode' {
             $LeafNodeId = ($LeafNodeId -Split ',').Trim()
             foreach ($LeafNode in $LeafNodeId) {
                 $Request.Query.epoLeafNodeId = $LeafNode
-                
                 try {
                     $Key = Invoke-ePOwerShellRequest @Request
                 } catch {
@@ -63,7 +73,7 @@ function Get-ePOwerShellMneRecoveryKey {
                     Key        = $Key
                 }
 
-                $Found.Add($Result) | Out-Null
+                $Found.Add([PSCustomObject]$Result) | Out-Null
             }
         }
         'SerialNumber' {
@@ -82,7 +92,7 @@ function Get-ePOwerShellMneRecoveryKey {
                     Key          = $Key
                 }
 
-                $Found.Add($Result) | Out-Null
+                $Found.Add([PSCustomObject]$Result) | Out-Null
             }
         }
     }

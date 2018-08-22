@@ -29,8 +29,13 @@ Describe $testFile.Name {
     foreach ($test in $tests) {
         Mock Invoke-ePOwerShellRequest {
             if ($test.Parameters.ComputerName) {
-                $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.searchText) -File
-                return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                if ($test.Parameters.ForceWildcardHandling) {
+                    $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter 'AllComputers.html' -File
+                    return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                } else {
+                    $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.searchText) -File
+                    return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                }
             } elseif ($test.Parameters.MACAddress) {
                 $Files = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Exclude 'AllComputers.html'
                 foreach ($File in $Files) {
@@ -46,6 +51,7 @@ Describe $testFile.Name {
                         $Found.Add(((Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)) | Out-Null
                     }
                 }
+
                 if ($Found.Count -eq 0) {
                     Throw "Failed to find computer with this tag"
                 } else {
@@ -106,10 +112,6 @@ Describe $testFile.Name {
                 } else {
                     $script:RequestResponse.GetType().FullName | Should Be $test.Output.Type
                 }
-            }
-
-            It "Correct Count: $($test.Output.Count)" {
-                $script:RequestResponse.Count | Should Be $test.Output.Count
             }
         }
     }
