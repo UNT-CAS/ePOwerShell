@@ -164,7 +164,9 @@ function Find-ePOwerShellComputerSystem {
                     $CurrentRequest.Query.searchText = $Address
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    $Found.Add($ComputerSystems) | Out-Null
+                    foreach ($System in $ComputerSystems) {
+                        $Found.Add($System) | Out-Null
+                    }
                 }
             }
             "IPAddress" {
@@ -174,7 +176,9 @@ function Find-ePOwerShellComputerSystem {
                     $CurrentRequest.Query.searchText = $Address
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    $Found.Add($ComputerSystems) | Out-Null
+                    foreach ($System in $ComputerSystems) {
+                        $Found.Add($System) | Out-Null
+                    }
                 }
             }
             "Tag" {
@@ -184,7 +188,9 @@ function Find-ePOwerShellComputerSystem {
                     $CurrentRequest.Query.searchText = $T
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    $Found.Add($ComputerSystems) | Out-Null
+                    foreach ($System in $ComputerSystems) {
+                        $Found.Add($System) | Out-Null
+                    }
                 }
             }
             "AgentGuid" {
@@ -194,7 +200,9 @@ function Find-ePOwerShellComputerSystem {
                     $CurrentRequest.Query.searchText = $Guid
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    $Found.Add($ComputerSystems) | Out-Null
+                    foreach ($System in $ComputerSystems) {
+                        $Found.Add($System) | Out-Null
+                    }
                 }
             }
             "Username" {
@@ -204,7 +212,9 @@ function Find-ePOwerShellComputerSystem {
                     $CurrentRequest.Query.searchText = $User
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    $Found.Add($ComputerSystems) | Out-Null
+                    foreach ($System in $ComputerSystems) {
+                        $Found.Add($System) | Out-Null
+                    }
                 }
             }
             "All" {
@@ -212,7 +222,9 @@ function Find-ePOwerShellComputerSystem {
                 $CurrentRequest.Query.searchText = ''
 
                 $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                $Found.Add($ComputerSystems) | Out-Null
+                foreach ($System in $ComputerSystems) {
+                    $Found.Add($System) | Out-Null
+                }
             }
         }
     }

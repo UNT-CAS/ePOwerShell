@@ -7,6 +7,7 @@
 . $testFile
 
 . $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePOwerShellRequest.ps1') -Resolve)
+. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath 'Find-ePOwerShellComputerSystem.ps1') -Resolve)
 
 [System.Collections.ArrayList] $tests = @()
 $examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
@@ -27,8 +28,13 @@ foreach ($example in $examples) {
 
 Describe $testFile.Name {
     foreach ($test in $tests) {
+        Mock Find-ePOwerShellComputerSystem {
+            $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $ComputerName) -File
+            return (Get-Content $File.FullName | Out-String).Substring(3).Trim()  | ConvertFrom-Json
+        }
+
         Mock Invoke-ePOwerShellRequest {
-            if ($test.Parameters.LeafNodeId) {
+            if ($Query.epoLeafNodeId) {
                 $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.epoLeafNodeId) -File
             } else {
                 $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.serialNumber) -File
@@ -59,10 +65,6 @@ Describe $testFile.Name {
                 } else {
                     $script:RequestResponse.GetType().FullName | Should Be $test.Output.Type
                 }
-            }
-
-            It "Correct Count: $($test.Output.Count)" {
-                $script:RequestResponse.Count | Should Be $test.Output.Count
             }
         }
     }

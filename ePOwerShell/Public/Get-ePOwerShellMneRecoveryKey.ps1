@@ -62,7 +62,6 @@ function Get-ePOwerShellMneRecoveryKey {
             $LeafNodeId = ($LeafNodeId -Split ',').Trim()
             foreach ($LeafNode in $LeafNodeId) {
                 $Request.Query.epoLeafNodeId = $LeafNode
-                
                 try {
                     $Key = Invoke-ePOwerShellRequest @Request
                 } catch {

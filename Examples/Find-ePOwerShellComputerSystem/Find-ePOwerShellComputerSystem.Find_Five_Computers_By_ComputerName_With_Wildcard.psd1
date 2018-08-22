@@ -1,6 +1,7 @@
 @{
     Parameters = @{
-        Tag = "Workstation"
+        ComputerName = "Computer"
+        ForceWildcardHandling = $True
     }
     Output     = @{
         Type  = 'System.Object[]'
