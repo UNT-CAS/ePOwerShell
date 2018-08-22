@@ -65,6 +65,10 @@ function Find-ePOwerShellComputerSystem {
         [String[]]
         $ComputerName,
 
+        [Parameter(ParameterSetName = 'ComputerName')]
+        [Switch]
+        $ForceWildcardHandling,
+
         [Parameter(ParameterSetName = 'MACAddress')]
         [String[]]
         $MACAddress,
@@ -104,7 +108,16 @@ function Find-ePOwerShellComputerSystem {
                     $CurrentRequest.Query.searchText = $Computer
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    $Found.Add($ComputerSystems) | Out-Null
+
+                    foreach ($ComputerSystem in $ComputerSystems) {
+                        if ($ForceWildcardHandling) {
+                            $Found.Add($ComputerSystem) | Out-Null
+                        } else {
+                            if ($ComputerSystem.'EPOComputerProperties.ComputerName' -eq $Computer) {
+                                $Found.Add($ComputerSystem) | Out-Null
+                            }
+                        }
+                    }
                 }
             }
             "MACAddress" {
@@ -208,8 +221,20 @@ function Find-ePOwerShellComputerSystem {
         if (-not ($Found)) {
             Throw "[Find-ePOwerShellComputerSystem] Failed to find any ePO Systems"
         }
+
+        [System.Collections.ArrayList] $Return = @()
+
+        foreach ($Computer in $Found) {
+            [hashtable]$ComputerItem = @{}
+
+            foreach ($Key in $Computer.PSObject.Properties) {
+                $ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
+            }
+
+            $Return.Add(([PSCustomObject]$ComputerItem)) | Out-Null
+        }
         
-        Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Found | Out-String)"
-        return $Found
+        Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Return | Out-String)"
+        return $Return
     }
 }
