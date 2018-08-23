@@ -73,7 +73,7 @@ function Get-ePOwerShellMneRecoveryKey {
                     Key        = $Key
                 }
 
-                $Found.Add([PSCustomObject]$Result) | Out-Null
+                [void]$Found.Add([PSCustomObject]$Result)
             }
         }
         'SerialNumber' {
@@ -92,7 +92,7 @@ function Get-ePOwerShellMneRecoveryKey {
                     Key          = $Key
                 }
 
-                $Found.Add([PSCustomObject]$Result) | Out-Null
+                [void]$Found.Add([PSCustomObject]$Result)
             }
         }
     }
