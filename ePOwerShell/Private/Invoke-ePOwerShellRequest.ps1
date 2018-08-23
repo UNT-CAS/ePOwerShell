@@ -47,11 +47,11 @@ function Invoke-ePOwerShellRequest {
 
     if ($PassThru) {
         if (-not ($Query.':output' -eq 'terse')) {
-            $Query.Add(':output', 'terse') | Out-Null
+            [void]$Query.Add(':output', 'terse')
         }
     } else {
         if (-not ($Query.':output' -eq 'json')) {
-            $Query.Add(':output', 'json') | Out-Null
+            [void]$Query.Add(':output', 'json')
         }
     }
 
@@ -78,7 +78,7 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 
     [System.Collections.ArrayList] $qs = @()
     foreach ($q in $Query.GetEnumerator()) {
-        $qs.Add("$($q.Name)=$($q.Value)") | Out-Null
+        [void]$qs.Add("$($q.Name)=$($q.Value)")
     }
     $query_string = $qs -join '&'
 
