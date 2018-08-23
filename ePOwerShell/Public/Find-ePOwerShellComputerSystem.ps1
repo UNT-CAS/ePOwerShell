@@ -111,10 +111,10 @@ function Find-ePOwerShellComputerSystem {
 
                     foreach ($ComputerSystem in $ComputerSystems) {
                         if ($ForceWildcardHandling) {
-                            $Found.Add($ComputerSystem) | Out-Null
+                            [void]$Found.Add($ComputerSystem)
                         } else {
                             if ($ComputerSystem.'EPOComputerProperties.ComputerName' -eq $Computer) {
-                                $Found.Add($ComputerSystem) | Out-Null
+                                [void]$Found.Add($ComputerSystem)
                             }
                         }
                     }
@@ -165,7 +165,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        $Found.Add($System) | Out-Null
+                        [void]$Found.Add($System)
                     }
                 }
             }
@@ -177,7 +177,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        $Found.Add($System) | Out-Null
+                        [void]$Found.Add($System)
                     }
                 }
             }
@@ -189,7 +189,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        $Found.Add($System) | Out-Null
+                        [void]$Found.Add($System)
                     }
                 }
             }
@@ -201,7 +201,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        $Found.Add($System) | Out-Null
+                        [void]$Found.Add($System)
                     }
                 }
             }
@@ -213,7 +213,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        $Found.Add($System) | Out-Null
+                        [void]$Found.Add($System)
                     }
                 }
             }
@@ -223,7 +223,7 @@ function Find-ePOwerShellComputerSystem {
 
                 $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                 foreach ($System in $ComputerSystems) {
-                    $Found.Add($System) | Out-Null
+                    [void]$Found.Add($System)
                 }
             }
         }
@@ -243,7 +243,7 @@ function Find-ePOwerShellComputerSystem {
                 $ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
             }
 
-            $Return.Add(([PSCustomObject]$ComputerItem)) | Out-Null
+            [void]$Return.Add(([PSCustomObject]$ComputerItem))
         }
         
         Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Return | Out-String)"
