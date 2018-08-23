@@ -77,7 +77,7 @@ function Get-ePOwerShellCoreHelp {
             [System.Collections.ArrayList] $Parameters = @()
 
             foreach ($Parameter in ($SecondRegexProduct.Groups[1].Value -Split ' ')) {
-                $Parameters.Add($Parameter) | Out-Null
+                [void]$Parameters.Add($Parameter)
             }
 
             $Description = $SecondRegexProduct.Groups[2].Value
@@ -87,13 +87,13 @@ function Get-ePOwerShellCoreHelp {
             $Description = $Remainder
         }
 
-        $Commands.Add(
+        [void]$Commands.Add(
             @{
                 Command     = $LocalCommand
                 Parameters  = $Parameters
                 Description = $Description
             }
-        ) | Out-Null
+        )
     }
 
     return ($Commands | % { [PSCustomObject]$_ } | Format-Table -Property Command, Parameters, Description)
