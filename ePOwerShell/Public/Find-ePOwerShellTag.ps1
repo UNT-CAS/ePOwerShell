@@ -53,7 +53,7 @@ function Find-ePOwerShellTag {
             Write-Debug "[Find-ePOwerShellGroups] Request: $($Request | ConvertTo-Json)"
             $ePOGroups = Invoke-ePOwerShellRequest @Request
 
-            $Found.Add($ePOGroups) | Out-Null
+            [void]$Found.Add($ePOGroups)
         }
     }
 
