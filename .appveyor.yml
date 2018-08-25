@@ -1,6 +1,6 @@
 image: WMF 5
 
-version: 0.2.{build}
+version: 0.3.{build}
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
