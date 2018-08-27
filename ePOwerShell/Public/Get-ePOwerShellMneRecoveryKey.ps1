@@ -30,6 +30,7 @@ function Get-ePOwerShellMneRecoveryKey {
     [OutputType([String])]
     param (
         [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
+        [Alias('Name')]
         [String[]]
         $ComputerName,
 
