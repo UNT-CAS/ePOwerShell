@@ -50,6 +50,10 @@ Describe $testFile.Name {
             }
         }
 
+        Mock Write-Warning {
+            Write-Debug $Message
+        }
+
         Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
 
         Context $test.Name {
