@@ -46,7 +46,12 @@ Describe $testFile.Name {
             } else {
                 $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter 'AllGroups_Json.html' -File
             }
-            return (Get-Content $File.FullName | Out-String).Substring(3).Trim()
+
+            if ($Test.Parameters.PassThru) {
+                return (Get-Content $File.FullName | Out-String).Substring(3).Trim()
+            } else {
+                return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+            }
         }
 
         Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
