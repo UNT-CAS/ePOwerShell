@@ -61,7 +61,8 @@ function Find-ePOwerShellComputerSystem {
         [String[]]
         $AgentGuid,
 
-        [Parameter(ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True)]
+        [Parameter(ParameterSetName = 'ComputerName', Position = 0, ValueFromPipeline = $True)]
+        [Alias('hostname', 'name', 'computer')]
         [String[]]
         $ComputerName,
 
@@ -240,7 +241,7 @@ function Find-ePOwerShellComputerSystem {
             [hashtable]$ComputerItem = @{}
 
             foreach ($Key in $Computer.PSObject.Properties) {
-                $ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
+                [void]$ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
             }
 
             [void]$Return.Add(([PSCustomObject]$ComputerItem))
