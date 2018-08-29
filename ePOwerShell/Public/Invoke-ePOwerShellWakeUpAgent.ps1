@@ -2,13 +2,9 @@ function Invoke-ePOwerShellWakeUpAgent {
     [CmdletBinding()]
     [Alias('Invoke-ePOWakeUpAgent')]
     param (
-        [Parameter(Mandatory = $True, Position = 1, ParameterSetName = 'ComputerName')]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [String[]]
         $ComputerName,
-
-        [Parameter(Mandatory = $True, ValueFromPipeline = $True, ParameterSetName = 'ComputerObject')]
-        [PSCustomObject[]]
-        $ComputerObject,
 
         [Switch]
         $ForceFullPolicyUpdate,
@@ -37,42 +33,24 @@ function Invoke-ePOwerShellWakeUpAgent {
     }
 
     process {
-        switch ($PSCmdlet.ParameterSetName) {
-            "ComputerName" {
-                $ComputerName = $ComputerName.Split(',').Trim()
+        foreach ($Computer in $ComputerName) {
+            Write-Verbose "Confirming computer is in ePO: $Computer"
 
-                foreach ($Computer in $ComputerName) {
-                    Write-Verbose "Confirming computer is in ePO: $Computer"
-
-                    if (-not ($ePOComputer = Find-ePOwerShellComputerSystem -ComputerName $Computer)) {
-                        Write-Warning ("Failed to find computer system '{0}' in ePO" -f $Computer)
-                        continue
-                    }
-
-                    Write-Verbose ('Found computer system in ePO: {0}' -f ($ePOComputer | Out-String))
-
-                    if (-not ($ePOComputer.ManagedState)) {
-                        Write-Warning ('Computer System is not in a managed state: {0}' -f $Computer)
-                        continue
-                    }
-
-                    Write-Verbose ('Computer System is in a managed state: {0}' -f $Computer)
-
-                    [void]$Computers.Add($Computer)
-                }
+            if (-not ($ePOComputer = Find-ePOwerShellComputerSystem -ComputerName $Computer)) {
+                Write-Warning ("Failed to find computer system '{0}' in ePO" -f $Computer)
+                continue
             }
-            "ComputerObject" {
-                foreach ($Computer in $ComputerObject) {
-                    if (-not ($Computer.ManagedState)) {
-                        Write-Warning ('Computer System is not in a managed state: {0}' -f $Computer.ComputerName)
-                        continue
-                    }
-    
-                    Write-Verbose ('Computer System is in a managed state: {0}' -f $Computer.ComputerName)
-    
-                    [void]$Computers.Add($Computer.ComputerName)
-                }
+
+            Write-Verbose ('Found computer system in ePO: {0}' -f ($ePOComputer | Out-String))
+
+            if (-not ($ePOComputer.ManagedState)) {
+                Write-Warning ('Computer System is not in a managed state: {0}' -f $Computer)
+                continue
             }
+
+            Write-Verbose ('Computer System is in a managed state: {0}' -f $Computer)
+
+            [void]$Computers.Add($Computer)
         }
     }
 

@@ -52,7 +52,7 @@ Describe $testFile.Name {
             if ($Test.Output.Throws) {
                 if ($Test.Pipeline) {
                     It "Invoke-ePOwerShellWakeUpAgent Throws through pipeline" {
-                        { $script:RequestResponse = Find-ePOwerShellComputerSystem $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Throw
+                        { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Throw
                     }
                 } else {
                     It "Invoke-ePOwerShellWakeUpAgent Throws" {
@@ -64,7 +64,7 @@ Describe $testFile.Name {
 
             if ($Test.Pipeline) {
                 It "Invoke-ePOwerShellWakeUpAgent through pipeline" {
-                    { $script:RequestResponse = Find-ePOwerShellComputerSystem $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Not Throw
+                    { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Not Throw
                 }
             } else {
                 It "Invoke-ePOwerShellWakeUpAgent" {
