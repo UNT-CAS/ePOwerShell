@@ -29,7 +29,8 @@ function Get-ePOwerShellMneRecoveryKey {
     [Alias('Get-ePOMneRecoveryKey')]
     [OutputType([String])]
     param (
-        [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 1)]
+        [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
+        [Alias('Name')]
         [String[]]
         $ComputerName,
 
@@ -42,60 +43,122 @@ function Get-ePOwerShellMneRecoveryKey {
         $SerialNumber
     )
 
-    $Request = @{
-        Name        = 'mne.recoverMachine'
-        PassThru    = $True
-        Query       = @{}
+    begin {
+        $TableName = 'RecoveryKeys'
+        $Table = New-Object System.Data.DataTable $TableName
     }
 
-    [System.Collections.ArrayList] $Found = @()
+    process {
+        switch ($PSCmdlet.ParameterSetName) {
+            'ComputerName' {
+                if (-not ($Table.Columns | ? { $_.ColumnName -eq 'ComputerName' })) {
+                    $Column1 = New-Object System.Data.DataColumn 'ComputerName', ([String])
+                    [void]$Table.Columns.Add($Column1)
+                }
 
-    switch ($PSCmdlet.ParameterSetName) {
-        'ComputerName' {
-            $ComputerName = ($ComputerName -Split ',').Trim()
-            foreach ($Computer in $ComputerName) {
-                $ComputerInformation = Find-ePOwerShellComputerSystem -ComputerName $Computer
-                return (Get-ePOwerShellMneRecoveryKey -LeafNodeId $ComputerInformation.ParentID)
+                if (-not ($Table.Columns | ? { $_.ColumnName -eq 'RecoveryKey' })) {
+                    $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
+                    [void]$Table.Columns.Add($Column2)
+                }
+                
+
+                foreach ($Computer in $ComputerName) {
+                    try {
+                        $ComputerInformation = Find-ePOwerShellComputerSystem -ComputerName $Computer
+                    } catch {
+                        Write-Warning ('Failed to find comptuer system in ePO: {0}' -f $Computer)
+                        continue
+                    }
+
+                    $Request = @{
+                        Name     = 'mne.recoverMachine'
+                        PassThru = $True
+                        Query    = @{
+                            epoLeafNodeId = $ComputerInformation.ParentID
+                        }
+                    }
+
+                    try {
+                        $Key = Invoke-ePOwerShellRequest @Request
+                    } catch {
+                        Write-Warning ('Failed to find detect recovery key for computer: {0}' -f $ComputerInformation.ComputerName)
+                        continue
+                    }
+
+                    $Row = $Table.NewRow()
+                    $Row.ComputerName = $ComputerInformation.ComputerName
+                    $Row.RecoveryKey = $Key
+                    [void]$Table.Rows.Add($Row)
+                }
             }
-        }
-        'LeafNode' {
-            $LeafNodeId = ($LeafNodeId -Split ',').Trim()
-            foreach ($LeafNode in $LeafNodeId) {
-                $Request.Query.epoLeafNodeId = $LeafNode
-                try {
-                    $Key = Invoke-ePOwerShellRequest @Request
-                } catch {
-                    Throw "Failed to find detect recovery key: $($_.Exception.Message)"
-                }
+            'LeafNode' {
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'LeafNode' })) {
+                    $Column1 = New-Object System.Data.DataColumn 'LeafNode', ([String])
+                    [void]$Table.Columns.Add($Column1)
+                # }
 
-                $Result = @{
-                    LeafNodeId = $LeafNode
-                    Key        = $Key
-                }
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'RecoveryKey' })) {
+                    $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
+                    [void]$Table.Columns.Add($Column2)
+                # }
 
-                [void]$Found.Add([PSCustomObject]$Result)
+                foreach ($LeafNode in $LeafNodeId) {
+                    $Request = @{
+                        Name     = 'mne.recoverMachine'
+                        PassThru = $True
+                        Query    = @{
+                            epoLeafNodeId = $LeafNode
+                        }
+                    }
+
+                    try {
+                        $Key = Invoke-ePOwerShellRequest @Request
+                    } catch {
+                        Throw "Failed to find detect recovery key: $($_.Exception.Message)"
+                    }
+
+                    $Row = $Table.NewRow()
+                    $Row.LeafNode = $LeafNode
+                    $Row.RecoveryKey = $Key
+                    [void]$Table.Rows.Add($Row)
+                }
             }
-        }
-        'SerialNumber' {
-            $SerialNumber = ($SerialNumber -Split ',').Trim()
-            foreach ($SN in $SerialNumber) {
-                $Request.Query.serialNumber = $SN
+            'SerialNumber' {
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'SerialNumber' })) {
+                    $Column1 = New-Object System.Data.DataColumn 'SerialNumber', ([String])
+                    [void]$Table.Columns.Add($Column1)
+                # }
 
-                try {
-                    $Key = Invoke-ePOwerShellRequest @Request
-                } catch {
-                    Throw "Failed to find detect recovery key: $($_.Exception.Message)"
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'RecoveryKey' })) {
+                    $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
+                    [void]$Table.Columns.Add($Column2)
+                # }
+
+                foreach ($SN in $SerialNumber) {
+                    $Request = @{
+                        Name     = 'mne.recoverMachine'
+                        PassThru = $True
+                        Query    = @{
+                            serialNumber = $SN
+                        }
+                    }
+
+                    try {
+                        $Key = Invoke-ePOwerShellRequest @Request
+                    } catch {
+                        Throw "Failed to find detect recovery key: $($_.Exception.Message)"
+                    }
+
+                    $Row = $Table.NewRow()
+                    $Row.SerialNumber = $SN
+                    $Row.RecoveryKey = $Key
+                    [void]$Table.Rows.Add($Row)
                 }
-
-                $Result = @{
-                    SerialNumber = $SN
-                    Key          = $Key
-                }
-
-                [void]$Found.Add([PSCustomObject]$Result)
             }
         }
     }
 
-    return $Found
+    end {
+        return $Table
+    }
 }

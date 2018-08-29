@@ -29,6 +29,10 @@ foreach ($example in $examples) {
 Describe $testFile.Name {
     foreach ($test in $tests) {
         Mock Find-ePOwerShellComputerSystem {
+            if ($Test.FailsToFindComputer) {
+                Throw "Failed to find computer"
+            }
+
             $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $ComputerName) -File
             return (Get-Content $File.FullName | Out-String).Substring(3).Trim()  | ConvertFrom-Json
         }
@@ -40,7 +44,15 @@ Describe $testFile.Name {
                 $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.serialNumber) -File
             }
 
-            return (Get-Content $File.FullName | Out-String).Substring(3).Trim()
+            if ($File) {
+                return (Get-Content $File.FullName | Out-String).Substring(3).Trim()
+            }
+
+            Throw "Failed to find file"
+        }
+
+        Mock Write-Warning {
+            Write-Verbose $Message
         }
 
         Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
@@ -55,9 +67,16 @@ Describe $testFile.Name {
                 continue
             }
 
-            It "Get-ePOwerShellMneRecoveryKey Does Not Throws" {
-                { $script:RequestResponse = Get-ePOwerShellMneRecoveryKey @parameters } | Should Not Throw
+            if ($Test.Pipeline) {
+                It "Get-ePOwerShellMneRecoveryKey Does Not Throws" {
+                    { $script:RequestResponse = $Parameters.ComputerName | Get-ePOwerShellMneRecoveryKey } | Should Not Throw
+                }
+            } else {
+                It "Get-ePOwerShellMneRecoveryKey Does Not Throws" {
+                    { $script:RequestResponse = Get-ePOwerShellMneRecoveryKey @parameters } | Should Not Throw
+                }
             }
+
 
             It "Output Type: $($test.Output.Type)" {
                 if ($test.Output.Type -eq 'System.Void') {

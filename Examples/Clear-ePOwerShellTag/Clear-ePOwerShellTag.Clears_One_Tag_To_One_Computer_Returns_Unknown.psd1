@@ -4,7 +4,4 @@
         TagName      = 'Tag1'
     }
     Unknown = $True
-    Output     = @{
-        Throws = $True
-    }
 }
