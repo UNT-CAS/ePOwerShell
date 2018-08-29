@@ -238,7 +238,7 @@ function Find-ePOwerShellComputerSystem {
         [System.Collections.ArrayList] $Return = @()
 
         foreach ($Computer in $Found) {
-            [hashtable]$ComputerItem = @{}
+            $ComputerItem = [Ordered]@{}
 
             foreach ($Key in $Computer.PSObject.Properties) {
                 [void]$ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
