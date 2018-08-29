@@ -3,7 +3,7 @@
         LeafNodeId = 'LeafNodeId1'
     }
     Output = @{
-        Type  = 'System.Management.Automation.PSCustomObject'
+        Type  = 'System.Data.DataRow'
         Count = 2
     }
 }

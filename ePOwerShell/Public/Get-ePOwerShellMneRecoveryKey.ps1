@@ -29,7 +29,7 @@ function Get-ePOwerShellMneRecoveryKey {
     [Alias('Get-ePOMneRecoveryKey')]
     [OutputType([String])]
     param (
-        [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
+        [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [Alias('Name')]
         [String[]]
         $ComputerName,
@@ -51,12 +51,17 @@ function Get-ePOwerShellMneRecoveryKey {
     process {
         switch ($PSCmdlet.ParameterSetName) {
             'ComputerName' {
-                $Column1 = New-Object System.Data.DataColumn 'ComputerName', ([String])
-                $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
-                $Table.Columns.Add($Column1)
-                $Table.Columns.Add($Column2)
+                if (-not ($Table.Columns | ? { $_.ColumnName -eq 'ComputerName' })) {
+                    $Column1 = New-Object System.Data.DataColumn 'ComputerName', ([String])
+                    [void]$Table.Columns.Add($Column1)
+                }
 
-                $ComputerName = ($ComputerName -Split ',').Trim()
+                if (-not ($Table.Columns | ? { $_.ColumnName -eq 'RecoveryKey' })) {
+                    $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
+                    [void]$Table.Columns.Add($Column2)
+                }
+                
+
                 foreach ($Computer in $ComputerName) {
                     try {
                         $ComputerInformation = Find-ePOwerShellComputerSystem -ComputerName $Computer
@@ -83,17 +88,20 @@ function Get-ePOwerShellMneRecoveryKey {
                     $Row = $Table.NewRow()
                     $Row.ComputerName = $ComputerInformation.ComputerName
                     $Row.RecoveryKey = $Key
-                    $Table.Rows.Add($Row)
-
+                    [void]$Table.Rows.Add($Row)
                 }
             }
             'LeafNode' {
-                $Column1 = New-Object System.Data.DataColumn 'LeafNode', ([String])
-                $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
-                $Table.Columns.Add($Column1)
-                $Table.Columns.Add($Column2)
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'LeafNode' })) {
+                    $Column1 = New-Object System.Data.DataColumn 'LeafNode', ([String])
+                    [void]$Table.Columns.Add($Column1)
+                # }
 
-                $LeafNodeId = ($LeafNodeId -Split ',').Trim()
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'RecoveryKey' })) {
+                    $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
+                    [void]$Table.Columns.Add($Column2)
+                # }
+
                 foreach ($LeafNode in $LeafNodeId) {
                     $Request = @{
                         Name     = 'mne.recoverMachine'
@@ -112,16 +120,20 @@ function Get-ePOwerShellMneRecoveryKey {
                     $Row = $Table.NewRow()
                     $Row.LeafNode = $LeafNode
                     $Row.RecoveryKey = $Key
-                    $Table.Rows.Add($Row)
+                    [void]$Table.Rows.Add($Row)
                 }
             }
             'SerialNumber' {
-                $Column1 = New-Object System.Data.DataColumn 'SerialNumber', ([String])
-                $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
-                $Table.Columns.Add($Column1)
-                $Table.Columns.Add($Column2)
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'SerialNumber' })) {
+                    $Column1 = New-Object System.Data.DataColumn 'SerialNumber', ([String])
+                    [void]$Table.Columns.Add($Column1)
+                # }
 
-                $SerialNumber = ($SerialNumber -Split ',').Trim()
+                # if (-not ($Table.Columns | ? { $_.ColumnName -eq 'RecoveryKey' })) {
+                    $Column2 = New-Object System.Data.DataColumn 'RecoveryKey', ([String])
+                    [void]$Table.Columns.Add($Column2)
+                # }
+
                 foreach ($SN in $SerialNumber) {
                     $Request = @{
                         Name     = 'mne.recoverMachine'
@@ -140,7 +152,7 @@ function Get-ePOwerShellMneRecoveryKey {
                     $Row = $Table.NewRow()
                     $Row.SerialNumber = $SN
                     $Row.RecoveryKey = $Key
-                    $Table.Rows.Add($Row)
+                    [void]$Table.Rows.Add($Row)
                 }
             }
         }
