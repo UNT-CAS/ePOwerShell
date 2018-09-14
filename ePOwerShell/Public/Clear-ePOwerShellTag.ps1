@@ -26,16 +26,20 @@ function Clear-ePOwerShellTag {
     [CmdletBinding()]
     [Alias('Clear-ePOTag')]
     param (
-        [Parameter(Mandatory = $True, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, ParameterSetName = 'ComputerName')]
+        [Parameter(Mandatory = $True, Position = 0)]
         [String[]]
         $ComputerName,
 
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $True, Position = 1)]
         [String[]]
         $TagName
     )
 
-    begin {}
+    begin {
+        if ($ComputerObject) {
+            $ComputerName = $ComputerObject
+        }
+    }
 
     process {
         foreach ($Computer in $ComputerName) {

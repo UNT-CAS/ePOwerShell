@@ -34,11 +34,11 @@ function Set-ePOwerShellTag {
     [CmdletBinding()]
     [Alias('Set-ePOTag')]
     param (
-        [Parameter(Mandatory = $True, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True, ParameterSetName = 'ComputerName')]
+        [Parameter(Mandatory = $True, Position = 0)]
         [String[]]
         $ComputerName,
 
-        [Parameter(Mandatory = $True)]
+        [Parameter(Mandatory = $True, Position = 1)]
         [String[]]
         $TagName
     )
