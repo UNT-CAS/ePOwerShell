@@ -23,16 +23,15 @@ function Initialize-ePOwerShellVariables {
     [Alias('Initialize-ePOVariables')]
     param(
         [Parameter(Mandatory=$True)]
-        [Int]
-        $Port,
-
-        [Parameter(Mandatory=$True)]
         [String]
         $Server,
-
+        
         [Parameter(Mandatory=$True)]
         [System.Management.Automation.PSCredential]
-        $Credentials
+        $Credentials,
+
+        [Int]
+        $Port = 8443
     )
 
     $Script:ePOwerShell = @{
