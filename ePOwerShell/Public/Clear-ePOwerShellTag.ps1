@@ -35,43 +35,35 @@ function Clear-ePOwerShellTag {
         $TagName
     )
 
-    begin {
-        if ($ComputerObject) {
-            $ComputerName = $ComputerObject
-        }
-    }
+    foreach ($Computer in $ComputerName) {
+        Write-Verbose ('Clearing from computer: {0}' -f $Computer)
 
-    process {
-        foreach ($Computer in $ComputerName) {
-            Write-Verbose ('Clearing from computer: {0}' -f $Computer)
-
-            foreach ($Tag in $TagName) {
-                Write-Verbose ('Clearing tag: {0}' -f $Tag)
-                $Request = @{
-                    Name     = 'system.clearTag'
-                    PassThru = $True
-                    Query    = @{
-                        names   = $Computer
-                        tagName = $Tag
-                    }
+        foreach ($Tag in $TagName) {
+            Write-Verbose ('Clearing tag: {0}' -f $Tag)
+            $Request = @{
+                Name     = 'system.clearTag'
+                PassThru = $True
+                Query    = @{
+                    names   = $Computer
+                    tagName = $Tag
                 }
+            }
 
-                Write-Debug ('Request: {0}' -f ($Request | Out-String))
-                try {
-                    $Result = Invoke-ePOwerShellRequest @Request
-                } catch {
-                    Throw $_
-                }
+            Write-Debug ('Request: {0}' -f ($Request | Out-String))
+            try {
+                $Result = Invoke-ePOwerShellRequest @Request
+            } catch {
+                Throw $_
+            }
 
-                Write-Debug ('Result: {0}' -f $Result)
+            Write-Debug ('Result: {0}' -f $Result)
 
-                if ($Result -eq 0) {
-                    Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Computer)
-                } elseif ($Result -eq 1) {
-                    Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Computer)
-                } else {
-                    Write-Warning ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Computer, $Result)
-                }
+            if ($Result -eq 0) {
+                Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Computer)
+            } elseif ($Result -eq 1) {
+                Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Computer)
+            } else {
+                Write-Warning ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Computer, $Result)
             }
         }
     }
