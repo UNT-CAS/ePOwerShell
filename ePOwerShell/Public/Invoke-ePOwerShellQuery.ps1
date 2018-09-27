@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
 
-    Finds available queries on the ePO server
+    Runs a query that's available on the ePO server.
 
 .DESCRIPTION
 
-    Finds all available queries from the ePO server.
+    Based off the Query Name or ID, runs the query and returns the output.
 
 .EXAMPLE
 
