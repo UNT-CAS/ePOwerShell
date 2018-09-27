@@ -1,0 +1,5 @@
+@{
+    Output     = @{
+        Type = 'System.Object[]'
+    }
+}
