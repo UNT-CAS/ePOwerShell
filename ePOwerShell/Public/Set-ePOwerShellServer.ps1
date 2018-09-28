@@ -46,12 +46,12 @@ function Set-ePOwerShellServer {
         $Server,
 
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
-        [Int]
-        $Port,
-
-        [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [System.Management.Automation.PSCredential]
         $Credentials,
+        
+        [Parameter(Mandatory = $False, ParameterSetName = 'ManualEntry')]
+        [Int]
+        $Port,
 
         [Parameter(ParameterSetName = 'Env')]
         [String]
@@ -101,15 +101,21 @@ function Set-ePOwerShellServer {
 
             $ePOwerShellVariables = @{
                 Server      = $Settings.Server
-                Port        = $Settings.Port
                 Credentials = $Credentials
+            }
+
+            if ($settings.Port) {
+                [void]$ePOwerShellVariables.Add("Port", $Settings.Port)
             }
         }
         'ManualEntry' {
             $ePOwerShellVariables = @{
                 Server      = $Server
-                Port        = $Port
                 Credentials = $Credentials
+            }
+
+            if ($Port) {
+                [void]$ePOwerShellVariables.Add("Port", $Port)
             }
         }
     }
