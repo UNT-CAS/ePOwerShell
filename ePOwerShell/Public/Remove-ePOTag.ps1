@@ -18,21 +18,19 @@
 
 .EXAMPLE
 
-    Clear-ePOwerShellTag Computer1 Tag1
+    Remove-ePOTag Computer1 Tag1
 
 #>
 
-function Clear-ePOwerShellTag {
-    [CmdletBinding()]
-    [Alias('Clear-ePOTag')]
+function Remove-ePOTag {
+    [CmdletBinding(SupportsShouldProcess = $True)]
+    [Alias('Clear-ePOwerShellTag', 'Clear-ePOTag')]
     param (
         [Parameter(Mandatory = $True, Position = 0)]
-        [String[]]
         $ComputerName,
 
         [Parameter(Mandatory = $True, Position = 1)]
-        [String[]]
-        $TagName
+        $Tag
     )
 
     foreach ($Computer in $ComputerName) {

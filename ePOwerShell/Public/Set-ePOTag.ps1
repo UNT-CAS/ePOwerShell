@@ -30,17 +30,15 @@
     Set-ePOwerShellTag Computer1 @(Tag1, Tag2)
 #>
 
-function Set-ePOwerShellTag {
-    [CmdletBinding()]
-    [Alias('Set-ePOTag')]
+function Set-ePOTag {
+    [CmdletBinding(SupportsShouldProcess = $True)]
+    [Alias('Set-ePOwerShellTag')]
     param (
         [Parameter(Mandatory = $True, Position = 0)]
-        [String[]]
         $ComputerName,
 
         [Parameter(Mandatory = $True, Position = 1)]
-        [String[]]
-        $TagName
+        $Tag
     )
 
     foreach ($Computer in $ComputerName) {
@@ -56,10 +54,12 @@ function Set-ePOwerShellTag {
                     tagName = $Tag
                 }
             }
-            
+
             Write-Debug ('Request: {0}' -f ($Request | Out-String))
             try {
-                $Result = Invoke-ePOwerShellRequest @Request
+                if ($PSCmdlet.ShouldProcess("Applying tag $Tag to $Computer")) {
+                    $Result = Invoke-ePOwerShellRequest @Request
+                }
             } catch {
                 Throw $_
             }

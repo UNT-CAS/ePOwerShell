@@ -1,6 +1,6 @@
-function Invoke-ePOwerShellWakeUpAgent {
+function Invoke-ePOWakeUpAgent {
     [CmdletBinding()]
-    [Alias('Invoke-ePOWakeUpAgent')]
+    [Alias('Invoke-ePOwerShellWakeUpAgent', 'Invoke-ePOWakeUpAgent')]
     param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [String[]]
@@ -17,19 +17,19 @@ function Invoke-ePOwerShellWakeUpAgent {
 
         [int32]
         $AbortAfter = 5,
-        
+
         [int32]
         $RetryIntervalSeconds = 30,
 
         [int32]
         $NumberOfAttempts = 1,
-        
+
         [int32]
         $RandomMinutes = 0
     )
 
     begin {
-        [System.Collections.ArrayList]$Computers = @()
+        [System.Collections.ArrayList] $Computers = @()
     }
 
     process {
@@ -58,7 +58,7 @@ function Invoke-ePOwerShellWakeUpAgent {
         if (-not ($Computers)) {
             Throw "Failed to find any computers in ePO to wake"
         }
-    
+
         $Request = @{
             Name     = 'system.wakeupAgent'
             Query    = @{
@@ -72,20 +72,20 @@ function Invoke-ePOwerShellWakeUpAgent {
                 superAgent = $SuperAgent
             }
         }
-    
+
         Write-Debug "[Invoke-ePOwerShellWakeUpAgent] Request: $($Request | ConvertTo-Json)"
         $Response = Invoke-ePOwerShellRequest @Request
-    
-        Write-Debug "[Invoke-ePOwerShellWakeUpAgent] Response: $($Response | Out-String)"
-    
+
+        Write-Debug "[Invoke-ePOwerShellWakeUpAgent] Response: $($Response | Format-Table)"
+
         $Results = @{}
-        $Response.Split("`n") | % { $s = $_.Split(':'); $Results.Add($s[0].Trim(), $s[1].Trim()) }
+        $Response.Split("`n") | ForEach-Object { $s = $_.Split(':'); $Results.Add($s[0].Trim(), $s[1].Trim()) }
         $ResultsObject = New-Object PSObject -Property $Results
-    
+
         if (-not ($ResultsObject.Completed -eq $Computers.Count)) {
-            Throw ('Failed to wake the agents on {0} computers: {1}' -f $ResultsObject.failed, ($ResultsObject | Out-String))
+            Throw ('Failed to wake the agents on {0} computers: {1}' -f $ResultsObject.failed, ($ResultsObject | Format-Table))
         }
-    
+
         Write-Verbose ('Successfully waked up the agents on {0} computers' -f $ResultsObject.Completed)
     }
 }

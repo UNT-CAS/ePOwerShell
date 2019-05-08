@@ -13,9 +13,10 @@
 
 #>
 
-function Get-ePOwerShellQueries {
+function Get-ePOQuery {
     [CmdletBinding()]
-    [Alias('Get-ePOQueries')]
+    [Alias('Get-ePOwerShellQueries', 'Get-ePOQueries')]
+    param ()
 
     $Request = @{
         Name  = 'core.listQueries'

@@ -9,13 +9,13 @@
 
 .EXAMPLE
 
-    Invoke-ePOwerShellQuery
+    Invoke-ePOQuery
 
 #>
 
-function Invoke-ePOwerShellQuery {
+function Invoke-ePOQuery {
     [CmdletBinding()]
-    [Alias('Invoke-ePOQuery')]
+    [Alias('Invoke-ePOwerShellQuery', 'Invoke-ePOQuery')]
     param (
         [Parameter(Mandatory = $True, ParameterSetName = 'QueryId', Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [Alias('id')]

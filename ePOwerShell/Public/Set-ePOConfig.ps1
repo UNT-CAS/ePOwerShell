@@ -37,8 +37,8 @@
 
 #>
 
-function Set-ePOwerShellServer {
-    [CmdletBinding(DefaultParameterSetName = 'Env')]
+function Set-ePOConfig {
+    [CmdletBinding(DefaultParameterSetName = 'Env', SupportsShouldProcess = $True)]
     [Alias('Set-ePOServer')]
     param (
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
@@ -48,7 +48,7 @@ function Set-ePOwerShellServer {
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [System.Management.Automation.PSCredential]
         $Credentials,
-        
+
         [Parameter(Mandatory = $False, ParameterSetName = 'ManualEntry')]
         [Int]
         $Port,
@@ -122,5 +122,7 @@ function Set-ePOwerShellServer {
 
     Write-Debug "Variables: $($ePOwerShellVariables | Out-String)"
 
-    Initialize-ePOwerShellVariables @ePOwerShellVariables
+    if ($PSCmdlet.ShouldProcess("Settings ePOwerShell configurations successfully")) {
+        Initialize-ePOwerShellVariables @ePOwerShellVariables
+    }
 }

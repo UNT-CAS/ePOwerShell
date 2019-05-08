@@ -37,16 +37,16 @@
 
 #>
 
-function Update-ePOwerShellServer {
-    [CmdletBinding()]
-    [Alias('Update-ePOServer')]
+function Update-ePOConfig {
+    [CmdletBinding(SupportsShouldProcess = $True)]
+    [Alias('Update-ePOwerShellServer', 'Update-ePOServer')]
     param (
         [Parameter(Mandatory = $False)]
-        [String]
+        [System.String]
         $Server = ($Script:ePOwerShell.Server),
 
         [Parameter(Mandatory = $False)]
-        [Int]
+        [System.Int32]
         $Port = ($Script:ePOwerShell.Port),
 
         [Parameter(Mandatory = $False)]
@@ -66,5 +66,7 @@ function Update-ePOwerShellServer {
 
     Write-Debug "Variables: $($ePOwerShellVariables | Out-String)"
 
-    Initialize-ePOwerShellVariables @ePOwerShellVariables
+    if ($PSCmdlet.ShouldProcess("Settings ePOwerShell configurations successfully")) {
+        Initialize-ePOwerShellVariables @ePOwerShellVariables
+    }
 }

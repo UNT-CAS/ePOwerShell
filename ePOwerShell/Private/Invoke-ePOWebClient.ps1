@@ -21,7 +21,8 @@ function Invoke-ePOwerShellWebClient {
 
     # Force TLS 1.2
     if (-not ([Net.ServicePointManager]::SecurityProtocol -eq 'Tls12')) {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor
+            [Net.SecurityProtocolType]::Tls12
     }
 
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ePOwerShell.Credentials.Password)

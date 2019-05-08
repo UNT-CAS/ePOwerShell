@@ -1,103 +1,129 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Finds available computer system on the ePO server
 
-    Finds available computer system on the ePO server
+    .DESCRIPTION
+        Finds all available computer systems from the ePO server. If a computer system name is specifed, it searches for only
+        the one computer system from the server. If a computer system is not specified, then it will return a list of all
+        available computer systems on the ePO server. You can search for a computer using the Agent Guid, Computer Name,
+        MAC Address, IP Address, Tags, and Usernames.
 
-.DESCRIPTION
+    .EXAMPLE
+        Returns all computers in the ePO system
+        `Get-ePOComputer -All`
 
-    Finds all available computer systems from the ePO server. If a computer system name is specifed, it searches for only
-    the one computer system from the server. If a computer system is not specified, then it will return a list of all
-    available computer systems on the ePO server. You can search for a computer using the Agent Guid, Computer Name,
-    MAC Address, IP Address, Tags, and Usernames.
+    .EXAMPLE
+        Returns ePO computer object searching by hostname
+        `Get-ePOComputer -ComputerName 'Computer1'`
 
-.PARAMETER AgentGuid
+    .EXAMPLE
+        Returns ePO computer object searching by hostname with wildcard
+        `Get-ePOComputer -ComputerName 'Computer*' -ForceWildcardHandling`
 
-    Specifies the computers Agent Guid to be found on the ePO server
+    .EXAMPLE
+        Returns ePO computer object searching by Agent Guid
+        `Get-ePOComputer -AgentGuid 5b273b72-977b-4566-9cb4-9af816ac222b`
 
-.PARAMETER ComputerName
+    .EXAMPLE
+        Returns ePO computer object searching by MAC Address
+        `Get-ePOComputer -MacAddress 00-05-9A-3C-7A-00`
 
-    Specifies a computer system to be found on the ePO server
+    .EXAMPLE
+        Returns ePO computer object searching by IP Address
+        `Get-ePOComputer -MacAddress 192.168.32.46`
 
-.PARAMETER MACAddress
+    .EXAMPLE
+        Returns ePO computer object searching by Username
+        `Get-ePOComputer -Username MyUsername`
 
-    Specifies the computers MAC Address to be found on the ePO server
-
-.PARAMETER IPAddress
-
-    Specifies the computers IPAddress to be found on the ePO server
-
-.PARAMETER Tag
-
-    Specifies the tag a computer might have applied to be found on the ePO server
-
-.PARAMETER Username
-
-    Specifies the computers Username to be found on the ePO server
-
-.PARAMETER All
-
-    Returns all computers in the ePO server
-
-.EXAMPLE
-
-    Find-ePOwerShellcomputerSystem -All
-
-.EXAMPLE
-
-    Find-ePOwerShellcomputerSystem 'computer1'
-
-.EXAMPLE
-
-    Find-ePOwerShellcomputerSystem 'computer1'
-
+    .EXAMPLE
+        Returns ePO computer objects searching by Tag
+        `Get-ePOComputer -Tag ePOTag1`
 #>
 
-function Find-ePOwerShellComputerSystem {
-    [CmdletBinding(DefaultParametersetname = 'ComputerName')]
-    [Alias("Find-ePOComputerSystem")]
-    [OutputType([System.Collections.ArrayList])]
+function Get-ePOComputer {
+    [CmdletBinding()]
+    [Alias('Find-ePOwerShellComputerSystem', 'Find-ePOComputerSystem')]
+    [OutputType([System.Object[]])]
     param (
+        <#
+            .PARAMETER AgentGuid
+                Specifies the computers Agent Guid to be found on the ePO server
+        #>
         [Parameter(ParameterSetName = 'AgentGuid')]
         [String[]]
         $AgentGuid,
 
+        <#
+            .PARAMETER ComputerName
+                Specifies a computer system to be found on the ePO server
+        #>
         [Parameter(ParameterSetName = 'ComputerName', Position = 0, ValueFromPipeline = $True)]
         [Alias('hostname', 'name', 'computer')]
         [String[]]
         $ComputerName,
 
+        <#
+            .PARAMETER ForceWildcardHandling
+                Allows for wildcards to be used when searching by computer name
+        #>
         [Parameter(ParameterSetName = 'ComputerName')]
         [Switch]
         $ForceWildcardHandling,
 
+        <#
+            .PARAMETER MACAddress
+                Specifies the computers MAC Address to be found on the ePO server
+        #>
         [Parameter(ParameterSetName = 'MACAddress')]
         [String[]]
         $MACAddress,
 
+        <#
+            .PARAMETER IPAddress
+                Specifies the computers IPAddress to be found on the ePO server
+        #>
         [Parameter(ParameterSetName = 'IPAddress')]
         [String[]]
         $IPAddress,
 
+        <#
+            .PARAMETER Tag
+                Specifies the tag a computer might have applied to be found on the ePO server
+        #>
         [Parameter(ParameterSetName = 'Tag')]
         [String[]]
         $Tag,
 
+        <#
+            .PARAMETER Username
+                Specifies the computers Username to be found on the ePO server
+        #>
         [Parameter(ParameterSetName = 'Username')]
         [String[]]
         $Username,
 
+        <#
+            .PARAMETER All
+                Returns all computers in the ePO server
+        #>
         [Parameter(ParameterSetName = 'All')]
         [Switch]
         $All
     )
 
     begin {
-        $Request = @{
-            Name  = 'system.find'
-            Query = @{}
-        }
+        try {
+            $Request = @{
+                Name  = 'system.find'
+                Query = @{}
+            }
 
-        [System.Collections.ArrayList] $Found = @()
+            [System.Collections.ArrayList] $Found = @()
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
     }
 
     process {
@@ -112,10 +138,10 @@ function Find-ePOwerShellComputerSystem {
 
                     foreach ($ComputerSystem in $ComputerSystems) {
                         if ($ForceWildcardHandling) {
-                            [void]$Found.Add($ComputerSystem)
+                            [Void] $Found.Add($ComputerSystem)
                         } else {
                             if ($ComputerSystem.'EPOComputerProperties.ComputerName' -eq $Computer) {
-                                [void]$Found.Add($ComputerSystem)
+                                [Void] $Found.Add($ComputerSystem)
                             }
                         }
                     }
@@ -166,7 +192,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        [void]$Found.Add($System)
+                        [Void] $Found.Add($System)
                     }
                 }
             }
@@ -178,7 +204,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        [void]$Found.Add($System)
+                        [Void] $Found.Add($System)
                     }
                 }
             }
@@ -190,7 +216,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        [void]$Found.Add($System)
+                        [Void] $Found.Add($System)
                     }
                 }
             }
@@ -202,7 +228,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        [void]$Found.Add($System)
+                        [Void] $Found.Add($System)
                     }
                 }
             }
@@ -214,7 +240,7 @@ function Find-ePOwerShellComputerSystem {
 
                     $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                     foreach ($System in $ComputerSystems) {
-                        [void]$Found.Add($System)
+                        [Void] $Found.Add($System)
                     }
                 }
             }
@@ -224,30 +250,39 @@ function Find-ePOwerShellComputerSystem {
 
                 $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
                 foreach ($System in $ComputerSystems) {
-                    [void]$Found.Add($System)
+                    [Void] $Found.Add($System)
                 }
+            }
+            default {
+                Throw "Invalid option. Please specify a parameter."
             }
         }
     }
 
     end {
-        if (-not ($Found)) {
-            Throw "[Find-ePOwerShellComputerSystem] Failed to find any ePO Systems"
-        }
-
-        [System.Collections.ArrayList] $Return = @()
-
-        foreach ($Computer in $Found) {
-            $ComputerItem = [Ordered]@{}
-
-            foreach ($Key in $Computer.PSObject.Properties) {
-                [void]$ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
+        try {
+            if (-not ($Found)) {
+                Write-Error "Failed to find any ePO Systems" -ErrorAction Stop
             }
 
-            [void]$Return.Add(([PSCustomObject]$ComputerItem))
+            [System.Collections.ArrayList] $Return = @()
+
+            foreach ($Computer in $Found) {
+                $ComputerItem = [Ordered]@{}
+
+                foreach ($Key in $Computer.PSObject.Properties) {
+                    [Void] $ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
+                }
+
+                [Void] $Return.Add(([PSCustomObject]$ComputerItem))
+            }
+
+            Write-Verbose "[Get-ePOComputer] Results: $($Return | Format-Table)"
+
+            return $Return
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
         }
-        
-        Write-Debug "[Find-ePOwerShellComputerSystem] Results: $($Return | Out-String)"
-        return $Return
     }
 }

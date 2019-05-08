@@ -24,10 +24,15 @@
     Get-ePOwerShellMneRecoveryKey -SerialNumber 'C035406KHV5K'
 #>
 
-function Get-ePOwerShellMneRecoveryKey {
+Class ePORecoveryKey {
+    [System.String] $ComputerName
+    [System.Object[]] $RecoveryKey
+}
+
+function Get-ePORecoveryKey {
     [CmdletBinding(DefaultParametersetname = 'ComputerName')]
-    [Alias('Get-ePOMneRecoveryKey')]
-    [OutputType([String])]
+    [Alias('Get-ePOwerShellMneRecoveryKey', 'Get-ePOMneRecoveryKey')]
+    [OutputType([System.Object[]])]
     param (
         [Parameter(Mandatory = $True, ParameterSetName = 'ComputerName', Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [Alias('Name')]

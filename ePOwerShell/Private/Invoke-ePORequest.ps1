@@ -20,7 +20,7 @@
     By default, the script allows self signed certs applied to your ePO server. Specifying this flag will block self signed certs
 #>
 
-function Invoke-ePOwerShellRequest {
+function Invoke-ePORequest {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
     param (
