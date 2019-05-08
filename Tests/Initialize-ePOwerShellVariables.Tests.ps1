@@ -43,8 +43,8 @@ Describe $testFile.Name {
         Context $test.Name {
             [hashtable] $parameters = $test.Parameters
 
-            It "Initialize-ePOwerShellVariables" {
-                { Initialize-ePOwerShellVariables @parameters } | Should Not Throw
+            It "Initialize-ePOConfig" {
+                { Initialize-ePOConfig @parameters } | Should Not Throw
             }
 
             It "`$ePOwerShell exists" {

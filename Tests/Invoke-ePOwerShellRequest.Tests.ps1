@@ -43,14 +43,14 @@ Describe $testFile.Name {
             [hashtable] $parameters = $test.Parameters
 
             if ($Test.Output.Throws) {
-                It "Invoke-ePOwerShellRequest Throws" {
-                    { $script:RequestResponse = Invoke-ePOwerShellRequest @parameters } | Should Throw
+                It "Invoke-ePORequest Throws" {
+                    { $script:RequestResponse = Invoke-ePORequest @parameters } | Should Throw
                 }
                 continue
             }
 
-            It "Invoke-ePOwerShellRequest" {
-                { $script:RequestResponse = Invoke-ePOwerShellRequest @parameters } | Should Not Throw
+            It "Invoke-ePORequest" {
+                { $script:RequestResponse = Invoke-ePORequest @parameters } | Should Not Throw
             }
 
             It "Output Type: $($test.Output.Type)" {

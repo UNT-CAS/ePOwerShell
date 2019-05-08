@@ -18,16 +18,43 @@ function Get-ePOQuery {
     [Alias('Get-ePOwerShellQueries', 'Get-ePOQueries')]
     param ()
 
-    $Request = @{
-        Name  = 'core.listQueries'
-        Query = @{}
+    begin {
+        try {
+            [System.Collections.ArrayList] $Found = @()
+
+            $Request = @{
+                Name  = 'core.listQueries'
+                Query = @{}
+            }
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
     }
 
-    Write-Debug "[Get-ePOwerShellQueries] Request: $($Request | ConvertTo-Json)"
-    if (-not ($ePOQueries = Invoke-ePOwerShellRequest @Request)) {
-        Throw "[Get-ePOwerShellQueries] Failed to find any ePO queries"
+    process {
+        try {
+            Write-Verbose "Request: $($Request | ConvertTo-Json)"
+            if (-not ($ePOQueries = Invoke-ePORequest @Request)) {
+                Throw "Failed to find any ePO queries"
+            }
+
+            foreach ($ePOQuery in $ePOQueries) {
+                [Void] $Found.Add((ConvertTo-ePOQuery $ePOQuery))
+            }
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
     }
 
-    Write-Debug "[Get-ePOwerShellQueries] Results: $($ePOQueries | Out-String)"
-    return $ePOQueries
+    end {
+        try {
+            Write-Verbose "Results: $($Found | Out-String)"
+            Write-Output $Found
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
+    }
 }

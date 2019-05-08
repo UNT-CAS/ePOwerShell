@@ -84,7 +84,7 @@ function Get-ePORecoveryKey {
                     }
 
                     try {
-                        $Key = Invoke-ePOwerShellRequest @Request
+                        $Key = Invoke-ePORequest @Request
                     } catch {
                         Write-Warning ('Failed to find detect recovery key for computer: {0}' -f $ComputerInformation.ComputerName)
                         continue
@@ -117,7 +117,7 @@ function Get-ePORecoveryKey {
                     }
 
                     try {
-                        $Key = Invoke-ePOwerShellRequest @Request
+                        $Key = Invoke-ePORequest @Request
                     } catch {
                         Throw "Failed to find detect recovery key: $($_.Exception.Message)"
                     }
@@ -149,7 +149,7 @@ function Get-ePORecoveryKey {
                     }
 
                     try {
-                        $Key = Invoke-ePOwerShellRequest @Request
+                        $Key = Invoke-ePORequest @Request
                     } catch {
                         Throw "Failed to find detect recovery key: $($_.Exception.Message)"
                     }

@@ -6,7 +6,7 @@
 [IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
 . $testFile
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Initialize-ePOwerShellVariables.ps1') -Resolve)
+. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Initialize-ePOConfig.ps1') -Resolve)
 
 [System.Collections.ArrayList] $tests = @()
 $examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File

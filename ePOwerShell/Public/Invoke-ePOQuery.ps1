@@ -65,7 +65,7 @@ function Invoke-ePOQuery {
             }
         
             Write-Debug "[Invoke-ePOwerShellQuery] Request: $($Request | ConvertTo-Json)"
-            if (-not ($QueryResults = Invoke-ePOwerShellRequest @Request)) {
+            if (-not ($QueryResults = Invoke-ePORequest @Request)) {
                 Throw "[Invoke-ePOwerShellQuery] Failed to find any ePO query results"
             }
     

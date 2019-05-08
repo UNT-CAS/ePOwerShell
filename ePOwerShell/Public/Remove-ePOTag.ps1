@@ -49,7 +49,7 @@ function Remove-ePOTag {
 
             Write-Debug ('Request: {0}' -f ($Request | Out-String))
             try {
-                $Result = Invoke-ePOwerShellRequest @Request
+                $Result = Invoke-ePORequest @Request
             } catch {
                 Throw $_
             }

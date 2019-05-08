@@ -123,6 +123,6 @@ function Set-ePOConfig {
     Write-Debug "Variables: $($ePOwerShellVariables | Out-String)"
 
     if ($PSCmdlet.ShouldProcess("Settings ePOwerShell configurations successfully")) {
-        Initialize-ePOwerShellVariables @ePOwerShellVariables
+        Initialize-ePOConfig @ePOwerShellVariables
     }
 }

@@ -6,7 +6,7 @@
 [IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
 . $testFile
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePOwerShellRequest.ps1') -Resolve)
+. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePORequest.ps1') -Resolve)
 . $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath 'Find-ePOwerShellComputerSystem.ps1') -Resolve)
 
 [System.Collections.ArrayList] $tests = @()
@@ -37,7 +37,7 @@ Describe $testFile.Name {
             return (Get-Content $File.FullName | Out-String).Substring(3).Trim()  | ConvertFrom-Json
         }
 
-        Mock Invoke-ePOwerShellRequest {
+        Mock Invoke-ePORequest {
             if ($Query.epoLeafNodeId) {
                 $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.epoLeafNodeId) -File
             } else {

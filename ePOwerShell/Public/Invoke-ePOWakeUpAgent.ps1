@@ -74,7 +74,7 @@ function Invoke-ePOWakeUpAgent {
         }
 
         Write-Debug "[Invoke-ePOwerShellWakeUpAgent] Request: $($Request | ConvertTo-Json)"
-        $Response = Invoke-ePOwerShellRequest @Request
+        $Response = Invoke-ePORequest @Request
 
         Write-Debug "[Invoke-ePOwerShellWakeUpAgent] Response: $($Response | Format-Table)"
 

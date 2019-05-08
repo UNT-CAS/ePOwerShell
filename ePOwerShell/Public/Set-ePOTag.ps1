@@ -58,7 +58,7 @@ function Set-ePOTag {
             Write-Debug ('Request: {0}' -f ($Request | Out-String))
             try {
                 if ($PSCmdlet.ShouldProcess("Applying tag $Tag to $Computer")) {
-                    $Result = Invoke-ePOwerShellRequest @Request
+                    $Result = Invoke-ePORequest @Request
                 }
             } catch {
                 Throw $_

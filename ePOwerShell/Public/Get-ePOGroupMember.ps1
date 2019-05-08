@@ -2,7 +2,7 @@ function Get-ePOGroupMember {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, ValueFromPipeline = $True, Mandatory = $True)]
-        $GroupID,
+        $Group,
 
         [Switch]
         $SearchSubgroups
@@ -24,10 +24,10 @@ function Get-ePOGroupMember {
                 Query = @{}
             }
 
-            if ($GroupID -is [ePOGroup]) {
+            if ($Group -is [ePOGroup]) {
                 [Void] $Request.Query.Add('groupId', $GroupID.ID)
             } else {
-                [Void] $Request.Query.Add('groupId', $GroupID)
+                [Void] $Request.Query.Add('groupId', $Group)
             }
 
             if ($SearchSubgroups) {
@@ -35,7 +35,11 @@ function Get-ePOGroupMember {
             }
 
             Write-Debug "Request: $($Request | ConvertTo-Json)"
-            $ePOGroupMembers = Invoke-ePOwerShellRequest @Request
+            $ePOGroupMembers = Invoke-ePORequest @Request
+
+            foreach ($ePOGroupMember in $ePOGroupMembers) {
+                [Void] $Found.Add((ConvertTo-ePOComputer $ePOGroupMember))
+            }
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_
@@ -43,6 +47,11 @@ function Get-ePOGroupMember {
     }
 
     end {
-
+        try {
+            Write-Output $Found
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
     }
 }

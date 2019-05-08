@@ -9,8 +9,7 @@
 
 .EXAMPLE
 
-    Get-ePOwerShellTag
-
+    Get-ePOConfig
 #>
 
 function Get-ePOConfig {
@@ -30,7 +29,8 @@ function Get-ePOConfig {
                 Server      = $Script:ePOwerShell.Server
                 Credentials = $Script:ePOwerShell.Credentials
             }
-            return $ePOwerShellVariables
+
+            Write-Output $ePOwerShellVariables
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_

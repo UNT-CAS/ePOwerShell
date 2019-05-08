@@ -28,31 +28,19 @@ function Invoke-ePORequest {
         $Name,
 
         [Hashtable]
-        $Query = @{},
-
-        [Switch]
-        $PassThru,
-
-        [Switch]
-        $BlockSelfSignedCerts
+        $Query = @{}
     )
 
     if (-not ($Script:ePOwerShell)) {
         try {
-            Set-ePOwerShellServer
+            Set-ePOConfig
         } catch {
             Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOwerShellServer first!'
         }
     }
 
-    if ($PassThru) {
-        if (-not ($Query.':output' -eq 'terse')) {
-            [void]$Query.Add(':output', 'terse')
-        }
-    } else {
-        if (-not ($Query.':output' -eq 'json')) {
-            [void]$Query.Add(':output', 'json')
-        }
+    if (-not ($Query.':output' -eq 'json')) {
+        [Void] $Query.Add(':output', 'json')
     }
 
     if ($BlockSelfSignedCerts) {
@@ -78,7 +66,7 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 
     [System.Collections.ArrayList] $qs = @()
     foreach ($q in $Query.GetEnumerator()) {
-        [void]$qs.Add("$($q.Name)=$($q.Value)")
+        [Void] $qs.Add("$($q.Name)=$($q.Value)")
     }
     $query_string = $qs -join '&'
 
@@ -91,15 +79,12 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
     }
 
     Write-Debug "Response: $($Response | Out-String)"
+
     if (-not ($Response.StartsWith('OK:'))) {
         Throw $Response
     }
 
-    $Response = $Response.Substring(3).Trim()
-
-    if ($PassThru) {
-        return $Response
-    } else {
-        return ($Response | ConvertFrom-Json)
-    }
+    $Response = $Response.Substring(3).Trim() | ConvertFrom-Json 
+    
+    Write-Output $Response 
 }

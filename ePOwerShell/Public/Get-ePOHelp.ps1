@@ -21,12 +21,6 @@
     Get-ePOHelp 'system.find'
 #>
 
-Class ePOHelp {
-    [System.String]    $CommandName
-    [System.String[]]  $Parameters
-    [System.String]    $Description
-}
-
 function Get-ePOHelp {
     [CmdletBinding()]
     [Alias('Get-ePOwerShellCoreHelp', 'Get-ePOCoreHelp')]
@@ -75,14 +69,10 @@ function Get-ePOHelp {
 
                 if ($Remainder -match '\s\-\s') {
                     $SecondRegexProduct = [Regex]::Match($Remainder, '(^\S+.{0,})\s\-\s(\S+.{0,})$')
-
-                    foreach ($Parameter in ($SecondRegexProduct.Groups[1].Value -Split ' ')) {
-                        [Void] $HelpObject.Parameters.Add($Parameter)
-                    }
-
+                    
+                    $HelpObject.Parameters = ($SecondRegexProduct.Groups[1].Value -Split ' ').Trim('[').Trim(']')
                     $HelpObject.Description = $SecondRegexProduct.Groups[2].Value
-                }
-                else {
+                } else {
                     $HelpObject.Description = $Remainder
                 }
 

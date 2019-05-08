@@ -51,17 +51,15 @@ function Get-ePOComputer {
                 Specifies the computers Agent Guid to be found on the ePO server
         #>
         [Parameter(ParameterSetName = 'AgentGuid')]
-        [String[]]
         $AgentGuid,
 
         <#
-            .PARAMETER ComputerName
+            .PARAMETER Computer
                 Specifies a computer system to be found on the ePO server
         #>
-        [Parameter(ParameterSetName = 'ComputerName', Position = 0, ValueFromPipeline = $True)]
-        [Alias('hostname', 'name', 'computer')]
-        [String[]]
-        $ComputerName,
+        [Parameter(ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True)]
+        [Alias('hostname', 'name', 'computername')]
+        $Computer,
 
         <#
             .PARAMETER ForceWildcardHandling
@@ -76,7 +74,6 @@ function Get-ePOComputer {
                 Specifies the computers MAC Address to be found on the ePO server
         #>
         [Parameter(ParameterSetName = 'MACAddress')]
-        [String[]]
         $MACAddress,
 
         <#
@@ -84,7 +81,6 @@ function Get-ePOComputer {
                 Specifies the computers IPAddress to be found on the ePO server
         #>
         [Parameter(ParameterSetName = 'IPAddress')]
-        [String[]]
         $IPAddress,
 
         <#
@@ -92,7 +88,6 @@ function Get-ePOComputer {
                 Specifies the tag a computer might have applied to be found on the ePO server
         #>
         [Parameter(ParameterSetName = 'Tag')]
-        [String[]]
         $Tag,
 
         <#
@@ -100,7 +95,6 @@ function Get-ePOComputer {
                 Specifies the computers Username to be found on the ePO server
         #>
         [Parameter(ParameterSetName = 'Username')]
-        [String[]]
         $Username,
 
         <#
@@ -114,12 +108,14 @@ function Get-ePOComputer {
 
     begin {
         try {
+            [System.Collections.ArrayList] $Found = @()
+
             $Request = @{
                 Name  = 'system.find'
-                Query = @{}
+                Query = @{
+                    searchText = ''
+                }
             }
-
-            [System.Collections.ArrayList] $Found = @()
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_
@@ -127,53 +123,37 @@ function Get-ePOComputer {
     }
 
     process {
-        switch ($PSCmdlet.ParameterSetName) {
-            "ComputerName" {
-                $ComputerName = $ComputerName.Split(',').Trim()
-                foreach ($Computer in $ComputerName) {
-                    $CurrentRequest = $Request
-                    $CurrentRequest.Query.searchText = $Computer
-
-                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-
-                    foreach ($ComputerSystem in $ComputerSystems) {
-                        if ($ForceWildcardHandling) {
-                            [Void] $Found.Add($ComputerSystem)
-                        } else {
-                            if ($ComputerSystem.'EPOComputerProperties.ComputerName' -eq $Computer) {
-                                [Void] $Found.Add($ComputerSystem)
-                            }
-                        }
-                    }
+        try {
+            switch ($PSCmdlet.ParameterSetName) {
+                "ComputerName" {
+                    $Request.Query.searchText = $Computer
                 }
-            }
-            "MACAddress" {
-                $MACAddress = $MACAddress.Split(',').Trim()
-                foreach ($Address in $MACAddress) {
-                    $Address = $Address.ToUpper()
 
-                    switch -Regex ($Address) {
-                       '^([0-9a-f]{2}:){5}([0-9a-f]{2})$' {
+                "MACAddress" {
+                    $MACAddress = $MACAddress.ToUpper()
+    
+                    switch -Regex ($MACAddress) {
+                        '^([0-9a-f]{2}:){5}([0-9a-f]{2})$' {
                             Write-Verbose 'Delimiter: Colons'
-                            $Address = $Address.Replace(':', '')
+                            $MACAddress = $MACAddress.Replace(':', '')
                             break
                         }
 
                         '^([0-9a-f]{2}-){5}([0-9a-f]{2})$' {
                             Write-Verbose 'Delimiter: Dashs'
-                            $Address = $Address.Replace('-', '')
+                            $MACAddress = $MACAddress.Replace('-', '')
                             break
                         }
 
                         '^([0-9a-f]{2}\.){5}([0-9a-f]{2})$' {
                             Write-Verbose 'Delimiter: Periods'
-                            $Address = $Address.Replace('.', '')
+                            $MACAddress = $MACAddress.Replace('.', '')
                             break
                         }
 
                         '^([0-9a-f]{2}\s){5}([0-9a-f]{2})$' {
                             Write-Verbose 'Delimiter: Spaces'
-                            $Address = $Address.Replace(' ', '')
+                            $MACAddress = $MACAddress.Replace(' ', '')
                             break
                         }
 
@@ -183,79 +163,60 @@ function Get-ePOComputer {
                         }
 
                         default {
-                            Throw ('MAC Address does not match known format: {0}' -f $Address)
+                            Throw ('MAC Address does not match known format: {0}' -f $MACAddress)
                         }
                     }
 
-                    $CurrentRequest = $Request
-                    $CurrentRequest.Query.searchText = $Address
+                    $Request.Query.searchText = $MACAddress
+                }
 
-                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    foreach ($System in $ComputerSystems) {
-                        [Void] $Found.Add($System)
+                "IPAddress" {
+                    $Request.Query.searchText = $IPAddress
+                }
+
+                "Tag" {
+                    $Request.Query.searchText = $Tag
+                }
+
+                "AgentGuid" {
+                    $Request.Query.searchText = $AgentGuid
+                }
+
+                "Username" {
+                    $Request.Query.searchText = $Username
+                }
+
+                "All" {
+                    $Request.Query.searchText = ''
+                }
+
+                default {
+                    Throw "Invalid option. Please specify a parameter."
+                }
+            }
+
+            if ($PSCmdlet.ParameterSetName -eq 'ComputerName' -and $Computer -is [ePOComputer]) {
+                Write-Verbose 'Using pipelined ePOComputer object'
+                [Void] $Found.Add($Computer)
+            } else {
+                Write-Verbose 'Either not pipelined, or pipeline object is not an ePOComputer object'
+                $ePOComputers = Invoke-ePORequest @Request
+    
+                foreach ($ePOComputer in $ePOComputers) {
+                    if ($PSCmdlet.ParameterSetName -eq 'ComputerName') {
+                        if ($ForceWildcardHandling) {
+                            [Void] $Found.Add((ConvertTo-ePOComputer $ePOComputer))
+                        } elseif ($ePOComputer.'EPOComputerProperties.ComputerName' -eq $Computer) {
+                            [Void] $Found.Add((ConvertTo-ePOComputer $ePOComputer))
+                        }
+                    } else {
+                        [Void] $Found.Add((ConvertTo-ePOComputer $ePOComputer))
                     }
                 }
             }
-            "IPAddress" {
-                $IPAddress = $IPAddress.Split(',').Trim()
-                foreach ($Address in $IPAddress) {
-                    $CurrentRequest = $Request
-                    $CurrentRequest.Query.searchText = $Address
-
-                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    foreach ($System in $ComputerSystems) {
-                        [Void] $Found.Add($System)
-                    }
-                }
-            }
-            "Tag" {
-                $Tag = $Tag.Split(',').Trim()
-                foreach ($T in $Tag) {
-                    $CurrentRequest = $Request
-                    $CurrentRequest.Query.searchText = $T
-
-                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    foreach ($System in $ComputerSystems) {
-                        [Void] $Found.Add($System)
-                    }
-                }
-            }
-            "AgentGuid" {
-                $AgentGuid = $AgentGuid.Split(',').Trim()
-                foreach ($Guid in $AgentGuid) {
-                    $CurrentRequest = $Request
-                    $CurrentRequest.Query.searchText = $Guid
-
-                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    foreach ($System in $ComputerSystems) {
-                        [Void] $Found.Add($System)
-                    }
-                }
-            }
-            "Username" {
-                $Username = $Username.Split(',').Trim()
-                foreach ($User in $Username) {
-                    $CurrentRequest = $Request
-                    $CurrentRequest.Query.searchText = $User
-
-                    $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                    foreach ($System in $ComputerSystems) {
-                        [Void] $Found.Add($System)
-                    }
-                }
-            }
-            "All" {
-                $CurrentRequest = $Request
-                $CurrentRequest.Query.searchText = ''
-
-                $ComputerSystems = Invoke-ePOwerShellRequest @CurrentRequest
-                foreach ($System in $ComputerSystems) {
-                    [Void] $Found.Add($System)
-                }
-            }
-            default {
-                Throw "Invalid option. Please specify a parameter."
-            }
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
         }
     }
 
@@ -265,21 +226,9 @@ function Get-ePOComputer {
                 Write-Error "Failed to find any ePO Systems" -ErrorAction Stop
             }
 
-            [System.Collections.ArrayList] $Return = @()
+            Write-Verbose "Results: $($Found | ConvertTo-Json)"
 
-            foreach ($Computer in $Found) {
-                $ComputerItem = [Ordered]@{}
-
-                foreach ($Key in $Computer.PSObject.Properties) {
-                    [Void] $ComputerItem.Add(($Key.Name.Split('.')[1]), $Key.Value)
-                }
-
-                [Void] $Return.Add(([PSCustomObject]$ComputerItem))
-            }
-
-            Write-Verbose "[Get-ePOComputer] Results: $($Return | Format-Table)"
-
-            return $Return
+            Write-Output $Found
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_

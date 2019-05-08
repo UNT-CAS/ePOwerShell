@@ -11,22 +11,6 @@
     load the module, saving a json file on your computer with the necessary information, or saving the
     json as an environment variable, $env:ePOwerShell.
 
-.PARAMETER Server
-
-    URL to the ePO server
-
-.PARAMETER Port
-
-    Specifies the port necessary to communicate with the ePO server
-
-.PARAMETER Credentials
-
-    Credentials with access to the ePO server
-
-.PARAMETER ePOwerShellSettings
-
-    Specifies a path to a json containing all information necessary to connect to an ePO server
-
 .EXAMPLE
 
     Update-ePOwerShellServer
@@ -41,15 +25,24 @@ function Update-ePOConfig {
     [CmdletBinding(SupportsShouldProcess = $True)]
     [Alias('Update-ePOwerShellServer', 'Update-ePOServer')]
     param (
-        [Parameter(Mandatory = $False)]
+        <#
+            .PARAMETER Server
+                URL to the ePO server
+        #>
         [System.String]
         $Server = ($Script:ePOwerShell.Server),
 
-        [Parameter(Mandatory = $False)]
+        <#
+            .PARAMETER Port
+                Specifies the port necessary to communicate with the ePO server
+        #>
         [System.Int32]
         $Port = ($Script:ePOwerShell.Port),
 
-        [Parameter(Mandatory = $False)]
+        <#
+            .PARAMETER Credentials
+                Credentials with access to the ePO server
+        #>
         [System.Management.Automation.PSCredential]
         $Credentials = ($Script:ePOwerShell.Credentials)
     )
@@ -66,7 +59,7 @@ function Update-ePOConfig {
 
     Write-Debug "Variables: $($ePOwerShellVariables | Out-String)"
 
-    if ($PSCmdlet.ShouldProcess("Settings ePOwerShell configurations successfully")) {
-        Initialize-ePOwerShellVariables @ePOwerShellVariables
+    if ($PSCmdlet.ShouldProcess("Updating ePOwerShell configurations")) {
+        Initialize-ePOConfig @ePOwerShellVariables
     }
 }

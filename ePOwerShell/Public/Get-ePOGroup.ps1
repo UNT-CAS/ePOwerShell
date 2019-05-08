@@ -22,11 +22,6 @@
     Find-ePOwerShellgroup 'Group*' -ForceWildcardHandling
 #>
 
-Class ePOGroup {
-    [System.String] $Name
-    [System.Int32]  $ID
-}
-
 function Get-ePOGroup {
     [CmdletBinding()]
     [Alias('Find-ePOwerShellGroups','Find-ePOGroups')]
@@ -60,26 +55,24 @@ function Get-ePOGroup {
     process {
         try {
             if ($Group -is [ePOGroup]) {
-                $FindGroupName = $Group.Name
+                [Void] $Found.Add($Group)
             } else {
-                $FindGroupName = $Group
-            }
-
-            $Request = @{
-                Name  = 'system.findGroups'
-                Query = @{
-                    searchText = $FindGroupName
+                $Request = @{
+                    Name  = 'system.findGroups'
+                    Query = @{
+                        searchText = $Group
+                    }
                 }
-            }
-
-            Write-Debug "Request: $($Request | ConvertTo-Json)"
-            $ePOGroups = Invoke-ePOwerShellRequest @Request
-
-            foreach ($ePOGroup in $ePOGroups) {
-                $GroupObject = [ePOGroup]::new()
-                $GroupObject.Name = $ePOGroup.groupPath
-                $GroupObject.ID   = $ePOGroup.groupId
-                [Void] $Found.Add($GroupObject)
+    
+                Write-Debug "Request: $($Request | ConvertTo-Json)"
+                $ePOGroups = Invoke-ePORequest @Request
+    
+                foreach ($ePOGroup in $ePOGroups) {
+                    $GroupObject = [ePOGroup]::new()
+                    $GroupObject.Name = $ePOGroup.groupPath
+                    $GroupObject.ID   = $ePOGroup.groupId
+                    [Void] $Found.Add($GroupObject)
+                }
             }
         } catch {
             Write-Information $_ -Tags Exception

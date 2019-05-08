@@ -6,7 +6,7 @@
 [IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
 . $testFile
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePOwerShellRequest.ps1') -Resolve)
+. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePORequest.ps1') -Resolve)
 
 [System.Collections.ArrayList] $tests = @()
 $examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
@@ -27,7 +27,7 @@ foreach ($example in $examples) {
 
 Describe $testFile.Name {
     foreach ($test in $tests) {
-        Mock Invoke-ePOwerShellRequest {
+        Mock Invoke-ePORequest {
             if ($test.Parameters.ComputerName) {
                 if ($test.Parameters.ForceWildcardHandling) {
                     $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter 'AllComputers.html' -File

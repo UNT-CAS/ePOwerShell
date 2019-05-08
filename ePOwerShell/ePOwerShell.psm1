@@ -4,10 +4,12 @@
         This is the main scaffolding the glues all the pieces together.
 #>
 
-$Public = @( Get-ChildItem -Path "${PSScriptRoot}\Public\*.ps1" -ErrorAction SilentlyContinue )
-$Private = @( Get-ChildItem -Path "${PSScriptRoot}\Private\*.ps1" -ErrorAction SilentlyContinue )
+$Class = Get-ChildItem -Path "${PSScriptRoot}\Classes\*.ps1" -ErrorAction SilentlyContinue
+$Public = Get-ChildItem -Path "${PSScriptRoot}\Public\*.ps1" -ErrorAction SilentlyContinue
+$Private = Get-ChildItem -Path "${PSScriptRoot}\Private\*.ps1" -ErrorAction SilentlyContinue
 
-foreach ($Import in @($Public + $Private)) {
+foreach ($Import in @($Class + $Public + $Private)) {
+    Write-Verbose "Dot-sourcing '$($Import.Name)'"
     try {
         . $Import.FullName
     } catch {

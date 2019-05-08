@@ -23,19 +23,14 @@
 
 #>
 
-Class ePOTag {
-    [System.String] $Name
-    [System.Int32]  $ID
-    [System.String] $Description
-}
-
 function Get-ePOTag {
     [CmdletBinding()]
     [Alias('Find-ePOwerShellTag','Find-ePOTag')]
     [OutputType([System.Collections.ArrayList])]
     param (
         [Parameter(Position = 0, ValueFromPipeline = $True)]
-        $TagName = ''
+        [Alias('TagName')]
+        $Tag = ''
     )
 
     begin {
@@ -49,27 +44,27 @@ function Get-ePOTag {
 
     process {
         try {
-            $TagObject = [ePOTag]::new()
-
-            $Request = @{
-                Name  = 'system.findTag'
-                Query = @{}
-            }
-
             if ($Tag -is [ePOTag]) {
-                [Void] $Request.Query.Add('searchText', $Tag.Name)
+                Write-Verbose 'Using pipelined ePOTag object'
+                [Void] $Found.Add($Tag)
             } else {
-                [Void] $Request.Query.Add('searchText', $Tag)
-            }
+                Write-Verbose 'Either not pipelined, or pipeline object is not an ePOTag object'
+                $Request = @{
+                    Name  = 'system.findTag'
+                    Query = @{
+                        searchText = $Tag
+                    }
+                }
 
-            Write-Debug "Request: $($Request | ConvertTo-Json)"
-            $ePOTags = Invoke-ePORequest @Request
-
-            foreach ($ePOTag in $ePOTags) {
-                $TagObject.Name = $ePOTag.tagName
-                $TagObject.ID = $ePOTag.tagId
-                $TagObject.Description = $ePOTag.tagNotes
-                [Void] $Found.Add($TagObject)
+                Write-Debug "Request: $($Request | ConvertTo-Json)"
+                $ePOTags = Invoke-ePORequest @Request
+                
+                foreach ($ePOTag in $ePOTags) {
+                    if (-not ($Tag) -or ($Tag -eq $ePOTag.tagName)) {
+                        $TagObject = [ePOTag]::new($ePOTag.tagName, $ePOTag.tagId, $ePOTag.tagNotes)
+                        [Void] $Found.Add($TagObject)
+                    }
+                }
             }
         } catch {
             Write-Information $_ -Tags Exception
@@ -83,7 +78,7 @@ function Get-ePOTag {
                 Write-Error 'Failed to find any ePO Tags' -ErrorAction Stop
             }
 
-            Write-Debug "[Get-ePOTag] Results: $($Found | Out-String)"
+            Write-Debug "Results: $($Found | Out-String)"
             Write-Output $Found
         } catch {
             Write-Information $_ -Tags Exception
