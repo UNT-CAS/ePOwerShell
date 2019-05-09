@@ -24,11 +24,6 @@
     Get-ePOwerShellMneRecoveryKey -SerialNumber 'C035406KHV5K'
 #>
 
-Class ePORecoveryKey {
-    [System.String] $ComputerName
-    [System.Object[]] $RecoveryKey
-}
-
 function Get-ePORecoveryKey {
     [CmdletBinding(DefaultParametersetname = 'ComputerName')]
     [Alias('Get-ePOwerShellMneRecoveryKey', 'Get-ePOMneRecoveryKey')]
@@ -49,8 +44,12 @@ function Get-ePORecoveryKey {
     )
 
     begin {
-        $TableName = 'RecoveryKeys'
-        $Table = New-Object System.Data.DataTable $TableName
+        try {
+            [System.Collections.ArrayList] $Found = @()
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
     }
 
     process {
@@ -164,6 +163,11 @@ function Get-ePORecoveryKey {
     }
 
     end {
-        return $Table
+        try {
+            Write-Output $Found
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
     }
 }
