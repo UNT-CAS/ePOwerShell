@@ -100,7 +100,9 @@ function Write-ePOWhere {
         }
     }
 
-    $return = $return.Replace('  ', ' ').Trim()
+    while ($return.Contains('  ')) {
+        $return = $return.Replace('  ', ' ').Trim()
+    }
 
     if ((-not $Parent) -and ($return.StartsWith('(eq') -or $return.StartsWith('(ne'))) {
         $return = '(where {0})' -f $return
