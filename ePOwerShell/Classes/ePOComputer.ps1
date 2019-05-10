@@ -1,4 +1,4 @@
-class ePOComputer {
+Class ePOComputer {
     [System.Int32]    $ParentID
     [System.String]   $ComputerName
     [System.String]   $Description

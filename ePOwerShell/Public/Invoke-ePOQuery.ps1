@@ -21,16 +21,20 @@ function Invoke-ePOQuery {
         $Query,
 
         [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
-        [String[]]
+        [System.String]
+        $Table,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
+        [System.String[]]
         $Select,
 
         [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
-        [String]
-        $Table,
+        [System.Management.Automation.PSCustomObject]
+        $Where,
 
         [Parameter(ParameterSetName = 'CustomQuery')]
         [Parameter(ParameterSetName = 'PremadeQuery')]
-        [String]
+        [System.String]
         $Database
     )
 
@@ -94,7 +98,7 @@ function Invoke-ePOQuery {
 
                 'CustomQuery' {
                     $Select = foreach ($Item in $Select) {
-                        if ($Item.StartsWith($Table)) {
+                        if ($Item -Match '^(\S+\.){1,}\S+$') {
                             $Item
                         } else {
                             $Table + '.' + $Item
@@ -103,6 +107,12 @@ function Invoke-ePOQuery {
 
                     $Select = '(select ' + ($Select -Join ' ') + ')'
                     [Void] $Request.Query.Add('select', $Select)
+
+                    if ($Where) {
+                        $WhereString = Write-ePOWhere $Where
+                        Write-Debug ('Where String: {0}' -f $WhereString)
+                        [Void] $Request.Query.Add('where', $WhereString)
+                    }
                 }
             }
 

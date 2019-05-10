@@ -1,4 +1,4 @@
-class ePOQuery {
+Class ePOQuery {
     [System.Int32]      $ID
     [System.String]     $Name
     [System.String]     $Description
