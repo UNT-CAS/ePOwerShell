@@ -11,15 +11,15 @@
 
 .EXAMPLE
     Returns array of ePOGroup objects containing group information
-    Find-ePOwerShellgroup
+    Find-ePOGroup
 
 .EXAMPLE
     Returns array of ePOGroup objects containing requested group information with matching group name
-    Find-ePOwerShellgroup 'Group1'
+    Find-ePOGroup 'Group1'
 
 .EXAMPLE
     Returns array of ePOGroup objects containing requested group information with matching group name by wildcard
-    Find-ePOwerShellgroup 'Group*' -ForceWildcardHandling
+    Find-ePOGroup 'Group*' -ForceWildcardHandling
 #>
 
 function Get-ePOGroup {
