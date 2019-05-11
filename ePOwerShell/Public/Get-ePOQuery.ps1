@@ -9,7 +9,7 @@
 
 .EXAMPLE
 
-    Get-ePOwerShellQueries
+    Get-ePOQuery
 
 #>
 
