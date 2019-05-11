@@ -72,6 +72,8 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 
     $RequestUrl = ('{0}?{1}' -f $Url, $query_string)
 
+    Write-Verbose ('Request URL: {0}' -f $RequestUrl)
+
     try {
         $Response = Invoke-ePOwerShellWebClient $RequestUrl
     } catch {
