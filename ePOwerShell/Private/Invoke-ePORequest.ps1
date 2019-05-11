@@ -43,9 +43,34 @@ function Invoke-ePORequest {
         [Void] $Query.Add(':output', 'json')
     }
 
-    if ($BlockSelfSignedCerts) {
-        Write-Debug 'Not allowing self signed certs'
-    } else {
+
+
+    $URL = '{0}:{1}/remote/{2}' -f $ePOwerShell.Server, $ePOwerShell.Port, $Name
+
+    [System.Collections.ArrayList] $QueryString = @()
+
+    foreach ($Item in $Query.GetEnumerator()) {
+        [Void] $QueryString.Add("$($Item.Name)=$($Item.Value)")
+    }
+
+    $RequestUrl = ('{0}?{1}' -f $Url, ($QueryString -join '&'))
+
+    Write-Verbose ('Request URL: {0}' -f $RequestUrl)
+
+    if (-not ([Net.ServicePointManager]::SecurityProtocol -eq 'Tls12')) {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor
+            [Net.SecurityProtocolType]::Tls12
+    }
+
+    $InvokeWebRequest = @{
+        Uri = $RequestUrl
+        Credential = $ePOwerShell.Credentials
+        UseBasicParsing = $True
+        ErrorAction = 'Stop'
+    }
+
+    if ($PSVersionTable.PSVersion.Major -le 5) {
+        Write-Verbose 'PSVersion is -le 5'
         Write-Debug 'Allowing self signed certs'
 
 Add-Type @"
@@ -59,34 +84,26 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
     }
 }
 "@
-        [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+    } else {
+        Write-Verbose 'PSVersion is -gt 5'
+        [Void] $InvokeWebRequest.Add('SkipCertificateCheck', $True)
     }
 
-    $URL = "$($ePOwerShell.Server):$($ePOwerShell.Port)/remote/${Name}"
-
-    [System.Collections.ArrayList] $qs = @()
-    foreach ($q in $Query.GetEnumerator()) {
-        [Void] $qs.Add("$($q.Name)=$($q.Value)")
-    }
-    $query_string = $qs -join '&'
-
-    $RequestUrl = ('{0}?{1}' -f $Url, $query_string)
-
-    Write-Verbose ('Request URL: {0}' -f $RequestUrl)
+    Write-Verbose ('Request: {0}' -f ($InvokeWebRequest | ConvertTo-Json))
 
     try {
-        $Response = Invoke-ePOwerShellWebClient $RequestUrl
+        $Response = Invoke-WebRequest @InvokeWebRequest
     } catch {
+        Write-Information $_ -Tags Exception
         Throw $_
     }
 
     Write-Debug "Response: $($Response | Out-String)"
 
-    if (-not ($Response.StartsWith('OK:'))) {
+    if (-not ($Response.Content.StartsWith('OK:'))) {
         Throw $Response
     }
 
-    $Response = $Response.Substring(3).Trim() | ConvertFrom-Json 
-    
-    Write-Output $Response 
+    Write-Output ($Response.Content.Substring(3).Trim() | ConvertFrom-Json)
 }
