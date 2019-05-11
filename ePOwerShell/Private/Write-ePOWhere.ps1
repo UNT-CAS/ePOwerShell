@@ -77,6 +77,7 @@ Output:
 ```   
 #>
 function Write-ePOWhere {
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
         [hashtable]
@@ -87,27 +88,27 @@ function Write-ePOWhere {
         $Parent
     )
 
-    foreach ($part in $WherePart.GetEnumerator()) {
-        if ($part.Value -is [hashtable]) {
-            if (@('and', 'or') -contains $part.Name) {
-                $return += ' ({0} {1})' -f $part.Name, (Write-ePOWhere $part.Value -Parent $part.Name)
+    foreach ($Part in $WherePart.GetEnumerator()) {
+        if ($Part.Value -is [hashtable]) {
+            if (@('and', 'or') -contains $Part.Name) {
+                $Return += ' ({0} {1})' -f $Part.Name, (Write-ePOWhere $Part.Value -Parent $Part.Name)
             } else {
-                $return += ' {1}' -f $part.Name, (Write-ePOWhere $part.Value -Parent $part.Name)
+                $Return += ' {1}' -f $Part.Name, (Write-ePOWhere $Part.Value -Parent $Part.Name)
             }
         } else {
-            $value = $part.Value
-            $return += ' ({0} {1} {2})' -f $Parent, $part.Name, $value
+            $Value = $Part.Value
+            $Return += ' ({0} {1} "{2}")' -f $Parent, $Part.Name, $Value
         }
     }
 
-    while ($return.Contains('  ')) {
-        $return = $return.Replace('  ', ' ')
+    while ($Return.Contains('  ')) {
+        $Return = $Return.Replace('  ', ' ')
     }
-    $return = $return.Trim()
+    $Return = $Return.Trim()
 
-    if ((-not $Parent) -and ($return.StartsWith('(eq') -or $return.StartsWith('(ne'))) {
-        $return = '(where {0})' -f $return
+    if ((-not $Parent) -and ($Return.StartsWith('(eq') -or $Return.StartsWith('(ne'))) {
+        $Return = '(where {0})' -f $Return
     }
 
-    return $return
+    return $Return
 }
