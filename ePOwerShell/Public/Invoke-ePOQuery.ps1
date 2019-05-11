@@ -15,7 +15,7 @@
 
 function Invoke-ePOQuery {
     [CmdletBinding()]
-    [Alias('Invoke-ePOwerShellQuery', 'Invoke-ePOQuery')]
+    [Alias('Invoke-ePOwerShellQuery')]
     param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ParameterSetName = 'PremadeQuery')]
         $Query,
@@ -29,7 +29,7 @@ function Invoke-ePOQuery {
         $Select,
 
         [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
-        [System.Management.Automation.PSCustomObject]
+        [HashTable]
         $Where,
 
         [Parameter(ParameterSetName = 'CustomQuery')]
