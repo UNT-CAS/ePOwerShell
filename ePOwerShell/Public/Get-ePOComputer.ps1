@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Finds available computer system on the ePO server
+        Finds available computer systems on the ePO server
 
     .DESCRIPTION
         Finds all available computer systems from the ePO server. If a computer system name is specifed, it searches for only
@@ -10,39 +10,55 @@
 
     .EXAMPLE
         Returns all computers in the ePO system
-        `Get-ePOComputer -All`
+        ```powershell
+        $Computer = Get-ePOComputer -All
+        ```
 
     .EXAMPLE
         Returns ePO computer object searching by hostname
-        `Get-ePOComputer -ComputerName 'Computer1'`
+        ```powershell
+        $Computer = Get-ePOComputer -ComputerName 'Computer1'
+        ```
 
     .EXAMPLE
         Returns ePO computer object searching by hostname with wildcard
-        `Get-ePOComputer -ComputerName 'Computer*' -ForceWildcardHandling`
+        ```powershell
+        $Computer = Get-ePOComputer -ComputerName 'Computer*' -ForceWildcardHandling
+        ```
 
     .EXAMPLE
         Returns ePO computer object searching by Agent Guid
-        `Get-ePOComputer -AgentGuid 5b273b72-977b-4566-9cb4-9af816ac222b`
+        ```powershell
+        $Computer = Get-ePOComputer -AgentGuid 5b273b72-977b-4566-9cb4-9af816ac222b
+        ```
 
     .EXAMPLE
         Returns ePO computer object searching by MAC Address
-        `Get-ePOComputer -MacAddress 00-05-9A-3C-7A-00`
+        ```powershell
+        $Computer = Get-ePOComputer -MacAddress 00-05-9A-3C-7A-00
+        ```
 
     .EXAMPLE
         Returns ePO computer object searching by IP Address
-        `Get-ePOComputer -MacAddress 192.168.32.46`
+        ```powershell
+        $Computer = Get-ePOComputer -IPAddress 192.168.32.46
+        ```
 
     .EXAMPLE
         Returns ePO computer object searching by Username
-        `Get-ePOComputer -Username MyUsername`
+        ```powershell
+        $Computer = Get-ePOComputer -Username MyUsername
+        ```
 
     .EXAMPLE
         Returns ePO computer objects searching by Tag
-        `Get-ePOComputer -Tag ePOTag1`
+        ```powershell
+        $Computer = Get-ePOComputer -Tag ePOTag1
+        ```
 #>
 
 function Get-ePOComputer {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'All')]
     [Alias('Find-ePOwerShellComputerSystem', 'Find-ePOComputerSystem')]
     [OutputType([System.Object[]])]
     param (

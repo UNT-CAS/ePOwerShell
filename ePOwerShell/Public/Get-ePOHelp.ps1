@@ -1,30 +1,38 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Fetchs and returns the content from ePOs core.help menu.
 
-    Fetchs and returns the content from ePOs core.help menu
+    .DESCRIPTION
+        Fetches all commands from the ePOs core.help menu. If a command is specified, the function will
+        only return a single command. Each command is converted to an ePOHelp object containing 3 values:
+        
+            * Command
+            * Parameters
+            * Description
 
-.DESCRIPTION
+        The function will then return an array containing all ePOHelp objects.
 
-    Fetches all commands from the ePOs core.help menu. If PassThru is specifed, it returns the
-    raw content from the server. If PassThru is not specified, then each command is broken down
-    into 3 sections: Command, Parameters, and Description. The function will then return an array
-    containing all commands and additional information.
+    .EXAMPLE
+        Get all help objects on the ePO servers core.help page.
+        ```powershell
+        $Help = Get-ePOHelp
+        ```
 
-.PARAMETER Command
-
-    Specifies a command the be queried from the ePO server
-
-.EXAMPLE
-    Get-ePOHelp
-
-.EXAMPLE
-    Get-ePOHelp 'system.find'
+    .EXAMPLE
+        Get a single help object from the ePO servers core.help page.
+        ```powershell
+        $FindHelp = Get-ePOHelp -Command 'system.find'
+        ```
 #>
 
 function Get-ePOHelp {
     [CmdletBinding()]
     [Alias('Get-ePOwerShellCoreHelp', 'Get-ePOCoreHelp')]
     param (
+        <#
+            .PARAMETER Command
+                Specifies a command the be queried from the ePO server
+        #>
         [Parameter(Position = 0, ValueFromPipeline = $True)]
         $Command
     )

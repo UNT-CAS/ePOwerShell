@@ -15,9 +15,9 @@ function ConvertTo-ePOQuery {
     $ePOQueryObject.GroupName = $ePOQuery.GroupName
     $ePOQueryObject.UserName = $ePOQuery.userName
     $ePOQueryObject.DatabaseType = $ePOQuery.databaseType
-    $ePOQueryObject.CreatedOn = $ePOQuery.createdOn
+    $ePOQueryObject.CreatedOn = if ($ePOQuery.createdOn) { $ePOQuery.createdOn }
     $ePOQueryObject.CreatedBy = $ePOQuery.createdBy
-    $ePOQueryObject.ModifiedOn= $ePOQuery.modifiedOn
+    $ePOQueryObject.ModifiedOn= if ($ePOQuery.modifiedOn) { $ePOQuery.modifiedOn }
     $ePOQueryObject.ModifiedBy = $ePOQuery.modifiedBy
 
     Write-Output $ePOQueryObject

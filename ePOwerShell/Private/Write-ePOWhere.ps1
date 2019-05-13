@@ -1,88 +1,80 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Write the WHERE portion of the ePO custom query.
 
-Write the WHERE portion of the ePO custom query.
+    .DESCRIPTION
+        Write the WHERE portion of the ePO custom query returning the string that's ready to be sent to ePO.
 
-.DESCRIPTION
-
-Write the WHERE portion of the ePO custom query returning the string that's ready to be sent to ePO.
-
-.PARAMETER WherePart
-
-A hashtable of the structure of the WHERE clause. See examples.
-
-.PARAMETER Parent
-
-This is really just called when re-calling this function from within itself.
-You probably shouldn't pass this parameter manually.
-
-.EXAMPLE
-
-```powershell
-$where = @{
-    and = @{
-        eq = @{
-            EPOLeafNodeId = 1234
-            ComputerName  = 'CAS-12345'
+    .EXAMPLE
+        ```powershell
+        $where = @{
+            and = @{
+                eq = @{
+                    EPOLeafNodeId = 1234
+                    ComputerName  = 'CAS-12345'
+                }
+            }
         }
-    }
-}
-Write-ePOWhere $where
-```
+        Write-ePOWhere $where
+        ```
 
-Output:
+        Output:
+        ```
+        (and (eq ComputerName CAS-12345) (eq EPOLeafNodeId 1234))
+        ```
 
-```
-(and (eq ComputerName CAS-12345) (eq EPOLeafNodeId 1234))
-```
-
-.EXAMPLE
-
-```powershell
-$where = @{
-    or = @{
-        eq = @{
-            EPOLeafNodeId = 1234
-            ComputerName = 'CAS-12345'
+    .EXAMPLE
+        ```powershell
+        $where = @{
+            or = @{
+                eq = @{
+                    EPOLeafNodeId = 1234
+                    ComputerName = 'CAS-12345'
+                }
+                ne = @{
+                    EPOLeafNodeId = 4321
+                }
+            }
         }
-        ne = @{
-            EPOLeafNodeId = 4321
+        Write-ePOWhere $where
+        ```
+
+        Output:
+        ```
+        (or (eq ComputerName CAS-12345) (eq EPOLeafNodeId 1234) (ne EPOLeafNodeId 4321))
+        ```
+
+    .EXAMPLE
+        ```powershell
+        $where = @{
+            eq = @{
+                EPOLeafNodeId = 1234
+            }
         }
-    }
-}
-Write-ePOWhere $where
-```
+        Write-ePOWhere $where
+        ```
 
-Output:
-
-```
-(or (eq ComputerName CAS-12345) (eq EPOLeafNodeId 1234) (ne EPOLeafNodeId 4321))
-```
-
-.EXAMPLE
-
-```powershell
-$where = @{
-    eq = @{
-        EPOLeafNodeId = 1234
-    }
-}
-Write-ePOWhere $where
-```
-
-Output:
-
-```
-(where (eq EPOLeafNodeId 1234))
-```   
+        Output:
+        ```
+        (where (eq EPOLeafNodeId 1234))
+        ```
 #>
 function Write-ePOWhere {
     [CmdletBinding()]
     param(
+        <#
+            .PARAMETER WherePart
+                A hashtable of the structure of the WHERE clause. See examples.
+        #>
         [Parameter(Mandatory = $true)]
         [hashtable]
         $WherePart,
 
+        <#
+            .PARAMETER Parent
+                This is really just called when re-calling this function from within itself.
+                You probably shouldn't pass this parameter manually.
+        #>
         [Parameter()]
         [string]
         $Parent

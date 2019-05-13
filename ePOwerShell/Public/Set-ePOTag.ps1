@@ -1,43 +1,58 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Applies tags to computers managed in ePO
 
-    Applies tags to computers managed in ePO
+    .DESCRIPTION
+        Using the supplied ComputerName(s) and TagName(s), we can apply the tag to the computers
+        specified. Tags or Computers can be passed in through the pipeline, but not both at the same time.
 
-.DESCRIPTION
+    .EXAMPLE
+        Set a single tag on a single computer
+        ```powershell
+        $Tag = Get-ePOTag -Tag 'Tag1'
+        $Computer = Get-ePOComputer -Computer 'Computer1'
+        Set-ePOwerShellTag -Computer $Computer -Tag $Tag
+        ```
 
-    Using the supplied ComputerName(s) and TagName(s), we can apply the tag to the computers
-    specified
+    .EXAMPLE
+        Set one tag on two computers
+        ```powershell
+        Set-ePOwerShellTag @(Computer1, Computer2) Tag1
+        ```
 
-.PARAMETER ComputerName
-
-    Specifies the name of the computer managed by ePO to have a tag applied to it. Computer names
-    can be found using Find-ePOwerShellComputerSystem.
-
-.PARAMETER TagName
-
-    Specifies the name of the tag to be applied. Tag names can be found using Find-ePOwerShellTag
-
-.EXAMPLE
-
-    Set-ePOwerShellTag Computer1 Tag1
-
-.EXAMPLE
-
-    Set-ePOwerShellTag @(Computer1, Computer2) Tag1
-
-.EXAMPLE
-
-    Set-ePOwerShellTag Computer1 @(Tag1, Tag2)
+    .EXAMPLE
+        Set two tags to a single computer:
+        ```powershell
+        Set-ePOwerShellTag Computer1 @(Tag1, Tag2)
+        ```
 #>
 
 function Set-ePOTag {
     [CmdletBinding(SupportsShouldProcess = $True)]
     [Alias('Set-ePOwerShellTag')]
     param (
+        <#
+            .PARAMETER Computer
+                Specifies the name of the computer managed by ePO to have a tag applied to it. This can be provided by:
+
+                    * An ePOComputer object
+                    * A computer name
+
+                This parameter can be provided through the pipeline
+        #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName')]
         $Computer,
         
+        <#
+            .PARAMETER Tag
+                Specifies the name of the tag to be applied. This can be provided by:
+
+                    * An ePOTag object
+                    * A tag name
+
+                This parameter can be provided through the pipeline
+        #>
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [Alias('TagName')]
         $Tag

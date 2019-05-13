@@ -1,15 +1,15 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Returns saved $ePOwerShell settings
 
-    Returns saved $ePOwerShell settings
+    .DESCRIPTION
+        Returns an ePOConfig object of the saved information necessary to communicate with the ePO server
 
-.DESCRIPTION
-
-    Returns a hashtable of the saved information necessary to communicate with the ePO server
-
-.EXAMPLE
-
-    Get-ePOConfig
+    .EXAMPLE
+        Returns the currently set configuration for connecting to the ePO server.
+        ```powershell
+        $Config = Get-ePOConfig
+        ```
 #>
 
 function Get-ePOConfig {

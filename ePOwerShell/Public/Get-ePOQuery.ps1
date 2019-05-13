@@ -1,16 +1,16 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Finds available predefined queries on the ePO server.
 
-    Finds available queries on the ePO server
+    .DESCRIPTION
+        Finds all available queries from the ePO server. Each query is then converted to an ePOQuery object,
+        and an array containing all objects will be returned.
 
-.DESCRIPTION
-
-    Finds all available queries from the ePO server.
-
-.EXAMPLE
-
-    Get-ePOQuery
-
+    .EXAMPLE
+        Get all predefined queries in ePO
+        ```powershell
+        $Queries = Get-ePOQuery
+        ```
 #>
 
 function Get-ePOQuery {

@@ -1,37 +1,64 @@
 <#
 .SYNOPSIS
-
-    Runs a query that's available on the ePO server.
+    Either runs a predefined query or a custom query against the ePO server 
 
 .DESCRIPTION
-
     Based off the Query Name or ID, runs the query and returns the output.
 
 .EXAMPLE
-
-    Invoke-ePOQuery
-
+    Run a predefined query saved on the ePO server:
+    ```powershell
+    $Query = Get-ePOQuery
+    $Query = $Query | Where-Object { $_.Name -eq 'My Awesome Query' }
+    $Results = Invoke-ePOQuery -Query $Query
+    ```
 #>
 
 function Invoke-ePOQuery {
     [CmdletBinding()]
     [Alias('Invoke-ePOwerShellQuery')]
     param (
+        <#
+            Specifies a predefined query that is stored on the ePO server. Can be provided by:
+
+                * An ePOQuery object
+                * A query ID
+                * A query Name
+
+            This parameter can be passed in from the pipeline.
+        #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ParameterSetName = 'PremadeQuery')]
         $Query,
 
+        <#
+            .PARAMETER Table
+                Specifies the table on the ePO server you would like to query against. Run Get-ePOTable to see available tables and values.
+        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
         [System.String]
         $Table,
 
+        <#
+            .PARAMETER Select
+                Specifies the items from tables you're specifically looking for. If a table name is not specified in your select string,
+                then `$Table` is prepended to the beginning of your select item.
+        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
         [System.String[]]
         $Select,
 
+        <#
+            .PARAMETER Where
+                A hashtable used to limit the query to items meeting only specific criteria
+        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
         [HashTable]
         $Where,
 
+        <#
+            .PARAMETER Database
+                Optional parameter. Specifies a separate database to query, other than the default one.
+        #>
         [Parameter(ParameterSetName = 'CustomQuery')]
         [Parameter(ParameterSetName = 'PremadeQuery')]
         [System.String]

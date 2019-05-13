@@ -1,32 +1,23 @@
 <#
-.SYNOPSIS
-
-    Builds the request URL to the ePO server, and calls Invoke-ePOwerShellWebClient with the URL query
-
-.PARAMETER Name
-
-    Specifies the function name to be used
-
-.PARAMETER Query
-
-    Specifies the query parameters to be used against the ePO server
-
-.PARAMETER PassThru
-
-    If specified, returns the raw content from the ePO server. Otherwise, returns the content as a hashtable
-
-.PARAMETER BlockSelfSignedCerts
-
-    By default, the script allows self signed certs applied to your ePO server. Specifying this flag will block self signed certs
+    .SYNOPSIS
+        Builds the request URL to the ePO server, executes the API call, and returns values.
 #>
 
 function Invoke-ePORequest {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
     param (
+        <#
+            .PARAMETER Name
+                Specifies the function name to be used
+        #>
         [String]
         $Name,
 
+        <#
+            .PARAMETER Query
+                Specifies the query parameters to be used against the ePO server
+        #>
         [Hashtable]
         $Query = @{}
     )
@@ -42,8 +33,6 @@ function Invoke-ePORequest {
     if (-not ($Query.':output' -eq 'json')) {
         [Void] $Query.Add(':output', 'json')
     }
-
-
 
     $URL = '{0}:{1}/remote/{2}' -f $ePOwerShell.Server, $ePOwerShell.Port, $Name
 

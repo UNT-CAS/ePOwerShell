@@ -1,24 +1,19 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Updates ePOwerShell config options individually, rather than setting everything at once.
 
-    Required command. Sets the necessary parameters to successfully communicate with an ePO server
+    .DESCRIPTION
+        This function sets up all information necessary to communicate with your ePO server.
 
-.DESCRIPTION
+        There are three ways to utilize this command: By manually specifying the variables each time you
+        load the module, saving a json file on your computer with the necessary information, or saving the
+        json as an environment variable, $env:ePOwerShell.
 
-    This function sets up all information necessary to communicate with your ePO server.
-
-    There are three ways to utilize this command: By manually specifying the variables each time you
-    load the module, saving a json file on your computer with the necessary information, or saving the
-    json as an environment variable, $env:ePOwerShell.
-
-.EXAMPLE
-
-    Update-ePOwerShellServer
-
-.EXAMPLE
-
-    Update-ePOwerShellServer -Server 'My-ePO-Server.domain.com'
-
+    .EXAMPLE
+        Update ePOwerShell to target a new server:
+        ```powershell
+        Update-ePOwerShellServer -Server 'My-ePO-Server.domain.com'
+        ```
 #>
 
 function Update-ePOConfig {

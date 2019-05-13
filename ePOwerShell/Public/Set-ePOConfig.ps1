@@ -1,58 +1,64 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Required command. Sets the necessary parameters to successfully communicate with an ePO server
 
-    Required command. Sets the necessary parameters to successfully communicate with an ePO server
+    .DESCRIPTION
+        This function sets up all information necessary to communicate with your ePO server.
 
-.DESCRIPTION
+        There are three ways to utilize this command: By manually specifying the variables each time you
+        load the module, saving a json file on your computer with the necessary information, or saving the
+        json as an environment variable, $env:ePOwerShell.
 
-    This function sets up all information necessary to communicate with your ePO server.
+    .EXAMPLE
+        Set ePO config after reading settings from an Environment variable
+        ```powershell
+        $env:ePOwerShell = @{
+            Server      = 'My-ePO-Server.domain.com'
+            Port        = 1234
+            Credentials = (Get-Credential)
+        }
 
-    There are three ways to utilize this command: By manually specifying the variables each time you
-    load the module, saving a json file on your computer with the necessary information, or saving the
-    json as an environment variable, $env:ePOwerShell.
-
-.PARAMETER Server
-
-    URL to the ePO server
-
-.PARAMETER Port
-
-    Specifies the port necessary to communicate with the ePO server
-
-.PARAMETER Credentials
-
-    Credentials with access to the ePO server
-
-.PARAMETER ePOwerShellSettings
-
-    Specifies a path to a json containing all information necessary to connect to an ePO server
-
-.EXAMPLE
-
-    Set-ePOwerShellServer
-
-.EXAMPLE
-
-    Set-ePOwerShellServer -Server 'My-ePO-Server.domain.com' -Port 1234 -Credentials (Get-Credential)
-
+        Set-ePOConfig
+        ```
+    .EXAMPLE
+        Set ePO config by manually specifying values each time
+        ```powershell
+        Set-ePOConfig -Server 'My-ePO-Server.domain.com' -Port 1234 -Credentials (Get-Credential)
+        ```
 #>
 
 function Set-ePOConfig {
     [CmdletBinding(DefaultParameterSetName = 'Env', SupportsShouldProcess = $True)]
     [Alias('Set-ePOServer')]
     param (
+        <#
+            .PARAMETER Server
+                URL to the ePO server
+        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [String]
         $Server,
 
+        <#
+            .PARAMETER Credentials
+                Credentials with access to the ePO server
+        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
+        <#
+            .PARAMETER Port
+                Specifies the port necessary to communicate with the ePO server
+        #>
         [Parameter(Mandatory = $False, ParameterSetName = 'ManualEntry')]
         [Int]
         $Port,
 
+        <#
+            .PARAMETER ePOwerShellSettings
+                Specifies a path to a json containing all information necessary to connect to an ePO server
+        #>
         [Parameter(ParameterSetName = 'Env')]
         [String]
         $ePOwerShellSettings = (${env:ePOwerShell})

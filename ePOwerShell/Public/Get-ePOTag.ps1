@@ -1,26 +1,23 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Finds available tags on the ePO server
 
-    Finds available tags on the ePO server
+    .DESCRIPTION
+        Finds all available tags from the ePO server. If a tag name is specifed, it searches for only
+        the one tag from the server. If a tag is not specified, then it will return an array of ePOTag
+        objects from the ePO server. Each tag contains an ID, Name, and Description.
 
-.DESCRIPTION
+    .EXAMPLE
+        Get all tags from the ePO server
+        ```powershell
+        $Tags = Get-ePOTag
+        ```
 
-    Finds all available tags from the ePO server. If a tag name is specifed, it searches for only
-    the one tag from the server. If a tag is not specified, then it will return a list of all
-    available tags on the ePO server. Each tag contains a Tag ID, Tag Name, and Description.
-
-.PARAMETER Tag
-
-    Specifies a tag to be found on the ePO server
-
-.EXAMPLE
-
-    Get-ePOTag
-
-.EXAMPLE
-
-    Get-ePOTag 'Tag1'
-
+    .EXAMPLE
+        Get a single tag from the ePO server
+        ```powershell
+        $Tag = Get-ePOTag 'Tag1'
+        ```
 #>
 
 function Get-ePOTag {
@@ -28,6 +25,15 @@ function Get-ePOTag {
     [Alias('Find-ePOwerShellTag','Find-ePOTag')]
     [OutputType([System.Collections.ArrayList])]
     param (
+        <#
+            .PARAMETER Tag
+                This parameter is used to request a specific tag. This can be provided as:
+
+                    * An ePOTag object
+                    * A tag name
+
+                This value can be passed in from the pipeline.
+        #>
         [Parameter(Position = 0, ValueFromPipeline = $True)]
         [Alias('TagName')]
         $Tag = ''

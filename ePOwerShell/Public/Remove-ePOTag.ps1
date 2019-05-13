@@ -1,35 +1,58 @@
 <#
-.SYNOPSIS
+    .SYNOPSIS
+        Removes tags from computers managed in ePO
 
-    Removes a tag from a specified computer system
+    .DESCRIPTION
+        Using the supplied ComputerName(s) and TagName(s), we can remove the tag to the computers
+        specified. Tags or Computers can be passed in through the pipeline, but not both at the same time.
 
-.DESCRIPTION
+    .EXAMPLE
+        Remove a single tag on a single computer
+        ```powershell
+        $Tag = Get-ePOTag -Tag 'Tag1'
+        $Computer = Get-ePOComputer -Computer 'Computer1'
+        Remove-ePOTag -Computer $Computer -Tag $Tag
+        ```
 
-    Ensures that a tag is cleared from the specicied computer system, whether
-    that means it wasn't applied to begin with, or it removes it from the system.
+    .EXAMPLE
+        Remove one tag on two computers
+        ```powershell
+        Remove-ePOTag @(Computer1, Computer2) Tag1
+        ```
 
-.PARAMETER ComputerName
-
-    Specifies a computer system the tag will be removed from.
-
-.PARAMETER TagName
-
-    Specifies a tag to be removed from the specified computer system
-
-.EXAMPLE
-
-    Remove-ePOTag Computer1 Tag1
-
+    .EXAMPLE
+        Remove two tags to a single computer:
+        ```powershell
+        Remove-ePOTag Computer1 @(Tag1, Tag2)
+        ```
 #>
 
 function Remove-ePOTag {
     [CmdletBinding(SupportsShouldProcess = $True)]
     [Alias('Clear-ePOwerShellTag', 'Clear-ePOTag')]
     param (
+        <#
+            .PARAMETER Computer
+                Specifies the name of the computer managed by ePO to have a tag applied to it. This can be provided by:
+
+                    * An ePOComputer object
+                    * A computer name
+
+                This parameter can be provided through the pipeline
+        #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName')]
         $Computer,
         
+        <#
+            .PARAMETER Tag
+                Specifies the name of the tag to be applied. This can be provided by:
+
+                    * An ePOTag object
+                    * A tag name
+
+                This parameter can be provided through the pipeline
+        #>
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [Alias('TagName')]
         $Tag

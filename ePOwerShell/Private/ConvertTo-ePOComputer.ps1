@@ -56,10 +56,10 @@ function ConvertTo-ePOComputer {
     $ePOComputerObject.SysvolTotalSpace = $ePOComputer.'EPOComputerProperties.SysvolTotalSpace'
     $ePOComputerObject.Tags = ($ePOComputer.'EPOLeafNode.Tags').Split(',').Trim()
     $ePOComputerObject.ExcludedTags = ($ePOComputer.'EPOLeafNode.ExcludedTags').Split(',').Trim()
-    $ePOComputerObject.LastUpdate = $ePOComputer.'EPOLeafNode.LastUpdate'
+    if ($ePOComputer.'EPOLeafNode.LastUpdate') { $ePOComputerObject.LastUpdate = $ePOComputer.'EPOLeafNode.LastUpdate' }
     $ePOComputerObject.ManagedState = $ePOComputer.'EPOLeafNode.ManagedState'
-    $ePOComputerObject.AgentGUID = $ePOComputer.'EPOLeafNode.AgentGUID'
-    $ePOComputerObject.AgentVersion = $ePOComputer.'EPOLeafNode.AgentVersion'
+    if ($ePOComputer.'EPOLeafNode.AgentGUID') { $ePOComputerObject.AgentGUID = $ePOComputer.'EPOLeafNode.AgentGUID' }
+    if ($ePOComputer.'EPOLeafNode.AgentVersion') { $ePOComputerObject.AgentVersion = $ePOComputer.'EPOLeafNode.AgentVersion' }
     $ePOComputerObject.AutoID = $ePOComputer.'EPOBranchNode.AutoID'
 
     Write-Output $ePOComputerObject
