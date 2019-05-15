@@ -1,0 +1,9 @@
+{
+    "editor.tabSize": 4,
+    "powershell.codeFormatting.preset": "Allman",
+    "powershell.codeFormatting.openBraceOnSameLine":true,
+    "powershell.codeFormatting.useCorrectCasing": true,
+    "powershell.codeFormatting.whitespaceAroundPipe": true,
+    "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
+    "powershell.scriptAnalysis.settingsPath": "PSScriptAnalyzerSettings.psd1"
+}
