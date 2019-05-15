@@ -1,34 +1,34 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath ($pesterFile.Name -replace '\.Tests\.ps1', '.psm1') -Resolve
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
+[IO.DirectoryInfo] $ProjectDirectory     = Join-Path -Path $ProjectRoot -ChildPath $ProjectDirectoryName -Resolve
+[IO.FileInfo]      $TestFile             = Join-Path -Path $ProjectDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.ps1', '.psm1') -Resolve
 
-Describe $testFile.Name {
+$ErrorActionPreference = 'SilentlyContinue'
+
+Describe $TestFile.Name {
     It 'Import-Module' {
-        { Import-Module $testFile } | Should Not Throw
+        { Import-Module $TestFile } | Should Not Throw
     }
 
     It 'Imported' {
-        Get-Module $projectDirectoryName | Should Not BeNullOrEmpty
+        Get-Module $ProjectDirectoryName | Should Not BeNullOrEmpty
     }
 
-    $public = @( Get-ChildItem -Path "${projectDirectory}\Public\*.ps1" -ErrorAction SilentlyContinue )
+    $Public, $Private = @( Get-ChildItem -Path "${ProjectDirectory}\Public\*.ps1" ), @( Get-ChildItem -Path "${ProjectDirectory}\Private\*.ps1" )
 
     Context 'Public Functions' {
-        foreach ($file in $public) {
-            It "Exists: $($file.BaseName)" {
-                Get-Command $file.BaseName -ErrorAction SilentlyContinue | Should Not BeNullOrEmpty
+        foreach ($File in $Public) {
+            It "Exists: $($File.BaseName)" {
+                Get-Command $File.BaseName | Should Not BeNullOrEmpty
             }
         }
     }
 
-    $private = @( Get-ChildItem -Path "${projectDirectory}\Private\*.ps1" -ErrorAction SilentlyContinue )
-
     Context 'Private Functions' {
-        foreach ($file in $Private) {
-            It "Not Exists: $($file.BaseName)" {
-                Get-Command $file.BaseName -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+        foreach ($File in $Private) {
+            It "Not Exists: $($File.BaseName)" {
+                Get-Command $File.BaseName | Should BeNullOrEmpty
             }
         }
     }
