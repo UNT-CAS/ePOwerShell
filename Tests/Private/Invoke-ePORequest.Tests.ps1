@@ -1,19 +1,41 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
-. $testFile
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[System.String]    $FunctionType         = 'Private'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePOwerShellWebClient.ps1') -Resolve)
+While (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+    $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
+}
+
+[IO.DirectoryInfo] $ProjectDirectory     = Join-Path -Path $ProjectRoot -ChildPath $ProjectDirectoryName -Resolve
+[IO.DirectoryInfo] $PublicDirectory      = Join-Path -Path $ProjectDirectory -ChildPath 'Public' -Resolve 
+[IO.DirectoryInfo] $ClassDirectory       = Join-Path -Path $ProjectDirectory -ChildPath 'Classes' -Resolve 
+[IO.DirectoryInfo] $PrivateDirectory     = Join-Path -Path $ProjectDirectory -ChildPath 'Private' -Resolve 
+[IO.DirectoryInfo] $ExampleDirectory     = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
+[IO.DirectoryInfo] $ExampleDirectory     = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
+[IO.DirectoryInfo] $ReferenceDirectory   = Join-Path $ExampleDirectory.FullName -ChildPath 'References' -Resolve
+if ($FunctionType -eq 'Private') {
+    [IO.FileInfo]  $TestFile             = Join-Path -Path $PrivateDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
+} else {
+    [IO.FileInfo]  $TestFile             = Join-Path -Path $PublicDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
+}
+
+. $TestFile
+Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
+Get-ChildItem -Path $ClassDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
+
+
+
+
+
 
 [System.Collections.ArrayList] $tests = @()
 $examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
 
 foreach ($example in $examples) {
     [hashtable] $test = @{
-        Name       = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
+        Name = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
     }
     Write-Verbose "Test: $($test | ConvertTo-Json)"
 
@@ -28,7 +50,7 @@ foreach ($example in $examples) {
 Describe $testFile.Name {
     foreach ($test in $tests) {
         Mock Invoke-ePOwerShellWebClient {
-            $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter $test.File -File
+            $File = Get-ChildItem $ReferenceDirectory -Filter "$($test.Parameters.Name).html" -File
             return (Get-Content $File.FullName | Out-String)
         }
 

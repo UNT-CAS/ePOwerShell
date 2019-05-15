@@ -102,5 +102,5 @@ function Write-ePOWhere {
         $Return = '(where {0})' -f $Return
     }
 
-    return $Return
+    Write-Output $Return
 }

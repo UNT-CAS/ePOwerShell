@@ -68,7 +68,7 @@ function Invoke-ePOQuery {
     begin {
         try {
             [System.Collections.ArrayList] $Results = @()
-            
+
             switch ($PSCmdlet.ParameterSetName) {
                 'PremadeQuery' {
                     $Request = @{
@@ -117,7 +117,7 @@ function Invoke-ePOQuery {
 
                         $Request.Query.queryId = $ePOQuery.ID
                     }
-                    
+
                     if ($Database) {
                         [Void] $Request.Query.Add('database', $Database)
                     }
@@ -147,7 +147,7 @@ function Invoke-ePOQuery {
             if (-not ($QueryResults = Invoke-ePORequest @Request)) {
                 Throw "Failed to find any ePO query results"
             }
-    
+
             Write-Debug "Results: $($QueryResults | Out-String)"
             [Void] $Results.Add($QueryResults)
         } catch {

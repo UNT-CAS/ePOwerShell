@@ -52,10 +52,10 @@ function Invoke-ePORequest {
     }
 
     $InvokeWebRequest = @{
-        Uri = $RequestUrl
-        Credential = $ePOwerShell.Credentials
+        Uri             = $RequestUrl
+        Credential      = $ePOwerShell.Credentials
         UseBasicParsing = $True
-        ErrorAction = 'Stop'
+        ErrorAction     = 'Stop'
     }
 
     if ($PSVersionTable.PSVersion.Major -le 5) {

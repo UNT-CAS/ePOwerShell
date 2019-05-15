@@ -9,7 +9,7 @@
 
 function Invoke-ePOWakeUpAgent {
     [CmdletBinding()]
-    [Alias('Invoke-ePOwerShellWakeUpAgent', 'Invoke-ePOWakeUpAgent')]
+    [Alias('Invoke-ePOwerShellWakeUpAgent')]
     param (
         <#
             .PARAMETER Computer
@@ -100,16 +100,16 @@ function Invoke-ePOWakeUpAgent {
                 Write-Verbose ('Computer System is in a managed state: {0}' -f $Comp)
 
                 $Request = @{
-                    Name     = 'system.wakeupAgent'
-                    Query    = @{
-                        names = $ePOComputer.ComputerName
-                        fullProps = $FullProps
+                    Name  = 'system.wakeupAgent'
+                    Query = @{
+                        names                 = $ePOComputer.ComputerName
+                        fullProps             = $FullProps
                         forceFullPolicyUpdate = $ForceFullPolicyUpdate
-                        abortAfterMinutes = $AbortAfter
-                        retryIntervalSeconds = $RetryIntervalSeconds
-                        attempts = $NumberOfAttempts
-                        randomMinutes = $RandomMinutes
-                        superAgent = $SuperAgent
+                        abortAfterMinutes     = $AbortAfter
+                        retryIntervalSeconds  = $RetryIntervalSeconds
+                        attempts              = $NumberOfAttempts
+                        randomMinutes         = $RandomMinutes
+                        superAgent            = $SuperAgent
                     }
                 }
 
@@ -119,11 +119,9 @@ function Invoke-ePOWakeUpAgent {
 
                 $Results = @{}
                 $Response.Split('\n') | Where-Object { $_ } | ForEach-Object { $s = $_.Split(':'); $Results.Add($s[0].Trim(), $s[1].Trim()) }
-                $Response.Split("`n") | ForEach-Object { $s = $_.Split(':'); $Results.Add($s[0].Trim(), $s[1].Trim()) }
-                $ResultsObject = New-Object PSObject -Property $Results
 
                 if ([Boolean]$Results.Completed) {
-                    Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName) 
+                    Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName)
                 } elseif ([Boolean]$Results.Failed) {
                     Write-Error ('Failed to wake up {0}' -f $ePOComputer.ComputerName) -ErrorAction Stop
                 } elseif ([Boolean]$Results.Expired) {

@@ -41,7 +41,7 @@ function Get-ePORecoveryKey {
     begin {
         try {
             [System.Collections.ArrayList] $Found = @()
-            
+
             $Request = @{
                 Name        = 'mne.recoverMachine'
                 Query       = @{
@@ -65,12 +65,12 @@ function Get-ePORecoveryKey {
             }
 
             $QueryRequest = @{
-                Table = 'MneVolumes'
-                Select = @(
+                Table       = 'MneVolumes'
+                Select      = @(
                     'MneFvRecoveryKeys.DisplayName',
                     'MneVolumes.MountPoint'
                 )
-                Where = @{
+                Where       = @{
                     eq = @{
                         'MneVolumes.EPOLeafNodeId' = $Comp.ParentID
                     }

@@ -43,7 +43,7 @@ function Remove-ePOTag {
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName')]
         $Computer,
-        
+
         <#
             .PARAMETER Tag
                 Specifies the name of the tag to be applied. This can be provided by:
@@ -61,8 +61,8 @@ function Remove-ePOTag {
     begin {
         try {
             $Request = @{
-                Name     = 'system.clearTag'
-                Query    = @{
+                Name  = 'system.clearTag'
+                Query = @{
                     names   = ''
                     tagName = ''
                 }
@@ -92,7 +92,7 @@ function Remove-ePOTag {
                     } else {
                         $Request.Query.tagName = $T
                     }
-                    
+
                     Write-Verbose ('Computer Name: {0}' -f $Request.Query.names)
                     Write-Verbose ('Tag Name: {0}' -f $Request.Query.tagName)
 

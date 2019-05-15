@@ -96,8 +96,8 @@ function Set-ePOConfig {
             Write-Debug "Settings: $($Settings | Out-String)"
 
             $GetCredentials = @{
-                TypeName        = 'System.Management.Automation.PSCredential'
-                ArgumentList    = @(
+                TypeName     = 'System.Management.Automation.PSCredential'
+                ArgumentList = @(
                     $Settings.Username,
                     ($Settings.Password | ConvertTo-SecureString)
                 )

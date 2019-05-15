@@ -10,17 +10,19 @@ While (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
 
 [IO.DirectoryInfo] $ProjectDirectory     = Join-Path -Path $ProjectRoot -ChildPath $ProjectDirectoryName -Resolve
 [IO.DirectoryInfo] $PublicDirectory      = Join-Path -Path $ProjectDirectory -ChildPath 'Public' -Resolve 
+[IO.DirectoryInfo] $ClassDirectory       = Join-Path -Path $ProjectDirectory -ChildPath 'Classes' -Resolve 
 [IO.DirectoryInfo] $PrivateDirectory     = Join-Path -Path $ProjectDirectory -ChildPath 'Private' -Resolve 
 [IO.DirectoryInfo] $ExampleDirectory     = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
 [IO.DirectoryInfo] $ExampleDirectory     = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
-if ($FunctionType = 'Private') {
+if ($FunctionType -eq 'Private') {
     [IO.FileInfo]  $TestFile             = Join-Path -Path $PrivateDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
 } else {
     [IO.FileInfo]  $TestFile             = Join-Path -Path $PublicDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
 }
 
 . $TestFile
-# Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | Foreach-Object { . $_.FullName }
+Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
+Get-ChildItem -Path $ClassDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
 
 
 
@@ -29,7 +31,7 @@ $Examples = Get-ChildItem $ExampleDirectory -Filter "$($TestFile.BaseName).*.psd
 
 foreach ($Example in $Examples) {
     [Hashtable] $Test = @{
-        Name = $Example.BaseName.Replace("$($TestFile.BaseName).$Verb", '').Replace('_', ' ')
+        Name       = $Example.BaseName.Replace("$($TestFile.BaseName).$Verb", '').Replace('_', ' ')
         Parameters = @{}
     }
     Write-Verbose "Test: $($Test | ConvertTo-Json)"
@@ -56,22 +58,20 @@ Describe $TestFile.Name {
                 { $Script:RequestResponse = ConvertTo-ePOComputer @Parameters } | Should Not Throw
             }
 
-            It "Returns a string" {
+            It "Returns an ePOComputer" {
                 $Script:RequestResponse.GetType().Fullname | Should Be 'ePOComputer'
             }
 
-            Context "Has correct types" {
-                It 'Has the correct type of tags' {
-                    $Script:RequestResponse.Tags.GetType().FullName | Should Be 'System.String[]'
-                }
+            It 'Has the correct type of tags' {
+                $Script:RequestResponse.Tags.GetType().FullName | Should Be 'System.String[]'
+            }
 
-                It 'Has the correct type for Agent GUID' {
-                    $Script:RequestResponse.AgentGUID.GetType().FullName | Should Be 'System.Guid'
-                }
+            It 'Has the correct type for Agent GUID' {
+                $Script:RequestResponse.AgentGUID.GetType().FullName | Should Be 'System.Guid'
+            }
 
-                It 'Has the correct type for Managed State' {
-                    $Script:RequestResponse.ManagedState.GetType().FullName | Should Be 'System.Boolean'
-                }
+            It 'Has the correct type for Managed State' {
+                $Script:RequestResponse.ManagedState.GetType().FullName | Should Be 'System.Boolean'
             }
         }
     }

@@ -77,7 +77,7 @@ function Get-ePOHelp {
 
                 if ($Remainder -match '\s\-\s') {
                     $SecondRegexProduct = [Regex]::Match($Remainder, '(^\S+.{0,})\s\-\s(\S+.{0,})$')
-                    
+
                     $HelpObject.Parameters = ($SecondRegexProduct.Groups[1].Value -Split ' ').Trim('[').Trim(']')
                     $HelpObject.Description = $SecondRegexProduct.Groups[2].Value
                 } else {

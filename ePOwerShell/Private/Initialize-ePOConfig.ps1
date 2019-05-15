@@ -42,12 +42,12 @@ function Initialize-ePOConfig {
 
         Write-Verbose ('Updated server address: {0}' -f $Server)
     }
-    
+
     $Script:ePOwerShell = @{
         Port        = $Port
         Server      = $Server
         Credentials = $Credentials
-    }    
+    }
 
     try {
         [Void] (Get-ePOHelp)

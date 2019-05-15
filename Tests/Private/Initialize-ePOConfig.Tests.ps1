@@ -13,14 +13,14 @@ While (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
 [IO.DirectoryInfo] $PrivateDirectory     = Join-Path -Path $ProjectDirectory -ChildPath 'Private' -Resolve 
 [IO.DirectoryInfo] $ExampleDirectory     = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
 [IO.DirectoryInfo] $ExampleDirectory     = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
-if ($FunctionType = 'Private') {
+if ($FunctionType -eq 'Private') {
     [IO.FileInfo]  $TestFile             = Join-Path -Path $PrivateDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
 } else {
     [IO.FileInfo]  $TestFile             = Join-Path -Path $PublicDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
 }
 
 . $TestFile
-Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | Foreach-Object { . $_.FullName }
+Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
 
 [System.Collections.ArrayList] $Tests = @()
 $Examples = Get-ChildItem $ExampleDirectory -Filter "$($TestFile.BaseName).*.psd1" -File

@@ -43,7 +43,7 @@ function Set-ePOTag {
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName')]
         $Computer,
-        
+
         <#
             .PARAMETER Tag
                 Specifies the name of the tag to be applied. This can be provided by:
@@ -61,8 +61,8 @@ function Set-ePOTag {
     begin {
         try {
             $Request = @{
-                Name     = 'system.applyTag'
-                Query    = @{
+                Name  = 'system.applyTag'
+                Query = @{
                     names   = ''
                     tagName = ''
                 }
@@ -84,7 +84,7 @@ function Set-ePOTag {
                     } else {
                         $Request.Query.names = $C
                     }
-        
+
                     if ($T -is [ePOTag]) {
                         $Request.Query.tagName = $T.Name
                     } elseif ($T -is [ePOComputer]) {
@@ -92,13 +92,13 @@ function Set-ePOTag {
                     } else {
                         $Request.Query.tagName = $T
                     }
-                    
+
                     Write-Verbose ('Computer Name: {0}' -f $Request.Query.names)
                     Write-Verbose ('Tag Name: {0}' -f $Request.Query.tagName)
-        
+
                     if ($PSCmdlet.ShouldProcess("Set ePO tag $($Request.Query.tagName) from $($Request.Query.names)")) {
                         $Result = Invoke-ePORequest @Request
-        
+
                         if ($Result -eq 0) {
                             Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $T, $C)
                         } elseif ($Result -eq 1) {

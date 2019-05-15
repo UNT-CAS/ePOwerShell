@@ -72,10 +72,10 @@ function Get-ePOGroup {
                         searchText = $Group
                     }
                 }
-    
+
                 Write-Debug "Request: $($Request | ConvertTo-Json)"
                 $ePOGroups = Invoke-ePORequest @Request
-    
+
                 foreach ($ePOGroup in $ePOGroups) {
                     $GroupObject = [ePOGroup]::new()
                     $GroupObject.Name = $ePOGroup.groupPath

@@ -7,9 +7,9 @@
         Password = 'SomePassword'
     }
     Parameters  = @{
-        Name    = 'core.help'
+        Name = 'core.help'
     }
     Output      = @{
-        Throws  = $True
+        Throws = $True
     }
 }

@@ -64,7 +64,7 @@ function Get-ePOTag {
 
                 Write-Debug "Request: $($Request | ConvertTo-Json)"
                 $ePOTags = Invoke-ePORequest @Request
-                
+
                 foreach ($ePOTag in $ePOTags) {
                     if (-not ($Tag) -or ($Tag -eq $ePOTag.tagName)) {
                         $TagObject = [ePOTag]::new($ePOTag.tagName, $ePOTag.tagId, $ePOTag.tagNotes)
