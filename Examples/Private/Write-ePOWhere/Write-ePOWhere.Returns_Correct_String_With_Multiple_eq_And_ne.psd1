@@ -3,7 +3,7 @@
         or = @{
             eq = @{
                 EPOLeafNodeId = 1234
-                ComputerName = 'CAS-12345'
+                ComputerName  = 'CAS-12345'
             }
             ne = @{
                 EPOLeafNodeId = 4321

@@ -1,6 +1,6 @@
 @{
     Port     = '1234'
-    Server   = 'Test-ePO-Server.com'
+    Server   = 'http://Test-ePO-Server.com'
     Username = 'domain\username'
     Password = 'SomePassword'
 }

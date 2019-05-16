@@ -54,12 +54,24 @@ foreach ($Example in $Examples) {
 
 
 Describe $TestFile.Name {
-    Mock Get-ePOHelp {}
+    Mock Get-ePOHelp {
+        if ($Test.CoreHelpFail) {
+            Throw 'Failing Core.help'
+        }
+    }
     foreach ($Test in $Tests) {
         Remove-Variable -Scope 'Script' -Name 'ePOwerShell' -Force -ErrorAction SilentlyContinue
 
         Context $Test.Name {
             [Hashtable] $Parameters = $Test.Parameters
+
+            if ($Test.Output.Throws) {
+                It "Initialize-ePOConfig" {
+                    { Initialize-ePOConfig @Parameters } | Should Throw
+                }
+
+                continue
+            }
 
             It "Initialize-ePOConfig" {
                 { Initialize-ePOConfig @Parameters } | Should Not Throw

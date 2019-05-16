@@ -85,7 +85,7 @@ function Write-ePOWhere {
             if (@('and', 'or') -contains $Part.Name) {
                 $Return += ' ({0} {1})' -f $Part.Name, (Write-ePOWhere $Part.Value -Parent $Part.Name)
             } else {
-                $Return += ' {1}' -f $Part.Name, (Write-ePOWhere $Part.Value -Parent $Part.Name)
+                $Return += ' {0}' -f (Write-ePOWhere $Part.Value -Parent $Part.Name)
             }
         } else {
             $Value = $Part.Value
