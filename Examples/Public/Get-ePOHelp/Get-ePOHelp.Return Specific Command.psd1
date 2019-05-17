@@ -1,9 +1,9 @@
 @{
-    File       = 'CoreHelpSpecific_Json.html'
+    File       = 'core.help.Specific.html'
     Parameters = @{
         Command = 'Test.Command2'
     }
     Output     = @{
-        Type = 'System.Object[]'
+        Type = 'ePOHelp'
     }
 }

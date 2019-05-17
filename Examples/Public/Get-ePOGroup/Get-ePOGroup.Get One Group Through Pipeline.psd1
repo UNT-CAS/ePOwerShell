@@ -2,8 +2,8 @@
     Parameters = @{
         GroupName = 'Group1'
     }
+    Pipeline   = $True
     Output     = @{
-        Type    = 'System.Object[]'
-        Count   = 1
+        Type = 'ePOGroup'
     }
 }

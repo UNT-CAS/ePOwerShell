@@ -77,15 +77,13 @@ function Get-ePOGroup {
                 $ePOGroups = Invoke-ePORequest @Request
 
                 foreach ($ePOGroup in $ePOGroups) {
-                    $GroupObject = [ePOGroup]::new()
-                    $GroupObject.Name = $ePOGroup.groupPath
-                    $GroupObject.ID   = $ePOGroup.groupId
+                    $GroupObject = [ePOGroup]::new($ePOGroup.groupPath, $ePOGroup.groupId)
                     [Void] $Found.Add($GroupObject)
                 }
             }
         } catch {
             Write-Information $_ -Tags Exception
-            Throw
+            Throw $_
         }
     }
 

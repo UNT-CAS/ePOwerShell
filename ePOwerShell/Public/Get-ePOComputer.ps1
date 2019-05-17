@@ -147,7 +147,7 @@ function Get-ePOComputer {
 
                 "MACAddress" {
                     $MACAddress = $MACAddress.ToUpper()
-    
+
                     switch -Regex ($MACAddress) {
                         '^([0-9a-f]{2}:){5}([0-9a-f]{2})$' {
                             Write-Verbose 'Delimiter: Colons'
@@ -205,10 +205,6 @@ function Get-ePOComputer {
                 "All" {
                     $Request.Query.searchText = ''
                 }
-
-                default {
-                    Throw "Invalid option. Please specify a parameter."
-                }
             }
 
             if ($PSCmdlet.ParameterSetName -eq 'ComputerName' -and $Computer -is [ePOComputer]) {
@@ -217,7 +213,7 @@ function Get-ePOComputer {
             } else {
                 Write-Verbose 'Either not pipelined, or pipeline object is not an ePOComputer object'
                 $ePOComputers = Invoke-ePORequest @Request
-    
+
                 foreach ($ePOComputer in $ePOComputers) {
                     if ($PSCmdlet.ParameterSetName -eq 'ComputerName') {
                         if ($ForceWildcardHandling) {

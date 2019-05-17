@@ -5,7 +5,7 @@
     .DESCRIPTION
         Fetches all commands from the ePOs core.help menu. If a command is specified, the function will
         only return a single command. Each command is converted to an ePOHelp object containing 3 values:
-        
+
             * Command
             * Parameters
             * Description

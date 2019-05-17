@@ -1,12 +1,29 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
-. $testFile
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[System.String]    $FunctionType         = 'Public'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePORequest.ps1') -Resolve)
+While (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+    $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
+}
+
+[IO.DirectoryInfo] $ProjectDirectory     = Join-Path -Path $ProjectRoot -ChildPath $ProjectDirectoryName -Resolve
+[IO.DirectoryInfo] $PublicDirectory      = Join-Path -Path $ProjectDirectory -ChildPath 'Public' -Resolve 
+[IO.DirectoryInfo] $PrivateDirectory     = Join-Path -Path $ProjectDirectory -ChildPath 'Private' -Resolve 
+[IO.DirectoryInfo] $ClassesDirectory     = Join-Path -Path $ProjectDirectory -ChildPath 'Classes' -Resolve 
+[IO.DirectoryInfo] $ExampleDirectory     = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
+[IO.DirectoryInfo] $ExampleDirectory     = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
+if ($FunctionType -eq 'Private') {
+    [IO.FileInfo]  $TestFile             = Join-Path -Path $PrivateDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
+} else {
+    [IO.FileInfo]  $TestFile             = Join-Path -Path $PublicDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
+}
+
+. $TestFile
+Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
+Get-ChildItem -Path $PrivateDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
+Get-ChildItem -Path $ClassesDirectory -Filter '*.ps1' | ForEach-Object { . $_.FullName }
 
 [System.Collections.ArrayList] $tests = @()
 $examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
@@ -21,7 +38,11 @@ foreach ($example in $examples) {
         $test.Add($exampleData.Name, $exampleData.Value) | Out-Null
     }
 
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
+    if ($Test.ePOGroupObject) {
+        $Test.Add('ePOGroup', ([ePOGroup]::new('Test', '123')))
+    }
+
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
     $tests.Add($test) | Out-Null
 }
 
@@ -47,11 +68,7 @@ Describe $testFile.Name {
                 $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter 'AllGroups_Json.html' -File
             }
 
-            if ($Test.Parameters.PassThru) {
-                return (Get-Content $File.FullName | Out-String).Substring(3).Trim()
-            } else {
-                return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-            }
+            return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
         }
 
         Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
@@ -60,29 +77,25 @@ Describe $testFile.Name {
             [hashtable] $parameters = $test.Parameters
 
             if ($Test.Output.Throws) {
-                It "Find-ePOwerShellGroups Throws" {
-                    { $script:RequestResponse = Find-ePOwerShellGroups @parameters } | Should Throw
+                It "Get-ePOGroup Throws" {
+                    { $script:RequestResponse = Get-ePOGroup @parameters } | Should Throw
                 }
                 continue
             }
 
-            if (
-                ($Test.Pipeline) -and
-                (-not ($parameters.PassThru))
-            ) {
-                It "Find-ePOwerShellGroups through pipeline" {
-                    { $script:RequestResponse = $Parameters.GroupName | Find-ePOwerShellGroups } | Should Not Throw
-                }
-            } elseif (
-                ($Test.Pipeline) -and
-                ($parameters.PassThru)
-            ) {
-                It "Find-ePOwerShellGroups through pipeline" {
-                    { $script:RequestResponse = $Parameters.GroupName | Find-ePOwerShellGroups -PassThru } | Should Not Throw
+            if ($Test.Pipeline) {
+                if ($Test.ePOGroupObject) {
+                    It "Get-ePOGroup through pipelined ePOGroup" {
+                        { $script:RequestResponse = $Test.ePOGroup | Get-ePOGroup } | Should Not Throw
+                    }
+                } else {
+                    It "Get-ePOGroup through pipelined Name" {
+                        { $script:RequestResponse = $Parameters.GroupName | Get-ePOGroup } | Should Not Throw
+                    }
                 }
             } else {
-                It "Find-ePOwerShellGroups" {
-                    { $script:RequestResponse = Find-ePOwerShellGroups @parameters } | Should Not Throw
+                It "Get-ePOGroup" {
+                    { $script:RequestResponse = Get-ePOGroup @parameters } | Should Not Throw
                 }
             }
 
@@ -92,10 +105,6 @@ Describe $testFile.Name {
                 } else {
                     $script:RequestResponse.GetType().FullName | Should Be $test.Output.Type
                 }
-            }
-
-            It "Correct Count: $($test.Output.Count)" {
-                $script:RequestResponse.Count | Should Be $test.Output.Count
             }
         }
     }
