@@ -5,10 +5,10 @@
         Username = "Domain\Username"
         Password = "ThisIsAPassword"
     }
-    Parameters = @{
+    Parameters  = @{
         Server = "My-ePO-Server-2.domain.com"
     }
-    Output     = @{
+    Output      = @{
         Type = 'System.Void'
     }
 }

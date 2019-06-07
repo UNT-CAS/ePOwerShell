@@ -111,13 +111,6 @@ Describe $testFile.Name {
         Context $test.Name {
             [hashtable] $parameters = $test.Parameters
 
-            if ($Test.Output.Throws) {
-                It "Get-ePOComputer Throws" {
-                    { $script:RequestResponse = Get-ePOComputer @parameters } | Should Throw
-                }
-                continue
-            }
-
             if ($Test.Pipeline) {
                 if ($Test.UseePOComputer) {
                     It "Get-ePOComputer through pipeline" {
@@ -134,19 +127,26 @@ Describe $testFile.Name {
                 }
             }
 
-            It "Output Type: $($test.Output.Type)" {
-                if ($test.Output.Type -eq 'System.Void') {
+            if ($Test.Output.Throws) {
+                It "Output Type: Should not return" {
                     $script:RequestResponse | Should BeNullOrEmpty
-                } else {
-                    $script:RequestResponse.GetType().FullName | Should Be $test.Output.Type
+                }
+            } else {
+                It "Output Type: $($test.Output.Type)" {
+                    if ($test.Output.Type -eq 'System.Void') {
+                        $script:RequestResponse | Should BeNullOrEmpty
+                    } else {
+                        $script:RequestResponse.GetType().FullName | Should Be $test.Output.Type
+                    }
+                }
+
+                It "Computer Type: ePOComputer" {
+                    foreach ($Computer in $script:RequestResponse) {
+                        $Computer.GetType().Fullname | Should Be 'ePOComputer'
+                    }
                 }
             }
 
-            It "Computer Type: ePOComputer" {
-                foreach ($Computer in $script:RequestResponse) {
-                    $Computer.GetType().Fullname | Should Be 'ePOComputer'
-                }
-            }
         }
     }
 }

@@ -52,19 +52,12 @@ function Get-ePOGroup {
         $ForceWildcardHandling
     )
 
-    begin {
-        try {
-            [System.Collections.ArrayList] $Found = @()
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    begin {}
 
     process {
         try {
             if ($Group -is [ePOGroup]) {
-                [Void] $Found.Add($Group)
+                Write-Output $Group
             } else {
                 $Request = @{
                     Name  = 'system.findGroups'
@@ -78,7 +71,7 @@ function Get-ePOGroup {
 
                 foreach ($ePOGroup in $ePOGroups) {
                     $GroupObject = [ePOGroup]::new($ePOGroup.groupPath, $ePOGroup.groupId)
-                    [Void] $Found.Add($GroupObject)
+                    Write-Output $GroupObject
                 }
             }
         } catch {
@@ -87,12 +80,5 @@ function Get-ePOGroup {
         }
     }
 
-    end {
-        try {
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

@@ -67,8 +67,6 @@ function Invoke-ePOQuery {
 
     begin {
         try {
-            [System.Collections.ArrayList] $Results = @()
-
             switch ($PSCmdlet.ParameterSetName) {
                 'PremadeQuery' {
                     $Request = @{
@@ -149,19 +147,12 @@ function Invoke-ePOQuery {
             }
 
             Write-Debug "Results: $($QueryResults | Out-String)"
-            [Void] $Results.Add($QueryResults)
+            Write-Output $QueryResults
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_
         }
     }
 
-    end {
-        try {
-            Write-Output $Results
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

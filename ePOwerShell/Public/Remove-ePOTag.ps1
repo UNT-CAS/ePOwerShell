@@ -28,7 +28,7 @@
 #>
 
 function Remove-ePOTag {
-    [CmdletBinding(SupportsShouldProcess = $True)]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "High")]
     [Alias('Clear-ePOwerShellTag', 'Clear-ePOTag')]
     param (
         <#
@@ -41,8 +41,8 @@ function Remove-ePOTag {
                 This parameter can be provided through the pipeline
         #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        [Alias('ComputerName')]
-        $Computer,
+        [Alias('Computer', 'cn', 'Name')]
+        $ComputerName,
 
         <#
             .PARAMETER Tag
@@ -54,8 +54,8 @@ function Remove-ePOTag {
                 This parameter can be provided through the pipeline
         #>
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
-        [Alias('TagName')]
-        $Tag
+        [Alias('Tag')]
+        $TagName
     )
 
     begin {
@@ -75,22 +75,22 @@ function Remove-ePOTag {
 
     process {
         try {
-            foreach ($C in $Computer) {
-                foreach ($T in $Tag) {
-                    if ($C -is [ePOComputer]) {
-                        $Request.Query.names = $C.ComputerName
-                    } elseif ($C -is [ePOTag]) {
-                        $Request.Query.tagName = $C.Name
+            foreach ($Computer in $ComputerName) {
+                foreach ($Tag in $TagName) {
+                    if ($Computer -is [ePOComputer]) {
+                        $Request.Query.names = $Computer.ComputerName
+                    } elseif ($Computer -is [ePOTag]) {
+                        $Request.Query.tagName = $Computer.Name
                     } else {
-                        $Request.Query.names = $C
+                        $Request.Query.names = $Computer
                     }
 
-                    if ($T -is [ePOTag]) {
-                        $Request.Query.tagName = $T.Name
+                    if ($Tag -is [ePOTag]) {
+                        $Request.Query.tagName = $Tag.Name
                     } elseif ($T -is [ePOComputer]) {
-                        $Request.Query.names = $T.ComputerName
+                        $Request.Query.names = $Tag.ComputerName
                     } else {
-                        $Request.Query.tagName = $T
+                        $Request.Query.tagName = $Tag
                     }
 
                     Write-Verbose ('Computer Name: {0}' -f $Request.Query.names)
@@ -100,18 +100,19 @@ function Remove-ePOTag {
                         $Result = Invoke-ePORequest @Request
 
                         if ($Result -eq 0) {
-                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $T, $C)
+                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Computer)
                         } elseif ($Result -eq 1) {
-                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $T, $C)
+                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Computer)
                         } else {
-                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $T, $C, $Result) -ErrorAction Stop
+                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Computer, $Result)
                         }
                     }
                 }
             }
         } catch {
             Write-Information $_ -Tags Exception
-            Throw $_
         }
     }
+
+    end {}
 }

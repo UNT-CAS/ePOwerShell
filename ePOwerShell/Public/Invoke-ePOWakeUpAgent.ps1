@@ -21,7 +21,7 @@ function Invoke-ePOWakeUpAgent {
                 This parameter can be passed in from the pipeline.
         #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        $Computer,
+        $ComputerName,
 
         <#
             .PARAMETER ForceFullPolicyUpdate
@@ -75,17 +75,19 @@ function Invoke-ePOWakeUpAgent {
         $RandomMinutes = 0
     )
 
+    begin {}
+
     process {
         try {
-            foreach ($Comp in $Computer) {
-                if ($Comp -is [ePOComputer]) {
+            foreach ($Computer in $ComputerName) {
+                if ($Computer -is [ePOComputer]) {
                     Write-Verbose "Computer was pipelined with an ePOComputer object"
-                    $ePOComputer = $Comp
+                    $ePOComputer = $Computer
                 } else {
-                    Write-Verbose "Confirming computer is in ePO: $Comp"
+                    Write-Verbose "Confirming computer is in ePO: $Computer"
 
-                    if (-not ($ePOComputer = Get-ePOComputer -Computer $Comp)) {
-                        Write-Error ("Failed to find computer system '{0}' in ePO" -f $Comp) -ErrorAction Stop
+                    if (-not ($ePOComputer = Get-ePOComputer -Computer $Computer)) {
+                        Write-Error ("Failed to find computer system '{0}' in ePO" -f $Computer) -ErrorAction Stop
                         continue
                     }
                 }
@@ -93,11 +95,11 @@ function Invoke-ePOWakeUpAgent {
                 Write-Verbose ('Found computer system in ePO: {0}' -f ($ePOComputer | Out-String))
 
                 if (-not ($ePOComputer.ManagedState)) {
-                    Write-Error ('Computer System is not in a managed state: {0}' -f $Comp) -ErrorAction Stop
+                    Write-Error ('Computer System is not in a managed state: {0}' -f $Computer) -ErrorAction Stop
                     continue
                 }
 
-                Write-Verbose ('Computer System is in a managed state: {0}' -f $Comp)
+                Write-Verbose ('Computer System is in a managed state: {0}' -f $Computer)
 
                 $Request = @{
                     Name  = 'system.wakeupAgent'
@@ -123,16 +125,17 @@ function Invoke-ePOWakeUpAgent {
                 if ([Boolean]$Results.Completed) {
                     Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName)
                 } elseif ([Boolean]$Results.Failed) {
-                    Write-Error ('Failed to wake up {0}' -f $ePOComputer.ComputerName) -ErrorAction Stop
+                    Write-Error ('Failed to wake up {0}' -f $ePOComputer.ComputerName)
                 } elseif ([Boolean]$Results.Expired) {
-                    Write-Error ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName) -ErrorAction Stop
+                    Write-Error ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName)
                 } else {
-                    Write-Error ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName) -ErrorAction Stop
+                    Write-Error ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName)
                 }
             }
         } catch {
             Write-Information $_ -Tags Exception
-            Throw $_
         }
     }
+
+    end {}
 }

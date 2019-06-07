@@ -2,7 +2,7 @@
     Parameters = @{
         Tag = 'DoesNotExist'
     }
-    Output = @{
+    Output     = @{
         Throws = $True
     }
 }

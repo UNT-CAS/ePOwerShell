@@ -124,8 +124,6 @@ function Get-ePOComputer {
 
     begin {
         try {
-            [System.Collections.ArrayList] $Found = @()
-
             $Request = @{
                 Name  = 'system.find'
                 Query = @{
@@ -209,41 +207,28 @@ function Get-ePOComputer {
 
             if ($PSCmdlet.ParameterSetName -eq 'ComputerName' -and $Computer -is [ePOComputer]) {
                 Write-Verbose 'Using pipelined ePOComputer object'
-                [Void] $Found.Add($Computer)
+                Write-Output $Computer
             } else {
                 Write-Verbose 'Either not pipelined, or pipeline object is not an ePOComputer object'
                 $ePOComputers = Invoke-ePORequest @Request
 
                 foreach ($ePOComputer in $ePOComputers) {
+                    $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
                     if ($PSCmdlet.ParameterSetName -eq 'ComputerName') {
                         if ($ForceWildcardHandling) {
-                            [Void] $Found.Add((ConvertTo-ePOComputer $ePOComputer))
+                            Write-Output $ePOComputerObject
                         } elseif ($ePOComputer.'EPOComputerProperties.ComputerName' -eq $Computer) {
-                            [Void] $Found.Add((ConvertTo-ePOComputer $ePOComputer))
+                            Write-Output $ePOComputerObject
                         }
                     } else {
-                        [Void] $Found.Add((ConvertTo-ePOComputer $ePOComputer))
+                        Write-Output $ePOComputerObject
                     }
                 }
             }
         } catch {
             Write-Information $_ -Tags Exception
-            Throw $_
         }
     }
 
-    end {
-        try {
-            if (-not ($Found)) {
-                Write-Error "Failed to find any ePO Systems" -ErrorAction Stop
-            }
-
-            Write-Verbose "Results: $($Found | ConvertTo-Json)"
-
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

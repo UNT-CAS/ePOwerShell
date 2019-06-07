@@ -17,7 +17,7 @@
 #>
 
 function Update-ePOConfig {
-    [CmdletBinding(SupportsShouldProcess = $True)]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Low")]
     [Alias('Update-ePOwerShellServer', 'Update-ePOServer')]
     param (
         <#
@@ -39,7 +39,14 @@ function Update-ePOConfig {
                 Credentials with access to the ePO server
         #>
         [System.Management.Automation.PSCredential]
-        $Credentials = ($Script:ePOwerShell.Credentials)
+        $Credentials = ($Script:ePOwerShell.Credentials),
+
+        <#
+            .PARAMETER AllowSelfSignedCerts
+                Specifies if you'd like to allow ePOwerShell to allow self signed certificates on the ePO server
+        #>
+        [Switch]
+        $AllowSelfSignedCerts = ($Script:ePOwerShell.AllowSelfSignedCerts)
     )
 
     if (-not ($script:ePOwerShell)) {
@@ -47,9 +54,10 @@ function Update-ePOConfig {
     }
 
     $ePOwerShellVariables = @{
-        Server      = $Server
-        Port        = $Port
-        Credentials = $Credentials
+        Server               = $Server
+        Port                 = $Port
+        Credentials          = $Credentials
+        AllowSelfSignedCerts = $AllowSelfSignedCerts
     }
 
     Write-Debug "Variables: $($ePOwerShellVariables | Out-String)"

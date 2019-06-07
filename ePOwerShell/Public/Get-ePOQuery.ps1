@@ -20,8 +20,6 @@ function Get-ePOQuery {
 
     begin {
         try {
-            [System.Collections.ArrayList] $Found = @()
-
             $Request = @{
                 Name  = 'core.listQueries'
                 Query = @{}
@@ -40,7 +38,8 @@ function Get-ePOQuery {
             }
 
             foreach ($ePOQuery in $ePOQueries) {
-                [Void] $Found.Add((ConvertTo-ePOQuery $ePOQuery))
+                $ePOQueryObject = ConvertTo-ePOQuery $ePOQuery
+                Write-Output $ePOQueryObject
             }
         } catch {
             Write-Information $_ -Tags Exception
@@ -48,13 +47,5 @@ function Get-ePOQuery {
         }
     }
 
-    end {
-        try {
-            Write-Verbose "Results: $($Found | Out-String)"
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

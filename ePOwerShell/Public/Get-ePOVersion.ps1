@@ -8,6 +8,7 @@ function Get-ePOVersion {
     [OutputType([System.String])]
     param ()
 
+    begin {}
     process {
         try {
             $Request = @{
@@ -15,12 +16,15 @@ function Get-ePOVersion {
             }
 
             Write-Debug "Request: $($Request | ConvertTo-Json)"
-            $Response = Invoke-ePORequest @Request
+            if (-not ($Response = Invoke-ePORequest @Request)) {
+                Throw 'Failed to determine ePO version'
+            }
 
-            Write-Output $Response
+            Write-Output ($Response -as [System.Version])
         } catch {
             Write-Information $_ -Tags Exception
-            Throw $_
         }
     }
+
+    end {}
 }

@@ -51,8 +51,6 @@ function Get-ePOHelp {
                     $Request.Query.Add('Command', $Command)
                 }
             }
-
-            [System.Collections.ArrayList] $Commands = @()
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_
@@ -84,7 +82,7 @@ function Get-ePOHelp {
                     $HelpObject.Description = $Remainder
                 }
 
-                [Void] $Commands.Add($HelpObject)
+                Write-Output $HelpObject
             }
         } catch {
             Write-Information $_ -Tags Exception
@@ -92,12 +90,5 @@ function Get-ePOHelp {
         }
     }
 
-    end {
-        try {
-            Write-Output $Commands
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

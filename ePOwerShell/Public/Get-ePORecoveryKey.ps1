@@ -40,8 +40,6 @@ function Get-ePORecoveryKey {
 
     begin {
         try {
-            [System.Collections.ArrayList] $Found = @()
-
             $Request = @{
                 Name        = 'mne.recoverMachine'
                 Query       = @{
@@ -86,17 +84,10 @@ function Get-ePORecoveryKey {
 
                 $RecoveryKey = Invoke-ePORequest @Request
                 $RecoveryKeyObject = [ePORecoveryKey]::new($Comp.ComputerName, $MountPoint.'MneVolumes.MountPoint', $RecoveryKey)
-                [Void] $Found.Add($RecoveryKeyObject)
+                Write-Output $RecoveryKeyObject
             }
         }
     }
 
-    end {
-        try {
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

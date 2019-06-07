@@ -49,14 +49,7 @@ function Get-ePOGroupMember {
         $Recurse
     )
 
-    begin {
-        try {
-            [System.Collections.ArrayList] $Found = @()
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    begin {}
 
     process {
         try {
@@ -79,7 +72,8 @@ function Get-ePOGroupMember {
             $ePOGroupMembers = Invoke-ePORequest @Request
 
             foreach ($ePOGroupMember in $ePOGroupMembers) {
-                [Void] $Found.Add((ConvertTo-ePOComputer $ePOGroupMember))
+                $ePOGroupMemberObject = ConvertTo-ePOComputer $ePOGroupMember
+                Write-Output $ePOGroupMemberObject
             }
         } catch {
             Write-Information $_ -Tags Exception
@@ -87,12 +81,5 @@ function Get-ePOGroupMember {
         }
     }
 
-    end {
-        try {
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

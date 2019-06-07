@@ -23,7 +23,7 @@
 function Get-ePOTag {
     [CmdletBinding()]
     [Alias('Find-ePOwerShellTag','Find-ePOTag')]
-    [OutputType([System.Collections.ArrayList])]
+    [OutputType([System.Object[]])]
     param (
         <#
             .PARAMETER Tag
@@ -39,20 +39,13 @@ function Get-ePOTag {
         $Tag = ''
     )
 
-    begin {
-        try {
-            [System.Collections.ArrayList] $Found = @()
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    begin {}
 
     process {
         try {
             if ($Tag -is [ePOTag]) {
                 Write-Verbose 'Using pipelined ePOTag object'
-                [Void] $Found.Add($Tag)
+                Write-Output $Tag
             } else {
                 Write-Verbose 'Either not pipelined, or pipeline object is not an ePOTag object'
                 $Request = @{
@@ -68,27 +61,14 @@ function Get-ePOTag {
                 foreach ($ePOTag in $ePOTags) {
                     if (-not ($Tag) -or ($Tag -eq $ePOTag.tagName)) {
                         $TagObject = [ePOTag]::new($ePOTag.tagName, $ePOTag.tagId, $ePOTag.tagNotes)
-                        [Void] $Found.Add($TagObject)
+                        Write-Output $TagObject
                     }
                 }
             }
         } catch {
             Write-Information $_ -Tags Exception
-            Throw $_
         }
     }
 
-    end {
-        try {
-            if (-not ($Found)) {
-                Write-Error 'Failed to find any ePO Tags' -ErrorAction Stop
-            }
-
-            Write-Debug "Results: $($Found | Out-String)"
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }

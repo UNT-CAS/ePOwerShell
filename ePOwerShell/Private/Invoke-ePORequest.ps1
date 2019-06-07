@@ -58,9 +58,10 @@ function Invoke-ePORequest {
         ErrorAction     = 'Stop'
     }
 
-    if ($PSVersionTable.PSVersion.Major -le 5) {
-        Write-Verbose 'PSVersion is -le 5'
-        Write-Debug 'Allowing self signed certs'
+    if ($Script:ePOwerShell.AllowSelfSignedCerts) {
+        if ($PSVersionTable.PSVersion.Major -le 5) {
+            Write-Verbose 'PSVersion is -le 5'
+            Write-Debug 'Allowing self signed certs'
 
 Add-Type @"
 using System.Net;
@@ -73,10 +74,11 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
     }
 }
 "@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-    } else {
-        Write-Verbose 'PSVersion is -gt 5'
-        [Void] $InvokeWebRequest.Add('SkipCertificateCheck', $True)
+            [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+        } else {
+            Write-Verbose 'PSVersion is -gt 5'
+            [Void] $InvokeWebRequest.Add('SkipCertificateCheck', $True)
+        }
     }
 
     Write-Verbose ('Request: {0}' -f ($InvokeWebRequest | ConvertTo-Json))

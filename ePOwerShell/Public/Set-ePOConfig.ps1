@@ -56,6 +56,13 @@ function Set-ePOConfig {
         $Port,
 
         <#
+            .PARAMETER AllowSelfSignedCerts
+                Specifies if you'd like to allow ePOwerShell to allow self signed certificates on the ePO server
+        #>
+        [Switch]
+        $AllowSelfSignedCerts = ($Script:ePOwerShell.AllowSelfSignedCerts),
+
+        <#
             .PARAMETER ePOwerShellSettings
                 Specifies a path to a json containing all information necessary to connect to an ePO server
         #>
@@ -116,8 +123,9 @@ function Set-ePOConfig {
         }
         'ManualEntry' {
             $ePOwerShellVariables = @{
-                Server      = $Server
-                Credentials = $Credentials
+                Server               = $Server
+                Credentials          = $Credentials
+                AllowSelfSignedCerts = $AllowSelfSignedCerts
             }
 
             if ($Port) {

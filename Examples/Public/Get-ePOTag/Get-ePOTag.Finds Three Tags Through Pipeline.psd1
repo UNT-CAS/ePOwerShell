@@ -6,7 +6,7 @@
             'Tag3'
         )
     }
-    Pipeline = $True
+    Pipeline   = $True
     Output     = @{
         Type  = 'System.Object[]'
         Count = 3

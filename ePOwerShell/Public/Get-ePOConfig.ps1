@@ -24,13 +24,7 @@ function Get-ePOConfig {
                 Write-Error 'ePO Server is not configured yet. Run Set-ePOConfig first' -ErrorAction Stop
             }
 
-            $ePOwerShellVariables = @{
-                Port        = $Script:ePOwerShell.Port
-                Server      = $Script:ePOwerShell.Server
-                Credentials = $Script:ePOwerShell.Credentials
-            }
-
-            Write-Output $ePOwerShellVariables
+            Write-Output $Script:ePOwerShell
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_

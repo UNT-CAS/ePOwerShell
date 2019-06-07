@@ -19,8 +19,6 @@ function Get-ePOTable {
 
     begin {
         try {
-            [System.Collections.ArrayList] $Found = @()
-
             $Request = @{
                 Name  = 'core.listTables'
                 Query = @{}
@@ -35,25 +33,16 @@ function Get-ePOTable {
         try {
             Write-Verbose "Request: $($Request | ConvertTo-Json)"
             if (-not ($ePOQueries = Invoke-ePORequest @Request)) {
-                Throw "Failed to find any ePO queries"
+                Write-Error "Failed to find any ePO queries"
             }
 
             foreach ($ePOTable in $ePOQueries) {
-                [Void] $Found.Add($ePOTable)
+                Write-Output $ePOTable
             }
         } catch {
             Write-Information $_ -Tags Exception
-            Throw $_
         }
     }
 
-    end {
-        try {
-            Write-Verbose "Results: $($Found | Out-String)"
-            Write-Output $Found
-        } catch {
-            Write-Information $_ -Tags Exception
-            Throw $_
-        }
-    }
+    end {}
 }
