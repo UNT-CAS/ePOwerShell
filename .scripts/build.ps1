@@ -8,7 +8,7 @@
         May do different tasks depending on the environment it's running in. Read the code for the details on that.
     .Example
         # Run this Build Script:
-        
+
         Invoke-psake .\.build.ps1
     .Example
         # Skip Bootstrap
@@ -20,7 +20,7 @@
         Invoke-psake .\.build.ps1 -Properties @{'thisModuleName'='OtherModuleName'}
     .Example
         # Run this Build Script with a parameters/properties that's not otherwise defined:
-        
+
         Invoke-psake .\.build.ps1 -Properties @{'Version'=[version]'1.2.3'}
 #>
 $ErrorActionPreference = 'Stop'
@@ -63,7 +63,7 @@ Properties {
     $BuildOutput = $script:BuildOutput
 
     # Manipulate the Parameters for usage:
-    
+
     $script:Manifest.Copyright = $script:Manifest.Copyright -f [DateTime]::Now.Year
     $script:Manifest.GUID = (New-Guid).Guid
 
@@ -177,7 +177,7 @@ Task InstallModule -Description "Prepare and Setup/Install Module" -Depends Setu
 Task TestModule -Description "Run Pester Tests and CoeCoverage" -Depends InstallModule {
     Write-Host "[BUILD TestModule] Import-Module ${env:Temp}\CodeCovIo.psm1" -ForegroundColor Magenta
     Import-Module ${env:Temp}\CodeCovIo.psm1
-    
+
     $invokePester = @{
         Path = "${PSScriptRootParent}\Tests"
         CodeCoverage = (Get-ChildItem "${PSScriptRootParent}\${thisModuleName}" -Recurse -Include '*.psm1', '*.ps1').FullName
@@ -189,7 +189,7 @@ Task TestModule -Description "Run Pester Tests and CoeCoverage" -Depends Install
     Write-Host "[BUILD TestModule] Invoke-Pester $($invokePester | ConvertTo-Json)" -ForegroundColor Magenta
     $res = Invoke-Pester @invokePester
     # Write-Host "[BUILD TestModule] Pester Result: $($res | ConvertTo-Json)" -ForegroundColor Magenta
-    
+
     $exportCodeCovIoJson = @{
         CodeCoverage = $res.CodeCoverage
         RepoRoot     = $PSScriptRootParent
@@ -197,7 +197,7 @@ Task TestModule -Description "Run Pester Tests and CoeCoverage" -Depends Install
     }
     Write-Host "[BUILD TestModule] Export-CodeCovIoJson: $($exportCodeCovIoJson | ConvertTo-Json)" -ForegroundColor Magenta
     Export-CodeCovIoJson @exportCodeCovIoJson
-    
+
     Write-Host "[BUILD TestModule] Uploading CodeCov.io Report ..." -ForegroundColor Magenta
     Push-Location $script:PSScriptRootParent
     & "${env:Temp}\Codecov\codecov.exe" -f $exportCodeCovIoJson.Path
