@@ -26,7 +26,7 @@ function Invoke-ePORequest {
         try {
             Set-ePOConfig
         } catch {
-            Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOwerShellServer first!'
+            Throw [System.Management.Automation.ParameterBindingException] 'ePO Server is not configured yet. Run Set-ePOConfig first!'
         }
     }
 

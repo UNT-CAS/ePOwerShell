@@ -11,19 +11,19 @@
         ```powershell
         $Tag = Get-ePOTag -Tag 'Tag1'
         $Computer = Get-ePOComputer -Computer 'Computer1'
-        Set-ePOwerShellTag -Computer $Computer -Tag $Tag
+        Set-ePOTag -Computer $Computer -Tag $Tag
         ```
 
     .EXAMPLE
         Set one tag on two computers
         ```powershell
-        Set-ePOwerShellTag @(Computer1, Computer2) Tag1
+        Set-ePOTag @(Computer1, Computer2) Tag1
         ```
 
     .EXAMPLE
         Set two tags to a single computer:
         ```powershell
-        Set-ePOwerShellTag Computer1 @(Tag1, Tag2)
+        Set-ePOTag Computer1 @(Tag1, Tag2)
         ```
 #>
 

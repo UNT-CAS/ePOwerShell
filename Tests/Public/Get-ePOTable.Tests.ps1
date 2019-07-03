@@ -53,8 +53,6 @@ Describe $FunctionName {
                     { $script:RequestResponse = Get-ePOTable } | Should not Throw
                 }
 
-                Write-Host "Type: $($script:RequestResponse.GetType().FullName)"
-
                 It "Output Type: $($Test.Output.Type)" {
                     $script:RequestResponse.GetType().FullName | Should Be $Test.Output.Type
                 }

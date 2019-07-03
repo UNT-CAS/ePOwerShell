@@ -62,9 +62,6 @@ Properties {
     $PSScriptRootParent = $script:PSScriptRootParent
     $ManifestJsonFile = $script:ManifestJsonFile
     $BuildOutput = $script:BuildOutput
-    # $PesterResults = $script:PesterResults
-
-    # Manipulate the Parameters for usage:
 
     $script:Manifest.Copyright = $script:Manifest.Copyright -f [DateTime]::Now.Year
     $script:Manifest.GUID = (New-Guid).Guid
@@ -99,7 +96,16 @@ Task Clean -Description 'Cleans the build environment' {
 
 Task CompileManifest -Description 'Created the module .psd1 manifest file' -Depends Clean {
     $script:Manifest.Path = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psd1"
-    $script:Manifest.ModuleVersion = $script:Version
+    if ($env:APPVEYOR_REPO_TAG -eq 'true') {
+        try {
+            [Version] $env:APPVEYOR_REPO_TAG_NAME
+            $script:Manifest.ModuleVersion = $env:APPVEYOR_REPO_TAG_NAME
+        } catch {
+            $script:Manifest.ModuleVersion = $script:Version
+        }
+    } else {
+        $script:Manifest.ModuleVersion = $script:Version
+    }
     Write-Host "[BUILD SetupModule] New-ModuleManifest: $($script:Manifest | ConvertTo-Json -Compress)" -ForegroundColor Magenta
     New-ModuleManifest @script:Manifest
 }
@@ -148,7 +154,7 @@ Task ImportModule -Description 'Imports the compiled module' -Depends CompileMod
 
 Task InvokePester -Description 'Runs Pester tests against compiled module' -Depends ImportModule {
     $InvokePester = @{
-        Path         = "${PSScriptRootParent}\Tests\Public\Get-ePOTable.Tests.ps1"
+        Path         = "${PSScriptRootParent}\Tests\"
         CodeCoverage = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1"
         PassThru     = $True
         OutputFormat = 'NUnitXml'
@@ -161,19 +167,14 @@ Task InvokePester -Description 'Runs Pester tests against compiled module' -Depe
         Throw "$($Pester.FailedCount) tests failed."
     }
 
-    # Write-Host ("Members: $($Pester | ConvertTo-Json)")
-
     $Script:PesterResults.Add('CodeCoverage', $Pester.CodeCoverage)
     $Script:PesterResults.Add('OutputFile', $InvokePester.OutputFile)
 
-    Write-Host "Pester Output Path: $($PesterResults.OutputFile)"
 }
 
 Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends InvokePester {
     Write-Host "[BUILD TestModule] Import-Module ${env:Temp}\CodeCovIo.psm1" -ForegroundColor Magenta
     Import-Module ${env:Temp}\CodeCovIo.psm1
-
-    Write-Host "Pester Results: $($PesterResults | ConvertTo-Json)"
 
     $exportCodeCovIoJson = @{
         CodeCoverage = $PesterResults.CodeCoverage

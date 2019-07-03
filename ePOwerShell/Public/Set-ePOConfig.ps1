@@ -13,9 +13,10 @@
         Set ePO config after reading settings from an Environment variable
         ```powershell
         $env:ePOwerShell = @{
-            Server      = 'My-ePO-Server.domain.com'
-            Port        = 1234
-            Credentials = (Get-Credential)
+            Server               = 'My-ePO-Server.domain.com'
+            Port                 = 1234
+            Credentials          = (Get-Credential)
+            AllowSelfSignedCerts = $True
         }
 
         Set-ePOConfig
