@@ -178,9 +178,15 @@ Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends In
 
     $exportCodeCovIoJson = @{
         CodeCoverage = $PesterResults.CodeCoverage
-        RepoRoot     = $PSScriptRootParent
+        RepoRoot     = $script:ParentModulePath
         Path         = ($PesterResults.OutputFile).Replace('.xml', '.json')
     }
+
+    # $exportCodeCovIoJson = @{
+    #     CodeCoverage = $PesterResults.CodeCoverage
+    #     RepoRoot     = $PSScriptRootParent
+    #     Path         = ($PesterResults.OutputFile).Replace('.xml', '.json')
+    # }
 
     Write-Host "[BUILD TestModule] Export-CodeCovIoJson: $($exportCodeCovIoJson | ConvertTo-Json)" -ForegroundColor Magenta
     Export-CodeCovIoJson @exportCodeCovIoJson
