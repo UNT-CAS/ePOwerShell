@@ -46,3 +46,5 @@ function Save-ePOConfig {
         Write-Information $_ -Tags Exception
     }
 }
+
+Export-ModuleMember -Function 'Save-ePOConfig'
