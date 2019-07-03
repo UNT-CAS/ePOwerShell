@@ -62,6 +62,7 @@ Properties {
     $PSScriptRootParent = $script:PSScriptRootParent
     $ManifestJsonFile = $script:ManifestJsonFile
     $BuildOutput = $script:BuildOutput
+    # $PesterResults = $script:PesterResults
 
     # Manipulate the Parameters for usage:
 
@@ -77,7 +78,6 @@ Properties {
     $script:SystemModuleLocation = "${PSModulePath1}\${script:Manifest_ModuleName}"
 
     $script:Version = [string](& "${PSScriptRootParent}\.scripts\version.ps1")
-    $PesterResults = $script:PesterResults
 }
 
 
@@ -148,7 +148,7 @@ Task ImportModule -Description 'Imports the compiled module' -Depends CompileMod
 
 Task InvokePester -Description 'Runs Pester tests against compiled module' -Depends ImportModule {
     $InvokePester = @{
-        Path         = "${PSScriptRootParent}\Tests\"
+        Path         = "${PSScriptRootParent}\Tests\Public\Get-ePOTable.Tests.ps1"
         CodeCoverage = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1"
         PassThru     = $True
         OutputFormat = 'NUnitXml'
@@ -161,18 +161,24 @@ Task InvokePester -Description 'Runs Pester tests against compiled module' -Depe
         Throw "$($Pester.FailedCount) tests failed."
     }
 
-    $PesterResults.Add('CodeCoverage', $Pester.CodeCoverage)
-    $PesterResults.Add('OutputFile', $Pester.OutputFile)
+    # Write-Host ("Members: $($Pester | ConvertTo-Json)")
+
+    $Script:PesterResults.Add('CodeCoverage', $Pester.CodeCoverage)
+    $Script:PesterResults.Add('OutputFile', $InvokePester.OutputFile)
+
+    Write-Host "Pester Output Path: $($PesterResults.OutputFile)"
 }
 
 Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends InvokePester {
     Write-Host "[BUILD TestModule] Import-Module ${env:Temp}\CodeCovIo.psm1" -ForegroundColor Magenta
     Import-Module ${env:Temp}\CodeCovIo.psm1
 
+    Write-Host "Pester Results: $($PesterResults | ConvertTo-Json)"
+
     $exportCodeCovIoJson = @{
         CodeCoverage = $PesterResults.CodeCoverage
         RepoRoot     = $PSScriptRootParent
-        Path         = ([string] $PesterResults.OutputFile).Replace('.xml', '.json')
+        Path         = ($PesterResults.OutputFile).Replace('.xml', '.json')
     }
 
     Write-Host "[BUILD TestModule] Export-CodeCovIoJson: $($exportCodeCovIoJson | ConvertTo-Json)" -ForegroundColor Magenta
@@ -185,7 +191,7 @@ Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends In
 
     Write-Host "[BUILD TestModule] Adding Results to Artifacts..." -ForegroundColor Magenta
     # (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Resolve-Path $invokePester.OutputFile))
-    Push-AppveyorArtifact (Resolve-Path $invokePester.OutputFile)
+    Push-AppveyorArtifact (Resolve-Path $PesterResults.OutputFile)
     Push-AppveyorArtifact (Resolve-Path $exportCodeCovIoJson.Path)
 }
 
