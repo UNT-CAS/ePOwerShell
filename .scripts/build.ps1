@@ -161,8 +161,8 @@ Task InvokePester -Description 'Runs Pester tests against compiled module' -Depe
         Throw "$($Pester.FailedCount) tests failed."
     }
 
-    $PesterResults.Add('CodeCoverage', $PesterResults.CodeCoverage)
-    $PesterResults.Add('OutputFile', $PesterResults.OutputFile)
+    $PesterResults.Add('CodeCoverage', $Pester.CodeCoverage)
+    $PesterResults.Add('OutputFile', $Pester.OutputFile)
 }
 
 Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends InvokePester {
