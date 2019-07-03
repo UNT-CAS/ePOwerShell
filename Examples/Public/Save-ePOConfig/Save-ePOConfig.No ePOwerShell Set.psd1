@@ -1,0 +1,5 @@
+@{
+    Output = @{
+        Throws = $True
+    }
+}
