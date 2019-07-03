@@ -1,70 +1,76 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
-. $testFile
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[System.String]    $FunctionType         = 'Public'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Initialize-ePOConfig.ps1') -Resolve)
-
-[System.Collections.ArrayList] $tests = @()
-$examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
-
-foreach ($example in $examples) {
-    [hashtable] $test = @{
-        Name       = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
-    }
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-
-    foreach ($exampleData in (Import-PowerShellDataFile -LiteralPath $example.FullName).GetEnumerator()) {
-        $test.Add($exampleData.Name, $exampleData.Value) | Out-Null
-    }
-
-    if ($Test.UpdatingCredentials) {
-        $SuperSecretPassword = ConvertTo-SecureString $test.Credentials.Password -AsPlainText -Force
-        $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($Test.Credentials.Username, $SuperSecretPassword)
-        if (-not ($test.Parameters)) {
-            $Test.Parameters = @{}
-        }
-    
-        [void]$test.Parameters.Add('Credentials', $Credentials)
-    }
-
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-    $tests.Add($test) | Out-Null
+while (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+    $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
 }
 
-Describe $testFile.Name {
-    foreach ($test in $tests) {
-        Remove-Variable -Scope 'Script' -Name 'ePOwerShell' -Force -ErrorAction SilentlyContinue
-        Remove-Variable -Scope 'Script' -Name 'ReturnResponse' -Force -ErrorAction SilentlyContinue
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
 
-        if ($test.ePOwerShell) {
-            $Script:ePOwerShell = @{
-                Server   = $test.ePOwerShell.Server
-                Port     = $test.ePOwerShell.Port
-                Credentials = (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($Test.ePOwerShell.Username, (ConvertTo-SecureString $test.ePOwerShell.Password -AsPlainText -Force)))
-            }
-        }
+$Examples = Get-ChildItem $ExampleDirectory -Filter "*.psd1" -File
 
-        Context $test.Name {
-            [hashtable] $parameters = $test.Parameters
+$Tests = foreach ($Example in $Examples) {
+    [hashtable] $Test = @{
+        Name = $Example.BaseName.Split('.')[1]
+    }
 
-            if ($Test.Output.Throws) {
-                It "Update-ePOwerShellServer Throws" {
-                    { Update-ePOwerShellServer @parameters } | Should Throw
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
+
+    foreach ($exampleData in (Import-PowerShellDataFile -LiteralPath $example.FullName).GetEnumerator()) {
+        $Test.Add($exampleData.Name, $exampleData.Value) | Out-Null
+    }
+
+    if ($Test.Username -and $Test.Password) {
+        $SuperSecretPassword = ConvertTo-SecureString $Test.Password -AsPlainText -Force
+        $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($Test.Username, $SuperSecretPassword)
+    
+        $Test.Parameters.Add('Credentials', $Credentials) | Out-Null
+    }
+
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
+    Write-Output $Test
+}
+
+Describe $FunctionName {
+    foreach ($Global:Test in $Tests) {
+        InModuleScope ePOwerShell {
+            Mock Get-ePOHelp {}
+
+            Remove-Variable -Scope 'Script' -Name 'ePOwerShell' -Force -ErrorAction SilentlyContinue
+            Remove-Variable -Scope 'Script' -Name 'ReturnResponse' -Force -ErrorAction SilentlyContinue
+
+            if ($Test.ePOwerShell) {
+                $Script:ePOwerShell = @{
+                    Server   = $Test.ePOwerShell.Server
+                    Port     = $Test.ePOwerShell.Port
+                    Credentials = (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($Test.ePOwerShell.Username, (ConvertTo-SecureString $Test.ePOwerShell.Password -AsPlainText -Force)))
                 }
-                continue
             }
 
-            It "Update-ePOwerShellServer" {
-                { $script:ReturnResponse = Update-ePOwerShellServer @parameters } | Should Not Throw
-            }
+            Context $Test.Name {
+                [hashtable] $parameters = $Test.Parameters
 
-            It "Does not return" {
-                $script:ReturnResponse | Should BeNullOrEmpty
+                if ($Test.Output.Throws) {
+                    It "Update-ePOwerShellServer Throws" {
+                        { Update-ePOwerShellServer @parameters } | Should Throw
+                    }
+                    continue
+                }
+
+                It "Update-ePOwerShellServer" {
+                    { $script:ReturnResponse = Update-ePOwerShellServer @parameters } | Should Not Throw
+                }
+
+                It "Does not return" {
+                    $script:ReturnResponse | Should BeNullOrEmpty
+                }
             }
         }
     }
+
+    Remove-Variable -Scope 'Global' -Name 'Test' -Force -ErrorAction SilentlyContinue
 }

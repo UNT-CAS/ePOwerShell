@@ -232,3 +232,5 @@ function Get-ePOComputer {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOComputer' -Alias 'Find-ePOwerShellComputerSystem', 'Find-ePOComputerSystem'

@@ -31,3 +31,5 @@ function Get-ePOConfig {
         }
     }
 }
+
+Export-ModuleMember 'Get-ePOConfig' -Alias 'Get-ePOwerShellServer', 'Get-ePOServer'

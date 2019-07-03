@@ -92,3 +92,5 @@ function Get-ePOHelp {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOHelp' -Alias 'Get-ePOwerShellCoreHelp', 'Get-ePOCoreHelp'

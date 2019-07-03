@@ -28,3 +28,5 @@ function Get-ePOVersion {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOVersion'

@@ -49,31 +49,37 @@ function Get-ePOGroupMember {
         $Recurse
     )
 
-    begin {}
+    begin {
+        if ($Group) {
+            $Group = $Group.Split(',').Trim()
+        }
+    }
 
     process {
         try {
-            $Request = @{
-                Name  = 'epogroup.findSystems'
-                Query = @{}
-            }
+            foreach ($GroupItem in $Group) {
+                $Request = @{
+                    Name  = 'epogroup.findSystems'
+                    Query = @{}
+                }
 
-            if ($Group -is [ePOGroup]) {
-                [Void] $Request.Query.Add('groupId', $GroupID.ID)
-            } else {
-                [Void] $Request.Query.Add('groupId', $Group)
-            }
+                if ($GroupItem -is [ePOGroup]) {
+                    [Void] $Request.Query.Add('groupId', $GroupItem.ID)
+                } else {
+                    [Void] $Request.Query.Add('groupId', $GroupItem)
+                }
 
-            if ($Recurse) {
-                [Void] $Request.Query.Add('searchSubgroups', 'true')
-            }
+                if ($Recurse) {
+                    [Void] $Request.Query.Add('searchSubgroups', 'true')
+                }
 
-            Write-Debug "Request: $($Request | ConvertTo-Json)"
-            $ePOGroupMembers = Invoke-ePORequest @Request
+                Write-Debug "Request: $($Request | ConvertTo-Json)"
+                $ePOGroupMembers = Invoke-ePORequest @Request
 
-            foreach ($ePOGroupMember in $ePOGroupMembers) {
-                $ePOGroupMemberObject = ConvertTo-ePOComputer $ePOGroupMember
-                Write-Output $ePOGroupMemberObject
+                foreach ($ePOGroupMember in $ePOGroupMembers) {
+                    $ePOGroupMemberObject = ConvertTo-ePOComputer $ePOGroupMember
+                    Write-Output $ePOGroupMemberObject
+                }
             }
         } catch {
             Write-Information $_ -Tags Exception
@@ -83,3 +89,5 @@ function Get-ePOGroupMember {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOGroupMember'

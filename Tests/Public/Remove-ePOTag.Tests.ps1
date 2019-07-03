@@ -1,78 +1,85 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
-. $testFile
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[System.String]    $FunctionType         = 'Public'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePORequest.ps1') -Resolve)
-
-[System.Collections.ArrayList] $tests = @()
-$examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
-
-foreach ($example in $examples) {
-    [hashtable] $test = @{
-        Name = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
-    }
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-
-    foreach ($exampleData in (Import-PowerShellDataFile -LiteralPath $example.FullName).GetEnumerator()) {
-        $test.Add($exampleData.Name, $exampleData.Value) | Out-Null
-    }
-
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-    $tests.Add($test) | Out-Null
+while (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+    $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
 }
 
-Write-Host "Example Directory: $exampleDirectory"
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
+[IO.DirectoryInfo] $Global:ReferenceDirectory = Join-Path $ExampleDirectory.FullName -ChildPath 'References' -Resolve
 
-Describe $testFile.Name {
-    foreach ($test in $tests) {
-        Mock Invoke-ePORequest {
-            if (-not ($ComputerFile = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.names))) {
-                Throw "Error 1: Invalid computername"
-            }
+$Examples = Get-ChildItem $ExampleDirectory -Filter "*.psd1" -File
 
-            if (-not ($TagFile = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $Query.tagName))) {
-                Throw "Error 1: Invalid tag"
-            }
+$Tests = foreach ($Example in $Examples) {
+    [hashtable] $Test = @{
+        Name = $Example.BaseName.Split('.')[1]
+    }
 
-            $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-            $Tag = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
 
-            if ($Test.Unknown) {
-                return 4
-            } elseif (-not ($Computer.'EPOLeafNode.Tags'.Split(',').Trim() | ? { $_ -eq $Tag.tagName })) {
-                return 0
-            } else {
-                return 1
-            }
-        }
+    foreach ($ExampleData in (Import-PowerShellDataFile -LiteralPath $Example.FullName).GetEnumerator()) {
+        $Test.Add($ExampleData.Name, $ExampleData.Value) | Out-Null
+    }
 
-        Mock Write-Warning {
-            Write-Debug $Message
-        }
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
+    Write-Output $Test
+}
 
-        Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
-
-        Context $test.Name {
-            [hashtable] $parameters = $test.Parameters
-
-            if ($Test.Output.Throws) {
-                It "Clear-ePOwerShellTag Throws" {
-                    { $script:RequestResponse = Clear-ePOwerShellTag @parameters } | Should Throw
+Describe $FunctionName {
+    foreach ($Global:Test in $Tests) {
+        InModuleScope ePOwerShell {
+            Mock Invoke-ePORequest {
+                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.names))) {
+                    Throw "Error 1: Invalid computername"
                 }
-                continue
+
+                if (-not ($TagFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.tagName))) {
+                    Throw "Error 1: Invalid tag"
+                }
+
+                $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                $Tag = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                if ($Test.Unknown) {
+                    return 4
+                } elseif (-not ($Computer.'EPOLeafNode.Tags'.Split(',').Trim() | ? { $_ -eq $Tag.tagName })) {
+                    return 0
+                } else {
+                    return 1
+                }
             }
 
-            It "Clear-ePOwerShellTag" {
-                { $script:RequestResponse = Clear-ePOwerShellTag @parameters } | Should Not Throw
+            Mock Write-Warning {
+                Write-Debug $Message
             }
-            
-            It "Output Type: $($test.Output.Type)" {
-                $script:RequestResponse | Should BeNullOrEmpty
+
+            Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
+
+            Context $Test.Name {
+                [hashtable] $parameters = $Test.Parameters
+
+                if ($Test.Output.Throws) {
+                    It "Remove-ePOTag Throws" {
+                        { $script:RequestResponse = Remove-ePOTag @parameters -Confirm:$False } | Should Throw
+                    }
+                    continue
+                }
+
+                It "Remove-ePOTag" {
+                    { $script:RequestResponse = Remove-ePOTag @parameters -Confirm:$False } | Should Not Throw
+                }
+                
+                It "Output Type: $($Test.Output.Type)" {
+                    $script:RequestResponse | Should BeNullOrEmpty
+                }
             }
         }
     }
+
+    Remove-Variable -Scope 'Global' -Name 'Test' -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Scope 'Global' -Name 'ReferenceDirectory' -Force -ErrorAction SilentlyContinue
 }

@@ -6,7 +6,7 @@
 
 function Initialize-ePOConfig {
     [CmdletBinding()]
-    param(
+    param (
         <#
             .PARAMETER Server
                 URL to the ePO server
@@ -28,7 +28,14 @@ function Initialize-ePOConfig {
                 Specifies the port necessary to communicate with the ePO server
         #>
         [System.Int32]
-        $Port = 8443
+        $Port = 8443,
+
+        <#
+            .PARAMETER AllowSelfSignedCerts
+                Allows for self signed certs to be accepted while connecting to the ePO server
+        #>
+        [Switch]
+        $AllowSelfSignedCerts
     )
 
     if (-not ($Server.StartsWith('https://'))) {
@@ -44,9 +51,10 @@ function Initialize-ePOConfig {
     }
 
     $Script:ePOwerShell = @{
-        Port        = $Port
-        Server      = $Server
-        Credentials = $Credentials
+        Port            = $Port
+        Server          = $Server
+        Credentials     = $Credentials
+        AllowSelfSigned = $AllowSelfSignedCerts
     }
 
     try {

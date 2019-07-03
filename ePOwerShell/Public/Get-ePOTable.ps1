@@ -32,11 +32,11 @@ function Get-ePOTable {
     process {
         try {
             Write-Verbose "Request: $($Request | ConvertTo-Json)"
-            if (-not ($ePOQueries = Invoke-ePORequest @Request)) {
+            if (-not ($ePOTables = Invoke-ePORequest @Request)) {
                 Write-Error "Failed to find any ePO queries"
             }
 
-            foreach ($ePOTable in $ePOQueries) {
+            foreach ($ePOTable in $ePOTables) {
                 Write-Output $ePOTable
             }
         } catch {
@@ -46,3 +46,5 @@ function Get-ePOTable {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOTable'

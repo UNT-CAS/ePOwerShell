@@ -1,0 +1,795 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="238" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2019-07-02" time="20:52:18">
+  <environment user="mma0173" machine-name="CAS-41YBHK2" cwd="D:\Git\Github\ePOwerShell\.scripts" user-domain="UNT" platform="Microsoft Windows 10 Enterprise|C:\Windows|\Device\Harddisk0\Partition4" nunit-version="2.5.8.0" os-version="10.0.17763" clr-version="4.0.30319.42000" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="161.7371" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Private\ConvertTo-ePOComputer.Tests.ps1" executed="True" result="Success" success="True" time="1.7876" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Private\ConvertTo-ePOComputer.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="ConvertTo-ePOComputer" executed="True" result="Success" success="True" time="1.6321" asserts="0" description="ConvertTo-ePOComputer">
+            <results>
+              <test-suite type="TestFixture" name="Returns Valid Object" executed="True" result="Success" success="True" time="1.2902" asserts="0" description="Returns Valid Object">
+                <results>
+                  <test-case description="ConvertTo-ePOComputer" name="ConvertTo-ePOComputer.Returns Valid Object.ConvertTo-ePOComputer" time="0.1236" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns an ePOComputer" name="ConvertTo-ePOComputer.Returns Valid Object.Returns an ePOComputer" time="0.0933" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct type of tags" name="ConvertTo-ePOComputer.Returns Valid Object.Has the correct type of tags" time="0.0989" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct type for Agent GUID" name="ConvertTo-ePOComputer.Returns Valid Object.Has the correct type for Agent GUID" time="0.1068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct type for Managed State" name="ConvertTo-ePOComputer.Returns Valid Object.Has the correct type for Managed State" time="0.1026" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Private\ConvertTo-ePOQuery.Tests.ps1" executed="True" result="Success" success="True" time="1.5083" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Private\ConvertTo-ePOQuery.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="ConvertTo-ePOQuery" executed="True" result="Success" success="True" time="1.3368" asserts="0" description="ConvertTo-ePOQuery">
+            <results>
+              <test-suite type="TestFixture" name="Returns Valid Object" executed="True" result="Success" success="True" time="0.9896" asserts="0" description="Returns Valid Object">
+                <results>
+                  <test-case description="ConvertTo-ePOQuery" name="ConvertTo-ePOQuery.Returns Valid Object.ConvertTo-ePOQuery" time="0.092" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns an ePOComputer" name="ConvertTo-ePOQuery.Returns Valid Object.Returns an ePOComputer" time="0.0963" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct type for name" name="ConvertTo-ePOQuery.Returns Valid Object.Has the correct type for name" time="0.1012" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct type for created on" name="ConvertTo-ePOQuery.Returns Valid Object.Has the correct type for created on" time="0.0936" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Private\Initialize-ePOConfig.Tests.ps1" executed="True" result="Success" success="True" time="3.328" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Private\Initialize-ePOConfig.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Initialize-ePOConfig" executed="True" result="Success" success="True" time="3.1175" asserts="0" description="Initialize-ePOConfig">
+            <results>
+              <test-suite type="TestFixture" name="Initialize-ePOConfigAuthentication Fails" executed="True" result="Success" success="True" time="0.6341" asserts="0" description="Initialize-ePOConfigAuthentication Fails">
+                <results>
+                  <test-case description="Initialize-ePOConfig" name="Initialize-ePOConfig.Initialize-ePOConfigAuthentication Fails.Initialize-ePOConfig" time="0.2277" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Initialize-ePOConfigConnect With Https" executed="True" result="Success" success="True" time="0.8078" asserts="0" description="Initialize-ePOConfigConnect With Https">
+                <results>
+                  <test-case description="Initialize-ePOConfig" name="Initialize-ePOConfig.Initialize-ePOConfigConnect With Https.Initialize-ePOConfig" time="0.2112" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="$ePOwerShell exists" name="Initialize-ePOConfig.Initialize-ePOConfigConnect With Https.$ePOwerShell exists" time="0.0772" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Initialize-ePOConfigTest Credentials" executed="True" result="Success" success="True" time="0.821" asserts="0" description="Initialize-ePOConfigTest Credentials">
+                <results>
+                  <test-case description="Initialize-ePOConfig" name="Initialize-ePOConfig.Initialize-ePOConfigTest Credentials.Initialize-ePOConfig" time="0.2097" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="$ePOwerShell exists" name="Initialize-ePOConfig.Initialize-ePOConfigTest Credentials.$ePOwerShell exists" time="0.0706" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Private\Invoke-ePORequest.Tests.ps1" executed="True" result="Success" success="True" time="4.6629" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Private\Invoke-ePORequest.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Invoke-ePORequest" executed="True" result="Success" success="True" time="4.4199" asserts="0" description="Invoke-ePORequest">
+            <results>
+              <test-suite type="TestFixture" name="Calls Incorrect Command" executed="True" result="Success" success="True" time="0.7551" asserts="0" description="Calls Incorrect Command">
+                <results>
+                  <test-case description="Invoke-ePORequest Throws" name="Invoke-ePORequest.Calls Incorrect Command.Invoke-ePORequest Throws" time="0.2924" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get Core Help" executed="True" result="Success" success="True" time="0.9628" asserts="0" description="Get Core Help">
+                <results>
+                  <test-case description="Invoke-ePORequest" name="Invoke-ePORequest.Get Core Help.Invoke-ePORequest" time="0.3052" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePORequest.Get Core Help.Output Type: System.Object[]" time="0.1093" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke Web Request Fails" executed="True" result="Success" success="True" time="0.8256" asserts="0" description="Invoke Web Request Fails">
+                <results>
+                  <test-case description="Invoke-ePORequest Throws" name="Invoke-ePORequest.Invoke Web Request Fails.Invoke-ePORequest Throws" time="0.325" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="No ePOwerShell" executed="True" result="Success" success="True" time="0.5886" asserts="0" description="No ePOwerShell">
+                <results>
+                  <test-case description="Invoke-ePORequest Throws" name="Invoke-ePORequest.No ePOwerShell.Invoke-ePORequest Throws" time="0.1153" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Private\Write-ePOWhere.Tests.ps1" executed="True" result="Success" success="True" time="2.3081" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Private\Write-ePOWhere.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Write-ePOWhere" executed="True" result="Success" success="True" time="2.1209" asserts="0" description="Write-ePOWhere">
+            <results>
+              <test-suite type="TestFixture" name="Returns Correct String With Multiple eq" executed="True" result="Success" success="True" time="0.8582" asserts="0" description="Returns Correct String With Multiple eq">
+                <results>
+                  <test-case description="Write-ePOWhere" name="Write-ePOWhere.Returns Correct String With Multiple eq.Write-ePOWhere" time="0.1219" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns a string" name="Write-ePOWhere.Returns Correct String With Multiple eq.Returns a string" time="0.1013" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Matches expected value" name="Write-ePOWhere.Returns Correct String With Multiple eq.Matches expected value" time="0.0986" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Returns Correct String With Single Where Parameter" executed="True" result="Success" success="True" time="0.8092" asserts="0" description="Returns Correct String With Single Where Parameter">
+                <results>
+                  <test-case description="Write-ePOWhere" name="Write-ePOWhere.Returns Correct String With Single Where Parameter.Write-ePOWhere" time="0.1075" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns a string" name="Write-ePOWhere.Returns Correct String With Single Where Parameter.Returns a string" time="0.0992" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Matches expected value" name="Write-ePOWhere.Returns Correct String With Single Where Parameter.Matches expected value" time="0.1062" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOComputer.Tests.ps1" executed="True" result="Success" success="True" time="26.2496" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOComputer.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOComputer" executed="True" result="Success" success="True" time="25.7703" asserts="0" description="Get-ePOComputer">
+            <results>
+              <test-suite type="TestFixture" name="Find All Computers" executed="True" result="Success" success="True" time="1.7241" asserts="0" description="Find All Computers">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find All Computers.Get-ePOComputer" time="0.5057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOComputer.Find All Computers.Output Type: System.Object[]" time="0.099" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find All Computers.Computer Type: ePOComputer" time="0.322" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find Computer By Agent Guid" executed="True" result="Success" success="True" time="1.3294" asserts="0" description="Find Computer By Agent Guid">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find Computer By Agent Guid.Get-ePOComputer" time="0.3261" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find Computer By Agent Guid.Output Type: ePOComputer" time="0.1009" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find Computer By Agent Guid.Computer Type: ePOComputer" time="0.096" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find Computer By IP Address" executed="True" result="Success" success="True" time="1.3195" asserts="0" description="Find Computer By IP Address">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find Computer By IP Address.Get-ePOComputer" time="0.3224" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find Computer By IP Address.Output Type: ePOComputer" time="0.0944" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find Computer By IP Address.Computer Type: ePOComputer" time="0.1032" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find Five Computers By ComputerName Through Pipeline" executed="True" result="Success" success="True" time="2.5637" asserts="0" description="Find Five Computers By ComputerName Through Pipeline">
+                <results>
+                  <test-case description="Get-ePOComputer through pipeline" name="Get-ePOComputer.Find Five Computers By ComputerName Through Pipeline.Get-ePOComputer through pipeline" time="1.2226" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOComputer.Find Five Computers By ComputerName Through Pipeline.Output Type: System.Object[]" time="0.1051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find Five Computers By ComputerName Through Pipeline.Computer Type: ePOComputer" time="0.411" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find Five Computers By ComputerName With Wildcard" executed="True" result="Success" success="True" time="1.7932" asserts="0" description="Find Five Computers By ComputerName With Wildcard">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find Five Computers By ComputerName With Wildcard.Get-ePOComputer" time="0.5252" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOComputer.Find Five Computers By ComputerName With Wildcard.Output Type: System.Object[]" time="0.1057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find Five Computers By ComputerName With Wildcard.Computer Type: ePOComputer" time="0.3504" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By ComputerName" executed="True" result="Success" success="True" time="1.3551" asserts="0" description="Find One Computer By ComputerName">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By ComputerName.Get-ePOComputer" time="0.3322" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By ComputerName.Output Type: ePOComputer" time="0.1014" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By ComputerName.Computer Type: ePOComputer" time="0.1348" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By MACAddress - V1" executed="True" result="Success" success="True" time="1.3992" asserts="0" description="Find One Computer By MACAddress - V1">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V1.Get-ePOComputer" time="0.349" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V1.Output Type: ePOComputer" time="0.0995" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V1.Computer Type: ePOComputer" time="0.1084" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By MACAddress - V2" executed="True" result="Success" success="True" time="1.4137" asserts="0" description="Find One Computer By MACAddress - V2">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V2.Get-ePOComputer" time="0.3218" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V2.Output Type: ePOComputer" time="0.1012" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V2.Computer Type: ePOComputer" time="0.1205" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By MACAddress - V3" executed="True" result="Success" success="True" time="1.4929" asserts="0" description="Find One Computer By MACAddress - V3">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V3.Get-ePOComputer" time="0.3348" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V3.Output Type: ePOComputer" time="0.1068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V3.Computer Type: ePOComputer" time="0.1082" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By MACAddress - V4" executed="True" result="Success" success="True" time="1.5132" asserts="0" description="Find One Computer By MACAddress - V4">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V4.Get-ePOComputer" time="0.3515" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V4.Output Type: ePOComputer" time="0.108" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V4.Computer Type: ePOComputer" time="0.116" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By MACAddress - V5" executed="True" result="Success" success="True" time="1.5334" asserts="0" description="Find One Computer By MACAddress - V5">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V5.Get-ePOComputer" time="0.3614" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V5.Output Type: ePOComputer" time="0.0982" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By MACAddress - V5.Computer Type: ePOComputer" time="0.119" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By Unique Tags" executed="True" result="Success" success="True" time="1.4598" asserts="0" description="Find One Computer By Unique Tags">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By Unique Tags.Get-ePOComputer" time="0.3555" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By Unique Tags.Output Type: ePOComputer" time="0.1061" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By Unique Tags.Computer Type: ePOComputer" time="0.1047" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Find One Computer By Username" executed="True" result="Success" success="True" time="1.4369" asserts="0" description="Find One Computer By Username">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Find One Computer By Username.Get-ePOComputer" time="0.3172" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOComputer.Find One Computer By Username.Output Type: ePOComputer" time="0.1101" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Computer Type: ePOComputer" name="Get-ePOComputer.Find One Computer By Username.Computer Type: ePOComputer" time="0.1071" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Throws While Trying To Decipher Delimited MACAddress" executed="True" result="Success" success="True" time="0.9406" asserts="0" description="Throws While Trying To Decipher Delimited MACAddress">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Throws While Trying To Decipher Delimited MACAddress.Get-ePOComputer" time="0.091" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: Should not return" name="Get-ePOComputer.Throws While Trying To Decipher Delimited MACAddress.Output Type: Should not return" time="0.0779" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Throws While Trying To Find Unknown IP Address" executed="True" result="Success" success="True" time="1.0636" asserts="0" description="Throws While Trying To Find Unknown IP Address">
+                <results>
+                  <test-case description="Get-ePOComputer" name="Get-ePOComputer.Throws While Trying To Find Unknown IP Address.Get-ePOComputer" time="0.2636" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: Should not return" name="Get-ePOComputer.Throws While Trying To Find Unknown IP Address.Output Type: Should not return" time="0.0685" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOConfig.Tests.ps1" executed="True" result="Success" success="True" time="2.4903" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOConfig.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOConfig" executed="True" result="Success" success="True" time="2.3172" asserts="0" description="Get-ePOConfig">
+            <results>
+              <test-suite type="TestFixture" name="Finds ePOwerShell" executed="True" result="Success" success="True" time="1.3786" asserts="0" description="Finds ePOwerShell">
+                <results>
+                  <test-case description="Get-ePOConfig" name="Get-ePOConfig.Finds ePOwerShell.Get-ePOConfig" time="0.0797" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="$ePOwerShell exists" name="Get-ePOConfig.Finds ePOwerShell.$ePOwerShell exists" time="0.0685" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct port" name="Get-ePOConfig.Finds ePOwerShell.Has correct port" time="0.0945" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct server" name="Get-ePOConfig.Finds ePOwerShell.Has correct server" time="0.093" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct Username" name="Get-ePOConfig.Finds ePOwerShell.Has correct Username" time="0.1018" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct Password" name="Get-ePOConfig.Finds ePOwerShell.Has correct Password" time="0.0971" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Throws Error" executed="True" result="Success" success="True" time="0.4961" asserts="0" description="Throws Error">
+                <results>
+                  <test-case description="Get-ePOConfig Throws" name="Get-ePOConfig.Throws Error.Get-ePOConfig Throws" time="0.0934" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOGroup.Tests.ps1" executed="True" result="Success" success="True" time="4.0786" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOGroup.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOGroup" executed="True" result="Success" success="True" time="3.8841" asserts="0" description="Get-ePOGroup">
+            <results>
+              <test-suite type="TestFixture" name="Get One Group Through Pipeline" executed="True" result="Success" success="True" time="0.9634" asserts="0" description="Get One Group Through Pipeline">
+                <results>
+                  <test-case description="Get-ePOGroup through pipelined Name" name="Get-ePOGroup.Get One Group Through Pipeline.Get-ePOGroup through pipelined Name" time="0.2487" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOGroup" name="Get-ePOGroup.Get One Group Through Pipeline.Output Type: ePOGroup" time="0.0999" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get One Group Through Pipelined ePOGroup" executed="True" result="Success" success="True" time="1.0009" asserts="0" description="Get One Group Through Pipelined ePOGroup">
+                <results>
+                  <test-case description="Get-ePOGroup through pipelined ePOGroup" name="Get-ePOGroup.Get One Group Through Pipelined ePOGroup.Get-ePOGroup through pipelined ePOGroup" time="0.2541" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOGroup" name="Get-ePOGroup.Get One Group Through Pipelined ePOGroup.Output Type: ePOGroup" time="0.1083" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get One Group" executed="True" result="Success" success="True" time="0.998" asserts="0" description="Get One Group">
+                <results>
+                  <test-case description="Get-ePOGroup" name="Get-ePOGroup.Get One Group.Get-ePOGroup" time="0.2685" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOGroup" name="Get-ePOGroup.Get One Group.Output Type: ePOGroup" time="0.0955" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOGroupMember.Tests.ps1" executed="True" result="Success" success="True" time="7.078" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOGroupMember.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOGroupMember" executed="True" result="Success" success="True" time="6.8735" asserts="0" description="Get-ePOGroupMember">
+            <results>
+              <test-suite type="TestFixture" name="Get Group with Subgroups" executed="True" result="Success" success="True" time="2.2724" asserts="0" description="Get Group with Subgroups">
+                <results>
+                  <test-case description="Get-ePOGroupMember" name="Get-ePOGroupMember.Get Group with Subgroups.Get-ePOGroupMember" time="0.473" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOGroupMember.Get Group with Subgroups.Output Type: System.Object[]" time="0.0987" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be the correct count: 4" name="Get-ePOGroupMember.Get Group with Subgroups.Should be the correct count: 4" time="0.1025" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Group with Subgroups.Should be: ePOComputer" time="0.0944" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Group with Subgroups.Should be: ePOComputer" time="0.1079" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Group with Subgroups.Should be: ePOComputer" time="0.096" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Group with Subgroups.Should be: ePOComputer" time="0.0944" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get One Groups Members" executed="True" result="Success" success="True" time="1.5338" asserts="0" description="Get One Groups Members">
+                <results>
+                  <test-case description="Get-ePOGroupMember" name="Get-ePOGroupMember.Get One Groups Members.Get-ePOGroupMember" time="0.2932" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOComputer" name="Get-ePOGroupMember.Get One Groups Members.Output Type: ePOComputer" time="0.1024" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be the correct count: 1" name="Get-ePOGroupMember.Get One Groups Members.Should be the correct count: 1" time="0.099" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get One Groups Members.Should be: ePOComputer" time="0.0983" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get Two Groups Members" executed="True" result="Success" success="True" time="2.1552" asserts="0" description="Get Two Groups Members">
+                <results>
+                  <test-case description="Get-ePOGroupMember" name="Get-ePOGroupMember.Get Two Groups Members.Get-ePOGroupMember" time="0.5409" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOGroupMember.Get Two Groups Members.Output Type: System.Object[]" time="0.0965" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be the correct count: 3" name="Get-ePOGroupMember.Get Two Groups Members.Should be the correct count: 3" time="0.0937" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Two Groups Members.Should be: ePOComputer" time="0.1014" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Two Groups Members.Should be: ePOComputer" time="0.0952" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should be: ePOComputer" name="Get-ePOGroupMember.Get Two Groups Members.Should be: ePOComputer" time="0.0958" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOHelp.Tests.ps1" executed="True" result="Success" success="True" time="4.5996" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOHelp.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOHelp" executed="True" result="Success" success="True" time="4.398" asserts="0" description="Get-ePOHelp">
+            <results>
+              <test-suite type="TestFixture" name="Return All" executed="True" result="Success" success="True" time="1.4357" asserts="0" description="Return All">
+                <results>
+                  <test-case description="Get-ePOHelp" name="Get-ePOHelp.Return All.Get-ePOHelp" time="0.2603" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOHelp.Return All.Output Type: System.Object[]" time="0.1039" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Contains ePOHelp objects" name="Get-ePOHelp.Return All.Contains ePOHelp objects" time="0.2826" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Return Specific Command From Pipeline" executed="True" result="Success" success="True" time="1.0125" asserts="0" description="Return Specific Command From Pipeline">
+                <results>
+                  <test-case description="Get-ePOHelp With Pipeline" name="Get-ePOHelp.Return Specific Command From Pipeline.Get-ePOHelp With Pipeline" time="0.2328" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOHelp" name="Get-ePOHelp.Return Specific Command From Pipeline.Output Type: ePOHelp" time="0.1025" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Return Specific Command" executed="True" result="Success" success="True" time="1.0235" asserts="0" description="Return Specific Command">
+                <results>
+                  <test-case description="Get-ePOHelp" name="Get-ePOHelp.Return Specific Command.Get-ePOHelp" time="0.2564" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOHelp" name="Get-ePOHelp.Return Specific Command.Output Type: ePOHelp" time="0.0947" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOQuery.Tests.ps1" executed="True" result="Success" success="True" time="3.1442" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOQuery.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOQuery" executed="True" result="Success" success="True" time="2.9531" asserts="0" description="Get-ePOQuery">
+            <results>
+              <test-suite type="TestFixture" name="Fails To Find Queries" executed="True" result="Success" success="True" time="0.6664" asserts="0" description="Fails To Find Queries">
+                <results>
+                  <test-case description="Get-ePOwerShellQueries Throws" name="Get-ePOQuery.Fails To Find Queries.Get-ePOwerShellQueries Throws" time="0.2335" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds All Queries" executed="True" result="Success" success="True" time="1.5404" asserts="0" description="Finds All Queries">
+                <results>
+                  <test-case description="Get-ePOwerShellQueries" name="Get-ePOQuery.Finds All Queries.Get-ePOwerShellQueries" time="0.2727" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOQuery.Finds All Queries.Output Type: System.Object[]" time="0.1" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOQuery object" name="Get-ePOQuery.Finds All Queries.Item is an ePOQuery object" time="0.1157" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOQuery object" name="Get-ePOQuery.Finds All Queries.Item is an ePOQuery object" time="0.0928" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOQuery object" name="Get-ePOQuery.Finds All Queries.Item is an ePOQuery object" time="0.1056" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePORecoveryKey.Tests.ps1" executed="True" result="Success" success="True" time="22.1074" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePORecoveryKey.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePORecoveryKey" executed="True" result="Success" success="True" time="21.8417" asserts="0" description="Get-ePORecoveryKey">
+            <results>
+              <test-suite type="TestFixture" name="Fails To Find Computer in ePO" executed="True" result="Success" success="True" time="1.3363" asserts="0" description="Fails To Find Computer in ePO">
+                <results>
+                  <test-case description="Get-ePORecoveryKey Does Not Throws" name="Get-ePORecoveryKey.Fails To Find Computer in ePO.Get-ePORecoveryKey Does Not Throws" time="0.258" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Get-ePORecoveryKey.Fails To Find Computer in ePO.Output Type: System.Void" time="0.0692" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct count: 0" name="Get-ePORecoveryKey.Fails To Find Computer in ePO.Has the correct count: 0" time="0.099" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Fails To Find Key With Computer Name" executed="True" result="Success" success="True" time="1.5449" asserts="0" description="Fails To Find Key With Computer Name">
+                <results>
+                  <test-case description="Get-ePORecoveryKey Does Not Throws" name="Get-ePORecoveryKey.Fails To Find Key With Computer Name.Get-ePORecoveryKey Does Not Throws" time="0.4358" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Get-ePORecoveryKey.Fails To Find Key With Computer Name.Output Type: System.Void" time="0.0692" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct count: 0" name="Get-ePORecoveryKey.Fails To Find Key With Computer Name.Has the correct count: 0" time="0.1031" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds 5 Keys With Computer Name Through Pipeline" executed="True" result="Success" success="True" time="5.2726" asserts="0" description="Finds 5 Keys With Computer Name Through Pipeline">
+                <results>
+                  <test-case description="Get-ePORecoveryKey Does Not Throws" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Get-ePORecoveryKey Does Not Throws" time="2.8354" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Output Type: System.Object[]" time="0.0978" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Object Type: ePORecoveryKey" time="0.102" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Object Type: ePORecoveryKey" time="0.1126" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Object Type: ePORecoveryKey" time="0.1003" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Object Type: ePORecoveryKey" time="0.1107" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Object Type: ePORecoveryKey" time="0.1032" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct count: 5" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name Through Pipeline.Has the correct count: 5" time="0.108" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds 5 Keys With Computer Name" executed="True" result="Success" success="True" time="5.2318" asserts="0" description="Finds 5 Keys With Computer Name">
+                <results>
+                  <test-case description="Get-ePORecoveryKey Does Not Throws" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Get-ePORecoveryKey Does Not Throws" time="2.741" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Output Type: System.Object[]" time="0.1006" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Object Type: ePORecoveryKey" time="0.1029" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Object Type: ePORecoveryKey" time="0.1023" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Object Type: ePORecoveryKey" time="0.1053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Object Type: ePORecoveryKey" time="0.104" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Object Type: ePORecoveryKey" time="0.0993" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct count: 5" name="Get-ePORecoveryKey.Finds 5 Keys With Computer Name.Has the correct count: 5" time="0.1016" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Key for Computer with Multiple Drives" executed="True" result="Success" success="True" time="2.5426" asserts="0" description="Finds Key for Computer with Multiple Drives">
+                <results>
+                  <test-case description="Get-ePORecoveryKey Does Not Throws" name="Get-ePORecoveryKey.Finds Key for Computer with Multiple Drives.Get-ePORecoveryKey Does Not Throws" time="0.7819" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePORecoveryKey.Finds Key for Computer with Multiple Drives.Output Type: System.Object[]" time="0.113" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds Key for Computer with Multiple Drives.Object Type: ePORecoveryKey" time="0.1072" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds Key for Computer with Multiple Drives.Object Type: ePORecoveryKey" time="0.0988" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct count: 2" name="Get-ePORecoveryKey.Finds Key for Computer with Multiple Drives.Has the correct count: 2" time="0.0966" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Key With Computer Name" executed="True" result="Success" success="True" time="2.1764" asserts="0" description="Finds Key With Computer Name">
+                <results>
+                  <test-case description="Get-ePORecoveryKey Does Not Throws" name="Get-ePORecoveryKey.Finds Key With Computer Name.Get-ePORecoveryKey Does Not Throws" time="0.6043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds Key With Computer Name.Output Type: ePORecoveryKey" time="0.1121" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Object Type: ePORecoveryKey" name="Get-ePORecoveryKey.Finds Key With Computer Name.Object Type: ePORecoveryKey" time="0.1055" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has the correct count: 1" name="Get-ePORecoveryKey.Finds Key With Computer Name.Has the correct count: 1" time="0.1038" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOTable.Tests.ps1" executed="True" result="Success" success="True" time="1.7131" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOTable.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOTable" executed="True" result="Success" success="True" time="1.5482" asserts="0" description="Get-ePOTable">
+            <results>
+              <test-suite type="TestFixture" name="Finds All Tables" executed="True" result="Success" success="True" time="0.9478" asserts="0" description="Finds All Tables">
+                <results>
+                  <test-case description="Get-ePOTable does not throw" name="Get-ePOTable.Finds All Tables.Get-ePOTable does not throw" time="0.26" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOTable.Finds All Tables.Output Type: System.Object[]" time="0.1138" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOTag.Tests.ps1" executed="True" result="Success" success="True" time="10.6563" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOTag.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOTag" executed="True" result="Success" success="True" time="10.3829" asserts="0" description="Get-ePOTag">
+            <results>
+              <test-suite type="TestFixture" name="Fail To Find Tag" executed="True" result="Success" success="True" time="1.0424" asserts="0" description="Fail To Find Tag">
+                <results>
+                  <test-case description="Get-ePOTag with tags" name="Get-ePOTag.Fail To Find Tag.Get-ePOTag with tags" time="0.241" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Get-ePOTag: Should not return anything" name="Get-ePOTag.Fail To Find Tag.Get-ePOTag: Should not return anything" time="0.0753" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds All Tags" executed="True" result="Success" success="True" time="1.6983" asserts="0" description="Finds All Tags">
+                <results>
+                  <test-case description="Get-ePOTag with tags" name="Get-ePOTag.Finds All Tags.Get-ePOTag with tags" time="0.2708" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOTag.Finds All Tags.Output Type: System.Object[]" time="0.1098" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds All Tags.Item is an ePOTag object" time="0.0948" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds All Tags.Item is an ePOTag object" time="0.1111" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds All Tags.Item is an ePOTag object" time="0.0992" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds One Tag" executed="True" result="Success" success="True" time="1.3182" asserts="0" description="Finds One Tag">
+                <results>
+                  <test-case description="Get-ePOTag with tags" name="Get-ePOTag.Finds One Tag.Get-ePOTag with tags" time="0.2662" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOTag" name="Get-ePOTag.Finds One Tag.Output Type: ePOTag" time="0.1039" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds One Tag.Item is an ePOTag object" time="0.0924" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Tag With Pipelined ePOTag" executed="True" result="Success" success="True" time="1.3812" asserts="0" description="Finds Tag With Pipelined ePOTag">
+                <results>
+                  <test-case description="Get-ePOTag with tags" name="Get-ePOTag.Finds Tag With Pipelined ePOTag.Get-ePOTag with tags" time="0.2499" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: ePOTag" name="Get-ePOTag.Finds Tag With Pipelined ePOTag.Output Type: ePOTag" time="0.1375" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds Tag With Pipelined ePOTag.Item is an ePOTag object" time="0.126" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Three Tags Through Pipeline" executed="True" result="Success" success="True" time="1.785" asserts="0" description="Finds Three Tags Through Pipeline">
+                <results>
+                  <test-case description="Get-ePOTag with tags" name="Get-ePOTag.Finds Three Tags Through Pipeline.Get-ePOTag with tags" time="0.2944" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOTag.Finds Three Tags Through Pipeline.Output Type: System.Object[]" time="0.0978" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds Three Tags Through Pipeline.Item is an ePOTag object" time="0.1146" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds Three Tags Through Pipeline.Item is an ePOTag object" time="0.1086" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds Three Tags Through Pipeline.Item is an ePOTag object" time="0.1001" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Two Tags" executed="True" result="Success" success="True" time="1.6051" asserts="0" description="Finds Two Tags">
+                <results>
+                  <test-case description="Get-ePOTag with tags" name="Get-ePOTag.Finds Two Tags.Get-ePOTag with tags" time="0.2918" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Get-ePOTag.Finds Two Tags.Output Type: System.Object[]" time="0.0931" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds Two Tags.Item is an ePOTag object" time="0.0991" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Item is an ePOTag object" name="Get-ePOTag.Finds Two Tags.Item is an ePOTag object" time="0.1026" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOVersion.Tests.ps1" executed="True" result="Success" success="True" time="2.687" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Get-ePOVersion.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ePOVersion" executed="True" result="Success" success="True" time="2.5016" asserts="0" description="Get-ePOVersion">
+            <results>
+              <test-suite type="TestFixture" name="Fails to find ePO version" executed="True" result="Success" success="True" time="0.8807" asserts="0" description="Fails to find ePO version">
+                <results>
+                  <test-case description="Get-ePOVersion" name="Get-ePOVersion.Fails to find ePO version.Get-ePOVersion" time="0.2382" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Get-ePOVersion: Should not return anything" name="Get-ePOVersion.Fails to find ePO version.Get-ePOVersion: Should not return anything" time="0.0813" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds ePO version" executed="True" result="Success" success="True" time="0.8647" asserts="0" description="Finds ePO version">
+                <results>
+                  <test-case description="Get-ePOVersion" name="Get-ePOVersion.Finds ePO version.Get-ePOVersion" time="0.2398" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Version" name="Get-ePOVersion.Finds ePO version.Output Type: System.Version" time="0.1017" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Invoke-ePOQuery.Tests.ps1" executed="True" result="Success" success="True" time="13.033" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Invoke-ePOQuery.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Invoke-ePOQuery" executed="True" result="Success" success="True" time="12.7223" asserts="0" description="Invoke-ePOQuery">
+            <results>
+              <test-suite type="TestFixture" name="Fails To Find Query Results" executed="True" result="Success" success="True" time="0.7831" asserts="0" description="Fails To Find Query Results">
+                <results>
+                  <test-case description="Invoke-ePOQuery Throws" name="Invoke-ePOQuery.Fails To Find Query Results.Invoke-ePOQuery Throws" time="0.2494" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs One Query By Id With Database" executed="True" result="Success" success="True" time="0.9889" asserts="0" description="Runs One Query By Id With Database">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs One Query By Id With Database.Invoke-ePOQuery" time="0.2465" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs One Query By Id With Database.Output Type: System.Object[]" time="0.098" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs One Query By Id" executed="True" result="Success" success="True" time="0.9849" asserts="0" description="Runs One Query By Id">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs One Query By Id.Invoke-ePOQuery" time="0.251" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs One Query By Id.Output Type: System.Object[]" time="0.0991" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs One Query By Name" executed="True" result="Success" success="True" time="1.1621" asserts="0" description="Runs One Query By Name">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs One Query By Name.Invoke-ePOQuery" time="0.4119" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs One Query By Name.Output Type: System.Object[]" time="0.1046" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs Three Queries By Id" executed="True" result="Success" success="True" time="1.3586" asserts="0" description="Runs Three Queries By Id">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs Three Queries By Id.Invoke-ePOQuery" time="0.585" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs Three Queries By Id.Output Type: System.Object[]" time="0.1052" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs Three Queries By Name" executed="True" result="Success" success="True" time="1.8176" asserts="0" description="Runs Three Queries By Name">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs Three Queries By Name.Invoke-ePOQuery" time="1.0168" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs Three Queries By Name.Output Type: System.Object[]" time="0.0985" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs Two Queries By Id" executed="True" result="Success" success="True" time="1.2252" asserts="0" description="Runs Two Queries By Id">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs Two Queries By Id.Invoke-ePOQuery" time="0.4325" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs Two Queries By Id.Output Type: System.Object[]" time="0.1058" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Runs Two Queries By Name" executed="True" result="Success" success="True" time="1.6146" asserts="0" description="Runs Two Queries By Name">
+                <results>
+                  <test-case description="Invoke-ePOQuery" name="Invoke-ePOQuery.Runs Two Queries By Name.Invoke-ePOQuery" time="0.7757" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Object[]" name="Invoke-ePOQuery.Runs Two Queries By Name.Output Type: System.Object[]" time="0.1012" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Invoke-ePOWakeUpAgent.Tests.ps1" executed="True" result="Success" success="True" time="10.3449" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Invoke-ePOWakeUpAgent.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Invoke-ePOWakeUpAgent" executed="True" result="Success" success="True" time="10.0625" asserts="0" description="Invoke-ePOWakeUpAgent">
+            <results>
+              <test-suite type="TestFixture" name="Fails To Find Computer" executed="True" result="Success" success="True" time="1.1101" asserts="0" description="Fails To Find Computer">
+                <results>
+                  <test-case description="Invoke-ePOwerShellWakeUpAgent Throws" name="Invoke-ePOWakeUpAgent.Fails To Find Computer.Invoke-ePOwerShellWakeUpAgent Throws" time="0.5491" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Fails To Wake Up One Computer" executed="True" result="Success" success="True" time="1.1602" asserts="0" description="Fails To Wake Up One Computer">
+                <results>
+                  <test-case description="Invoke-ePOwerShellWakeUpAgent Throws" name="Invoke-ePOWakeUpAgent.Fails To Wake Up One Computer.Invoke-ePOwerShellWakeUpAgent Throws" time="0.5778" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Computer In Unmanaged State Via Pipeline" executed="True" result="Success" success="True" time="1.1549" asserts="0" description="Finds Computer In Unmanaged State Via Pipeline">
+                <results>
+                  <test-case description="Invoke-ePOwerShellWakeUpAgent Throws through pipeline" name="Invoke-ePOWakeUpAgent.Finds Computer In Unmanaged State Via Pipeline.Invoke-ePOwerShellWakeUpAgent Throws through pipeline" time="0.5479" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Finds Computer In Unmanaged State" executed="True" result="Success" success="True" time="1.1257" asserts="0" description="Finds Computer In Unmanaged State">
+                <results>
+                  <test-case description="Invoke-ePOwerShellWakeUpAgent Throws" name="Invoke-ePOWakeUpAgent.Finds Computer In Unmanaged State.Invoke-ePOwerShellWakeUpAgent Throws" time="0.5257" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Wakes Up One Computer Via Pipeline" executed="True" result="Success" success="True" time="1.2752" asserts="0" description="Wakes Up One Computer Via Pipeline">
+                <results>
+                  <test-case description="Invoke-ePOwerShellWakeUpAgent through pipeline" name="Invoke-ePOWakeUpAgent.Wakes Up One Computer Via Pipeline.Invoke-ePOwerShellWakeUpAgent through pipeline" time="0.4475" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: Null" name="Invoke-ePOWakeUpAgent.Wakes Up One Computer Via Pipeline.Output Type: Null" time="0.0685" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Wakes Up One Computer" executed="True" result="Success" success="True" time="1.2476" asserts="0" description="Wakes Up One Computer">
+                <results>
+                  <test-case description="Invoke-ePOwerShellWakeUpAgent" name="Invoke-ePOWakeUpAgent.Wakes Up One Computer.Invoke-ePOwerShellWakeUpAgent" time="0.4192" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: Null" name="Invoke-ePOWakeUpAgent.Wakes Up One Computer.Output Type: Null" time="0.0747" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Remove-ePOTag.Tests.ps1" executed="True" result="Success" success="True" time="14.656" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Remove-ePOTag.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Remove-ePOTag" executed="True" result="Success" success="True" time="14.3387" asserts="0" description="Remove-ePOTag">
+            <results>
+              <test-suite type="TestFixture" name="Clears One Tag To Five Computers" executed="True" result="Success" success="True" time="1.6848" asserts="0" description="Clears One Tag To Five Computers">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears One Tag To Five Computers.Remove-ePOTag" time="0.9859" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears One Tag To Five Computers.Output Type: System.Void" time="0.0733" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears One Tag To One Computer Already Exists" executed="True" result="Success" success="True" time="0.9726" asserts="0" description="Clears One Tag To One Computer Already Exists">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears One Tag To One Computer Already Exists.Remove-ePOTag" time="0.2693" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears One Tag To One Computer Already Exists.Output Type: System.Void" time="0.0759" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears One Tag To One Computer Returns Unknown" executed="True" result="Success" success="True" time="0.9021" asserts="0" description="Clears One Tag To One Computer Returns Unknown">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears One Tag To One Computer Returns Unknown.Remove-ePOTag" time="0.2602" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: " name="Remove-ePOTag.Clears One Tag To One Computer Returns Unknown.Output Type: " time="0.0677" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears One Tag To One Computer" executed="True" result="Success" success="True" time="0.9422" asserts="0" description="Clears One Tag To One Computer">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears One Tag To One Computer.Remove-ePOTag" time="0.2441" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears One Tag To One Computer.Output Type: System.Void" time="0.0753" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears One Tag To Two Computers" executed="True" result="Success" success="True" time="1.1224" asserts="0" description="Clears One Tag To Two Computers">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears One Tag To Two Computers.Remove-ePOTag" time="0.4326" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears One Tag To Two Computers.Output Type: System.Void" time="0.0705" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears Three Tags To Five Computers" executed="True" result="Success" success="True" time="3.4117" asserts="0" description="Clears Three Tags To Five Computers">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears Three Tags To Five Computers.Remove-ePOTag" time="2.6622" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears Three Tags To Five Computers.Output Type: System.Void" time="0.0678" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears Three Tags To One Computer" executed="True" result="Success" success="True" time="1.3507" asserts="0" description="Clears Three Tags To One Computer">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears Three Tags To One Computer.Remove-ePOTag" time="0.5828" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears Three Tags To One Computer.Output Type: System.Void" time="0.065" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Clears Two Tags To One Computer" executed="True" result="Success" success="True" time="1.1938" asserts="0" description="Clears Two Tags To One Computer">
+                <results>
+                  <test-case description="Remove-ePOTag" name="Remove-ePOTag.Clears Two Tags To One Computer.Remove-ePOTag" time="0.4395" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Remove-ePOTag.Clears Two Tags To One Computer.Output Type: System.Void" time="0.0706" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Set-ePOConfig.Tests.ps1" executed="True" result="Success" success="True" time="6.7876" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Set-ePOConfig.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Set-ePOConfig" executed="True" result="Success" success="True" time="6.5194" asserts="0" description="Set-ePOConfig">
+            <results>
+              <test-suite type="TestFixture" name="ePOwerShell Is FilePath" executed="True" result="Success" success="True" time="0.8088" asserts="0" description="ePOwerShell Is FilePath">
+                <results>
+                  <test-case description="Set-ePOConfig" name="Set-ePOConfig.ePOwerShell Is FilePath.Set-ePOConfig" time="0.2557" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="ePOwerShell Is Json" executed="True" result="Success" success="True" time="0.761" asserts="0" description="ePOwerShell Is Json">
+                <results>
+                  <test-case description="Set-ePOConfig" name="Set-ePOConfig.ePOwerShell Is Json.Set-ePOConfig" time="0.2277" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Fails To Read env Json" executed="True" result="Success" success="True" time="0.9785" asserts="0" description="Fails To Read env Json">
+                <results>
+                  <test-case description="Set-ePOConfig Throws" name="Set-ePOConfig.Fails To Read env Json.Set-ePOConfig Throws" time="0.2363" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Fails To Read Json" executed="True" result="Success" success="True" time="1.0005" asserts="0" description="Fails To Read Json">
+                <results>
+                  <test-case description="Set-ePOConfig Throws" name="Set-ePOConfig.Fails To Read Json.Set-ePOConfig Throws" time="0.2575" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Manual Entry" executed="True" result="Success" success="True" time="0.8061" asserts="0" description="Manual Entry">
+                <results>
+                  <test-case description="Set-ePOConfig" name="Set-ePOConfig.Manual Entry.Set-ePOConfig" time="0.2501" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="No ePOwerShell Set" executed="True" result="Success" success="True" time="0.6272" asserts="0" description="No ePOwerShell Set">
+                <results>
+                  <test-case description="Set-ePOConfig Throws" name="Set-ePOConfig.No ePOwerShell Set.Set-ePOConfig Throws" time="0.0923" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Set-ePOTag.Tests.ps1" executed="True" result="Success" success="True" time="14.2144" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Set-ePOTag.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Set-ePOTag" executed="True" result="Success" success="True" time="13.8874" asserts="0" description="Set-ePOTag">
+            <results>
+              <test-suite type="TestFixture" name="Sets One Tag To Five Computers" executed="True" result="Success" success="True" time="1.6057" asserts="0" description="Sets One Tag To Five Computers">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets One Tag To Five Computers.Set-ePOwerShellTag" time="0.9801" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets One Tag To Five Computers.Output Type: System.Void" time="0.0673" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets One Tag To One Computer Already Exists" executed="True" result="Success" success="True" time="0.8552" asserts="0" description="Sets One Tag To One Computer Already Exists">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets One Tag To One Computer Already Exists.Set-ePOwerShellTag" time="0.2441" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets One Tag To One Computer Already Exists.Output Type: System.Void" time="0.0673" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets One Tag To One Computer Returns Unknown" executed="True" result="Success" success="True" time="0.7126" asserts="0" description="Sets One Tag To One Computer Returns Unknown">
+                <results>
+                  <test-case description="Set-ePOwerShellTag Throws" name="Set-ePOTag.Sets One Tag To One Computer Returns Unknown.Set-ePOwerShellTag Throws" time="0.2591" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets One Tag To One Computer" executed="True" result="Success" success="True" time="0.9108" asserts="0" description="Sets One Tag To One Computer">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets One Tag To One Computer.Set-ePOwerShellTag" time="0.2723" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets One Tag To One Computer.Output Type: System.Void" time="0.0769" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets One Tag To Two Computers" executed="True" result="Success" success="True" time="1.0907" asserts="0" description="Sets One Tag To Two Computers">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets One Tag To Two Computers.Set-ePOwerShellTag" time="0.4331" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets One Tag To Two Computers.Output Type: System.Void" time="0.0734" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets Three Tags To Five Computers" executed="True" result="Success" success="True" time="3.4116" asserts="0" description="Sets Three Tags To Five Computers">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets Three Tags To Five Computers.Set-ePOwerShellTag" time="2.6935" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets Three Tags To Five Computers.Output Type: System.Void" time="0.0686" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets Three Tags To One Computer" executed="True" result="Success" success="True" time="1.3493" asserts="0" description="Sets Three Tags To One Computer">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets Three Tags To One Computer.Set-ePOwerShellTag" time="0.6239" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets Three Tags To One Computer.Output Type: System.Void" time="0.0716" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Sets Two Tags To One Computer" executed="True" result="Success" success="True" time="1.1439" asserts="0" description="Sets Two Tags To One Computer">
+                <results>
+                  <test-case description="Set-ePOwerShellTag" name="Set-ePOTag.Sets Two Tags To One Computer.Set-ePOwerShellTag" time="0.4409" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Output Type: System.Void" name="Set-ePOTag.Sets Two Tags To One Computer.Output Type: System.Void" time="0.0787" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Thows Error Setting Tag" executed="True" result="Success" success="True" time="0.7622" asserts="0" description="Thows Error Setting Tag">
+                <results>
+                  <test-case description="Set-ePOwerShellTag Throws" name="Set-ePOTag.Thows Error Setting Tag.Set-ePOwerShellTag Throws" time="0.2379" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="D:\Git\Github\ePOwerShell\Tests\Public\Update-ePOConfig.Tests.ps1" executed="True" result="Success" success="True" time="4.3022" asserts="0" description="D:\Git\Github\ePOwerShell\Tests\Public\Update-ePOConfig.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Update-ePOConfig" executed="True" result="Success" success="True" time="4.0791" asserts="0" description="Update-ePOConfig">
+            <results>
+              <test-suite type="TestFixture" name="ePOwerShell Is Not Set Yet" executed="True" result="Success" success="True" time="0.5201" asserts="0" description="ePOwerShell Is Not Set Yet">
+                <results>
+                  <test-case description="Update-ePOwerShellServer Throws" name="Update-ePOConfig.ePOwerShell Is Not Set Yet.Update-ePOwerShellServer Throws" time="0.0933" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="No ePOwerShell Settings Changed" executed="True" result="Success" success="True" time="0.8161" asserts="0" description="No ePOwerShell Settings Changed">
+                <results>
+                  <test-case description="Update-ePOwerShellServer" name="Update-ePOConfig.No ePOwerShell Settings Changed.Update-ePOwerShellServer" time="0.2318" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not return" name="Update-ePOConfig.No ePOwerShell Settings Changed.Does not return" time="0.0718" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Updates Port" executed="True" result="Success" success="True" time="0.8352" asserts="0" description="Updates Port">
+                <results>
+                  <test-case description="Update-ePOwerShellServer" name="Update-ePOConfig.Updates Port.Update-ePOwerShellServer" time="0.2273" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not return" name="Update-ePOConfig.Updates Port.Does not return" time="0.0728" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Updates Server" executed="True" result="Success" success="True" time="0.8108" asserts="0" description="Updates Server">
+                <results>
+                  <test-case description="Update-ePOwerShellServer" name="Update-ePOConfig.Updates Server.Update-ePOwerShellServer" time="0.2228" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not return" name="Update-ePOConfig.Updates Server.Does not return" time="0.076" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

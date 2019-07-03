@@ -1,80 +1,90 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
-. $testFile
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[System.String]    $FunctionType         = 'Public'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Invoke-ePORequest.ps1') -Resolve)
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath 'Find-ePOwerShellComputerSystem.ps1') -Resolve)
-
-[System.Collections.ArrayList] $tests = @()
-$examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
-
-foreach ($example in $examples) {
-    [hashtable] $test = @{
-        Name = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
-    }
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-
-    foreach ($exampleData in (Import-PowerShellDataFile -LiteralPath $example.FullName).GetEnumerator()) {
-        $test.Add($exampleData.Name, $exampleData.Value) | Out-Null
-    }
-
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-    $tests.Add($test) | Out-Null
+while (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+    $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
 }
 
-Describe $testFile.Name {
-    foreach ($test in $tests) {
-        Mock Invoke-ePORequest {
-            $File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $test.ResultsFile)
-            return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-        }
-        
-        Mock Find-ePOwerShellComputerSystem {
-            if ($File = Get-ChildItem (Join-Path -Path $exampleDirectory -ChildPath 'References' -Resolve) -Filter ('{0}.html' -f $ComputerName)) {
-                return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-            }
-            return $Null
-        }
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
+[IO.DirectoryInfo] $Global:ReferenceDirectory = Join-Path $ExampleDirectory.FullName -ChildPath 'References' -Resolve
 
-        Mock Write-Warning {
-            Write-Debug $Message
-        }
+$Examples = Get-ChildItem $ExampleDirectory -Filter "*.psd1" -File
 
-        Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
+$Tests = foreach ($Example in $Examples) {
+    [hashtable] $Test = @{
+        Name = $Example.BaseName.Split('.')[1]
+    }
 
-        Context $test.Name {
-            [hashtable] $parameters = $test.Parameters
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
 
-            if ($Test.Output.Throws) {
-                if ($Test.Pipeline) {
-                    It "Invoke-ePOwerShellWakeUpAgent Throws through pipeline" {
-                        { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Throw
-                    }
-                } else {
-                    It "Invoke-ePOwerShellWakeUpAgent Throws" {
-                        { $script:RequestResponse = Invoke-ePOwerShellWakeUpAgent @parameters } | Should Throw
-                    }
-                }
-                continue
-            }
+    foreach ($ExampleData in (Import-PowerShellDataFile -LiteralPath $Example.FullName).GetEnumerator()) {
+        $Test.Add($ExampleData.Name, $ExampleData.Value) | Out-Null
+    }
 
-            if ($Test.Pipeline) {
-                It "Invoke-ePOwerShellWakeUpAgent through pipeline" {
-                    { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Not Throw
-                }
-            } else {
-                It "Invoke-ePOwerShellWakeUpAgent" {
-                    { $script:RequestResponse = Invoke-ePOwerShellWakeUpAgent @parameters } | Should Not Throw
-                }
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
+    Write-Output $Test
+}
+
+Describe $FunctionName {
+    foreach ($Global:Test in $Tests) {
+        InModuleScope ePOwerShell {
+            Mock Invoke-ePORequest {
+                $File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Test.ResultsFile)
+                $Content = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                return $Content
             }
             
-            It "Output Type: Null" {
-                $script:RequestResponse | Should BeNullOrEmpty
+            Mock Find-ePOwerShellComputerSystem {
+                if ($File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $ComputerName)) {
+                    return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                }
+                return $Null
+            }
+
+            Mock Write-Error {
+                Throw "SHIT"
+            }
+
+            Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
+
+            Context $Test.Name {
+                [hashtable] $parameters = $Test.Parameters
+
+                if ($Test.Output.Throws) {
+                    if ($Test.Pipeline) {
+                        It "Invoke-ePOwerShellWakeUpAgent Throws through pipeline" {
+                            { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Throw
+                        }
+                    } else {
+                        It "Invoke-ePOwerShellWakeUpAgent Throws" {
+                            { $script:RequestResponse = Invoke-ePOwerShellWakeUpAgent @parameters } | Should Throw
+                        }
+                    }
+
+                    continue
+                }
+
+                if ($Test.Pipeline) {
+                    It "Invoke-ePOwerShellWakeUpAgent through pipeline" {
+                        { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Not Throw
+                    }
+                } else {
+                    It "Invoke-ePOwerShellWakeUpAgent" {
+                        { $script:RequestResponse = Invoke-ePOwerShellWakeUpAgent @parameters } | Should Not Throw
+                    }
+                }
+                
+                It "Output Type: Null" {
+                    $script:RequestResponse | Should BeNullOrEmpty
+                }
             }
         }
     }
+
+    Remove-Variable -Scope 'Global' -Name 'Test' -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Scope 'Global' -Name 'ReferenceDirectory' -Force -ErrorAction SilentlyContinue
 }

@@ -1,0 +1,43 @@
+OK:
+[
+    {
+        "name":  "Endpoint Security Platform Systems",
+        "target":  "GS_CustomProps",
+        "type":  "target",
+        "databaseType":  "",
+        "description":  "Endpoint Security Platform Custom Properties",
+        "columns":  "\r\n    Name                               Type      Select? Condition? GroupBy? Order? Number? \r\n    ---------------------------------- --------- ------- ---------- -------- ------ -------\r\n    AutoID                             int       False   False      False    True   True   \r\n    ParentID                           int       False   False      False    True   True   \r\n    LeafNodeID                         int       False   False      False    True   True   \r\n    IsTimeBasedPasswordEnabled         enum      True    True       True     True   False  \r\n    IsSPEnabled                        boolean   True    True       True     True   False  \r\n    SPbComplianceStatus                enum      True    True       True     True   False  \r\n    SPComplianceStatus                 string    True    True       True     True   False  \r\n    SPAdditionalComplianceStatus       string    True    True       True     True   False  \r\n    UIPasswordChanged                  timestamp True    True       True     True   False  \r\n    clientUIAccessLevel                enum      True    True       True     True   False  \r\n    gtiProxyType                       enum      True    True       True     True   False  \r\n    IsWindowsApplicationLoggingEnabled boolean   True    True       True     True   False  \r\n    IsSendEventsToepoEnabled           boolean   True    True       True     True   False  \r\n    APEventFilterlevel                 enum      True    True       True     True   False  \r\n    BOEventFilterlevel                 enum      True    True       True     True   False  \r\n    FWEventFilterlevel                 enum      True    True       True     True   False  \r\n    OASEventFilterlevel                enum      True    True       True     True   False  \r\n    ODSEventFilterlevel                enum      True    True       True     True   False  \r\n    ATPEventFilterlevel                enum      True    True       True     True   False  \r\n    WPEventFilterlevel                 enum      True    True       True     True   False  \r\n    IsClientActivityLoggingEnabled     boolean   True    True       True     True   False  \r\n    IsAPClientDebugLoggingEnabled      boolean   True    True       True     True   False  \r\n    IsBOClientDebugLoggingEnabled      boolean   True    True       True     True   False  \r\n    IsOASClientDebugLoggingEnabled     boolean   True    True       True     True   False  \r\n    IsODSClientDebugLoggingEnabled     boolean   True    True       True     True   False  \r\n    IsFWClientDebugLoggingEnabled      boolean   True    True       True     True   False  \r\n    IsWPClientDebugLoggingEnabled      boolean   True    True       True     True   False  \r\n    IsATPClientDebugLoggingEnabled     boolean   True    True       True     True   False  \r\n    ClientActivityLogSizeMB            int       True    True       True     True   True   \r\n    ClientDebugLogSizeMB               int       True    True       True     True   True   \r\n    ClientLogFilesLocation             string    True    True       True     True   False  \r\n    AacVersion                         string    True    True       True     True   False  \r\n    Hotfixes                           string    True    True       True     True   False  \r\n    Patch                              string    True    True       True     True   False  \r\n    LicenseStatus                      string    True    True       True     True   False  \r\n    Language                           string    True    True       True     True   False  \r\n    GlobalExclusionStatus              enum      True    True       True     True   False  \r\n",
+        "relatedTables":  "\r\n    Name\r\n    -----------\r\n    EPOLeafNode\r\n",
+        "foreignKeys":  "\r\n    Source table   Source Columns Destination table Destination columns Allows inverse? One-to-one? Many-to-one? \r\n    -------------- -------------- ----------------- ------------------- --------------- ----------- ------------\r\n    GS_CustomProps LeafNodeID     EPOLeafNode       AutoID              False           True        False       \r\n"
+    },
+    {
+        "name":  "Users (by system)",
+        "target":  "MneUsersView",
+        "type":  "target",
+        "databaseType":  "",
+        "description":  "List of users (by system)",
+        "columns":  "\r\n    Name          Type      Select? Condition? GroupBy? Order? Number? \r\n    ------------- --------- ------- ---------- -------- ------ -------\r\n    UserId        int       False   False      False    True   True   \r\n    EPOLeafNodeId int       False   False      False    True   True   \r\n    TenantId      int       False   False      False    True   True   \r\n    UserName      string    True    True       True     True   False  \r\n    UserType      enum      True    True       True     True   False  \r\n    AuthName      string    True    True       True     True   False  \r\n    ModifiedUtc   timestamp True    True       True     True   False  \r\n",
+        "relatedTables":  "\r\n    Name\r\n    -----------\r\n    EPOLeafNode\r\n",
+        "foreignKeys":  "\r\n    Source table Source Columns Destination table Destination columns Allows inverse? One-to-one? Many-to-one? \r\n    ------------ -------------- ----------------- ------------------- --------------- ----------- ------------\r\n    MneUsersView EPOLeafNodeId  EPOLeafNode       AutoID              False           False       True        \r\n"
+    },
+    {
+        "name":  "Event Product",
+        "target":  "EPOSoftwareView",
+        "type":  "join",
+        "databaseType":  "",
+        "description":  "Event Product",
+        "columns":  "\r\n    Name         Type          Select? Condition? GroupBy? Order? Number? \r\n    ------------ ------------- ------- ---------- -------- ------ -------\r\n    ProductCode  string        False   False      False    True   False  \r\n    SoftwareName string_lookup True    True       True     True   False  \r\n",
+        "relatedTables":  "\r\n    Name\r\n    ----\r\n",
+        "foreignKeys":  "None"
+    },
+    {
+        "name":  "Trend of Number of Cloud Provider Users ",
+        "target":  "FRPCloudTrendOfNumberOfUsers",
+        "type":  "target",
+        "databaseType":  "",
+        "description":  "Trend of the number of cloud provider users detected over time",
+        "columns":  "\r\n    Name         Type      Select? Condition? GroupBy? Order? Number? \r\n    ------------ --------- ------- ---------- -------- ------ -------\r\n    AutoID       int       False   False      False    True   True   \r\n    SnapshotTime timestamp True    True       True     True   False  \r\n    ProviderName string    True    True       True     True   False  \r\n    UserCount    int       True    True       True     True   True   \r\n",
+        "relatedTables":  "\r\n    Name\r\n    ----\r\n",
+        "foreignKeys":  "None"
+    }
+]

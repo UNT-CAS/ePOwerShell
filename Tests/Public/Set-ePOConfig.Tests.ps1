@@ -1,94 +1,104 @@
-[string]           $projectDirectoryName = 'ePOwerShell'
-[IO.FileInfo]      $pesterFile = [io.fileinfo] ([string] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
-[IO.DirectoryInfo] $projectRoot = Split-Path -Parent $pesterFile.Directory
-[IO.DirectoryInfo] $projectDirectory = Join-Path -Path $projectRoot -ChildPath $projectDirectoryName -Resolve
-[IO.DirectoryInfo] $exampleDirectory = [IO.DirectoryInfo] ([String] (Resolve-Path (Get-ChildItem (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -Filter (($pesterFile.Name).Split('.')[0]) -Directory).FullName))
-[IO.FileInfo]      $testFile = Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Public' -ChildPath ($pesterFile.Name -replace '\.Tests\.', '.')) -Resolve
-. $testFile
+[System.String]    $ProjectDirectoryName = 'ePOwerShell'
+[System.String]    $FunctionType         = 'Public'
+[IO.FileInfo]      $PesterFile           = [IO.FileInfo] ([System.String] (Resolve-Path -Path $MyInvocation.MyCommand.Path))
+[System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
+[IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-. $(Join-Path -Path $projectDirectory -ChildPath (Join-Path -Path 'Private' -ChildPath 'Initialize-ePOConfig.ps1') -Resolve)
+while (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+    $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
+}
 
-[System.Collections.ArrayList] $tests = @()
-$examples = Get-ChildItem $exampleDirectory -Filter "$($testFile.BaseName).*.psd1" -File
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
+[IO.DirectoryInfo] $ExampleDirectory          = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
 
-foreach ($example in $examples) {
-    [hashtable] $test = @{
-        Name       = $example.BaseName.Replace("$($testFile.BaseName).$verb", '').Replace('_', ' ')
+$Examples = Get-ChildItem $ExampleDirectory -Filter "*.psd1" -File
+
+$Tests = foreach ($Example in $Examples) {
+    [hashtable] $Test = @{
+        Name = $Example.BaseName.Split('.')[1]
         Parameters = @{}
     }
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
+
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
 
     foreach ($exampleData in (Import-PowerShellDataFile -LiteralPath $example.FullName).GetEnumerator()) {
         if (
             ($exampleData.Name -eq 'Port') -or
             ($exampleData.Name -eq 'Server')
         ) {
-            $test.Parameters.Add($exampleData.Name, $exampleData.Value) | Out-Null
+            $Test.Parameters.Add($exampleData.Name, $exampleData.Value) | Out-Null
         } else {
-            $test.Add($exampleData.Name, $exampleData.Value) | Out-Null
+            $Test.Add($exampleData.Name, $exampleData.Value) | Out-Null
         }
     }
 
-    if ($test.Username -and $test.Password) {
-        $SuperSecretPassword = ConvertTo-SecureString $test.Password -AsPlainText -Force
+    if ($Test.Username -and $Test.Password) {
+        $SuperSecretPassword = ConvertTo-SecureString $Test.Password -AsPlainText -Force
         $Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($Test.Username, $SuperSecretPassword)
     
-        $test.Parameters.Add('Credentials', $Credentials) | Out-Null
+        $Test.Parameters.Add('Credentials', $Credentials) | Out-Null
     }
 
-    Write-Verbose "Test: $($test | ConvertTo-Json)"
-    $tests.Add($test) | Out-Null
+    Write-Verbose "Test: $($Test | ConvertTo-Json)"
+    Write-Output $Test
 }
 
-Describe $testFile.Name {
-    foreach ($test in $tests) {
-        $env:ePOwerShell = $Null
-        if ($test.ePOwerShell) {
-            if ($test.ePOwerShellFilePath) {
-                $FilePath = $test.ePOwerShellFilePath -f ($test.ePOwerShellFilePath_f | iex)
 
-                @{
-                    Server      = $test.ePOwerShell.Server
-                    Port        = $test.ePOwerShell.Port
-                    Username    = $test.ePOwerShell.Username
-                    Password    = (ConvertTo-SecureString $test.ePOwerShell.Password -AsPlainText -Force | ConvertFrom-SecureString)
-                } | ConvertTo-Json | Out-File $FilePath -Force
+Describe $FunctionName {
+    foreach ($Global:Test in $Tests) {
+        InModuleScope ePOwerShell {
+            Mock Get-ePOHelp {}
+            $env:ePOwerShell = $Null
+            if ($Test.ePOwerShell) {
+                if ($Test.ePOwerShellFilePath) {
+                    $FilePath = $Test.ePOwerShellFilePath -f ($Test.ePOwerShellFilePath_f | Invoke-Expression)
 
-                $env:ePOwerShell = $FilePath
-            } else {
-                $env:ePOwerShell = @{
-                    Server   = $test.ePOwerShell.Server
-                    Port     = $test.ePOwerShell.Port
-                    Username = $test.ePOwerShell.Username
-                    Password = (ConvertTo-SecureString $test.ePOwerShell.Password -AsPlainText -Force | ConvertFrom-SecureString)
-                } | ConvertTo-Json -Compress
+                    @{
+                        Server      = $Test.ePOwerShell.Server
+                        Port        = $Test.ePOwerShell.Port
+                        Username    = $Test.ePOwerShell.Username
+                        Password    = (ConvertTo-SecureString $Test.ePOwerShell.Password -AsPlainText -Force | ConvertFrom-SecureString)
+                    } | ConvertTo-Json | Out-File $FilePath -Force
+
+                    $env:ePOwerShell = $FilePath
+                } else {
+                    $env:ePOwerShell = @{
+                        Server   = $Test.ePOwerShell.Server
+                        Port     = $Test.ePOwerShell.Port
+                        Username = $Test.ePOwerShell.Username
+                        Password = (ConvertTo-SecureString $Test.ePOwerShell.Password -AsPlainText -Force | ConvertFrom-SecureString)
+                    } | ConvertTo-Json -Compress
+                }
             }
-        }
 
-        Context $test.Name {
-            [hashtable] $parameters = $test.Parameters
+            Context $Test.Name {
+                [hashtable] $parameters = $Test.Parameters
 
-            if ($Test.Output.Throws) {
-                if ($Test.BreakJson) {
-                    Mock ConvertFrom-Json {
-                        Throw "This should break it"
+                if ($Test.Output.Throws) {
+                    if ($Test.BreakJson) {
+                        Mock ConvertFrom-Json {
+                            Throw "This should break it"
+                        }
                     }
+
+                    It "Set-ePOConfig Throws" {
+                        { Set-ePOConfig @parameters } | Should Throw
+                    }
+                    continue
                 }
 
-                It "Set-ePOwerShellServer Throws" {
-                    { Set-ePOwerShellServer @parameters } | Should Throw
+                It "Set-ePOConfig" {
+                    { Set-ePOConfig @parameters } | Should Not Throw
                 }
-                continue
-            }
 
-            It "Set-ePOwerShellServer" {
-                { Set-ePOwerShellServer @parameters } | Should Not Throw
-            }
-
-            if ($test.ePOwerShellFilePath) {
-                $FilePath = $test.ePOwerShellFilePath -f ($test.ePOwerShellFilePath_f | iex)
-                Remove-Item $FilePath -Force -ErrorAction SilentlyContinue
+                if ($Test.ePOwerShellFilePath) {
+                    $FilePath = $Test.ePOwerShellFilePath -f ($Test.ePOwerShellFilePath_f | iex)
+                    Remove-Item $FilePath -Force -ErrorAction SilentlyContinue
+                }
             }
         }
     }
+
+    Remove-Variable -Scope 'Global' -Name 'Test' -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Scope 'Global' -Name 'ReferenceDirectory' -Force -ErrorAction SilentlyContinue
 }

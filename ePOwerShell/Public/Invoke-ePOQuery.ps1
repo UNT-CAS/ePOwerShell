@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Either runs a predefined query or a custom query against the ePO server 
+    Either runs a predefined query or a custom query against the ePO server
 
 .DESCRIPTION
     Based off the Query Name or ID, runs the query and returns the output.
@@ -98,56 +98,59 @@ function Invoke-ePOQuery {
 
     process {
         try {
-            switch ($PSCmdlet.ParameterSetName) {
-                'PremadeQuery' {
-                    Write-Debug 'Using a premade query'
-                    if ($Query -is [ePOQuery]) {
-                        Write-Debug 'ePOQuery object specified'
-                        $Request.Query.queryId = $Query.ID
-                    } elseif ($Query -is [Int32]) {
-                        Write-Debug 'Query ID specified'
-                        $Request.Query.queryId = $Query
-                    } else {
-                        Write-Debug 'Query Name specified'
-                        if (-not ($ePOQuery = Get-ePOQuery | Where-Object { $_.Name -eq $Query })) {
-                            Write-Error ('Failed to find a query for: {0}' -f $Query) -ErrorAction Stop
-                        }
-
-                        $Request.Query.queryId = $ePOQuery.ID
-                    }
-
-                    if ($Database) {
-                        [Void] $Request.Query.Add('database', $Database)
-                    }
-                }
-
-                'CustomQuery' {
-                    $Select = foreach ($Item in $Select) {
-                        if ($Item -Match '^(\S+\.){1,}\S+$') {
-                            $Item
+            foreach ($QueryItem in $Query) {
+                switch ($PSCmdlet.ParameterSetName) {
+                    'PremadeQuery' {
+                        Write-Debug 'Using a premade query'
+                        if ($QueryItem -is [ePOQuery]) {
+                            Write-Debug 'ePOQuery object specified'
+                            $Request.Query.queryId = $QueryItem.ID
+                        } elseif ($QueryItem -is [Int32]) {
+                            Write-Debug 'Query ID specified'
+                            $Request.Query.queryId = $QueryItem
                         } else {
-                            $Table + '.' + $Item
+                            Write-Debug 'Query Name specified'
+
+                            if (-not ($ePOQuery = Get-ePOQuery | Where-Object { $_.name -eq $QueryItem })) {
+                                Write-Error ('Failed to find a query for: {0}' -f $QueryItem) -ErrorAction Stop
+                            }
+
+                            $Request.Query.queryId = $ePOQuery.ID
+                        }
+
+                        if ($Database) {
+                            [Void] $Request.Query.Add('database', $Database)
                         }
                     }
 
-                    $Select = '(select ' + ($Select -Join ' ') + ')'
-                    [Void] $Request.Query.Add('select', $Select)
+                    'CustomQuery' {
+                        $Select = foreach ($Item in $Select) {
+                            if ($Item -Match '^(\S+\.){1,}\S+$') {
+                                $Item
+                            } else {
+                                $Table + '.' + $Item
+                            }
+                        }
 
-                    if ($Where) {
-                        $WhereString = Write-ePOWhere $Where
-                        Write-Debug ('Where String: {0}' -f $WhereString)
-                        [Void] $Request.Query.Add('where', $WhereString)
+                        $Select = '(select ' + ($Select -Join ' ') + ')'
+                        [Void] $Request.Query.Add('select', $Select)
+
+                        if ($Where) {
+                            $WhereString = Write-ePOWhere $Where
+                            Write-Debug ('Where String: {0}' -f $WhereString)
+                            [Void] $Request.Query.Add('where', $WhereString)
+                        }
                     }
                 }
-            }
 
-            Write-Debug "Request: $($Request | ConvertTo-Json)"
-            if (-not ($QueryResults = Invoke-ePORequest @Request)) {
-                Throw "Failed to find any ePO query results"
-            }
+                Write-Debug "Request: $($Request | ConvertTo-Json)"
+                if (-not ($QueryResults = Invoke-ePORequest @Request)) {
+                    Throw "Failed to find any ePO query results"
+                }
 
-            Write-Debug "Results: $($QueryResults | Out-String)"
-            Write-Output $QueryResults
+                Write-Debug "Results: $($QueryResults | Out-String)"
+                Write-Output $QueryResults
+            }
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_
@@ -156,3 +159,5 @@ function Invoke-ePOQuery {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Invoke-ePOQuery' -Alias 'Invoke-ePOwerShellQuery'

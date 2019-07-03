@@ -49,3 +49,5 @@ function Get-ePOQuery {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOQuery' -Alias 'Get-ePOwerShellQueries', 'Get-ePOQueries'

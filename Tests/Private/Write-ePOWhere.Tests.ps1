@@ -4,69 +4,54 @@
 [System.String]    $FunctionName         = $PesterFile.Name.Split('.')[0]
 [IO.DirectoryInfo] $ProjectRoot          = Split-Path -Parent $PesterFile.Directory
 
-While (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
+while (-not ($ProjectRoot.Name -eq $ProjectDirectoryName)) {
     $ProjectRoot = Split-Path -Parent $ProjectRoot.FullName
 }
 
-[IO.DirectoryInfo] $ProjectDirectory     = Join-Path -Path $ProjectRoot -ChildPath $ProjectDirectoryName -Resolve
-[IO.DirectoryInfo] $PublicDirectory      = Join-Path -Path $ProjectDirectory -ChildPath 'Public' -Resolve 
-[IO.DirectoryInfo] $PrivateDirectory     = Join-Path -Path $ProjectDirectory -ChildPath 'Private' -Resolve 
 [IO.DirectoryInfo] $ExampleDirectory     = Join-Path (Join-Path -Path $ProjectRoot -ChildPath 'Examples' -Resolve) -ChildPath $FunctionType -Resolve
 [IO.DirectoryInfo] $ExampleDirectory     = Join-Path $ExampleDirectory.FullName -ChildPath $FunctionName -Resolve
-if ($FunctionType = 'Private') {
-    [IO.FileInfo]  $TestFile             = Join-Path -Path $PrivateDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
-} else {
-    [IO.FileInfo]  $TestFile             = Join-Path -Path $PublicDirectory -ChildPath ($PesterFile.Name -replace '\.Tests\.', '.') -Resolve
-}
 
-. $TestFile
-Get-ChildItem -Path $PublicDirectory -Filter '*.ps1' | Foreach-Object { . $_.FullName }
+$Examples = Get-ChildItem $ExampleDirectory -Filter "*.psd1" -File
 
-
-
-[System.Collections.ArrayList] $Tests = @()
-$Examples = Get-ChildItem $ExampleDirectory -Filter "$($TestFile.BaseName).*.psd1" -File
-
-foreach ($Example in $Examples) {
-    [Hashtable] $Test = @{
-        Name = $Example.BaseName.Replace("$($TestFile.BaseName).$Verb", '').Replace('_', ' ')
-        Parameters = @{}
+$Tests = foreach ($Example in $Examples) {
+    [hashtable] $Test = @{
+        Name = $Example.BaseName.Split('.')[1]
     }
+
     Write-Verbose "Test: $($Test | ConvertTo-Json)"
 
     foreach ($ExampleData in (Import-PowerShellDataFile -LiteralPath $Example.FullName).GetEnumerator()) {
-        if ($ExampleData.Name -eq 'Response') {
-            $Test.Add($ExampleData.Name, $ExampleData.Value) | Out-Null
-        } else {
-            $Test.Parameters.Add($ExampleData.Name, $ExampleData.Value) | Out-Null
-        }
+        $Test.Add($ExampleData.Name, $ExampleData.Value) | Out-Null
     }
 
     Write-Verbose "Test: $($Test | ConvertTo-Json)"
-    $Tests.Add($Test) | Out-Null
+    $Test
 }
 
 
 
-Describe $TestFile.Name {
-    Mock Get-ePOHelp {}
-    foreach ($Test in $Tests) {
-        Remove-Variable -Scope 'Script' -Name 'ePOwerShell' -Force -ErrorAction SilentlyContinue
+Describe $FunctionName {
+    foreach ($Global:Test in $Tests) {
+        InModuleScope ePOwerShell {
+            Remove-Variable -Scope 'Script' -Name 'ePOwerShell' -Force -ErrorAction SilentlyContinue
 
-        Context $Test.Name {
-            [Hashtable] $Parameters = $Test.Parameters
+            Context $Test.Name {
+                [Hashtable] $Parameters = $Test.Parameters
 
-            It "Write-ePOWhere" {
-                { $Script:RequestResponse = Write-ePOWhere @Parameters } | Should Not Throw
-            }
+                It "Write-ePOWhere" {
+                    { $Script:RequestResponse = Write-ePOWhere @Parameters } | Should Not Throw
+                }
 
-            It "Returns a string" {
-                $Script:RequestResponse.GetType().Fullname | Should Be 'System.String'
-            }
+                It "Returns a string" {
+                    $Script:RequestResponse.GetType().Fullname | Should Be 'System.String'
+                }
 
-            It "Matches expected value" {
-                $Script:RequestResponse | Should Be $Test.Response
+                It "Matches expected value" {
+                    $Script:RequestResponse | Should Be $Test.Response
+                }
             }
         }
     }
+    
+    Remove-Variable -Scope 'Global' -Name 'Test' -Force -ErrorAction SilentlyContinue
 }

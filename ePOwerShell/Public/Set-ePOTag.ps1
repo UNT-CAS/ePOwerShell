@@ -117,3 +117,5 @@ function Set-ePOTag {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Set-ePOTag' -Alias 'Set-ePOwerShellTag'

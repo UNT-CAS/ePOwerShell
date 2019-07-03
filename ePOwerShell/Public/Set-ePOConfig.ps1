@@ -140,3 +140,5 @@ function Set-ePOConfig {
         Initialize-ePOConfig @ePOwerShellVariables
     }
 }
+
+Export-ModuleMember -Function 'Set-ePOConfig' -Alias 'Set-ePOServer'

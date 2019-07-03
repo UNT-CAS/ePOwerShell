@@ -66,3 +66,5 @@ function Update-ePOConfig {
         Initialize-ePOConfig @ePOwerShellVariables
     }
 }
+
+Export-ModuleMember -Function 'Update-ePOConfig' -Alias 'Update-ePOwerShellServer', 'Update-ePOServer'

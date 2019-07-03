@@ -117,25 +117,32 @@ function Invoke-ePOWakeUpAgent {
 
                 Write-Verbose "Request: $($Request | ConvertTo-Json)"
                 $Response = Invoke-ePORequest @Request
-                Write-Debug "Response: $($Response | Format-Table)"
 
                 $Results = @{}
-                $Response.Split('\n') | Where-Object { $_ } | ForEach-Object { $s = $_.Split(':'); $Results.Add($s[0].Trim(), $s[1].Trim()) }
+                foreach ($Item in (($Response | ConvertTo-Json).Split('\n').Replace('"', ''))) {
+                    if ($Item) {
+                        $ItemName = ($Item.Split(':')[0].Trim())
+                        $ItemResults = ([Boolean]($Item.Split(':')[1].Trim() -as [Int]))
+                        $Results.Add($ItemName, $ItemResults)
+                    }
+                }
 
-                if ([Boolean]$Results.Completed) {
+                if ($Results.Completed) {
                     Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName)
-                } elseif ([Boolean]$Results.Failed) {
-                    Write-Error ('Failed to wake up {0}' -f $ePOComputer.ComputerName)
-                } elseif ([Boolean]$Results.Expired) {
-                    Write-Error ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName)
+                } elseif ($Results.Failed) {
+                    Throw ('Failed to wake up {0}' -f $ePOComputer.ComputerName)
+                } elseif ($Results.Expired) {
+                    Throw ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName)
                 } else {
-                    Write-Error ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName)
+                    Throw ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName)
                 }
             }
         } catch {
-            Write-Information $_ -Tags Exception
+            Write-Error $_
         }
     }
 
     end {}
 }
+
+Export-ModuleMember -Function 'Invoke-ePOWakeUpAgent' -Alias 'Invoke-ePOwerShellWakeUpAgent'

@@ -34,7 +34,7 @@ function Get-ePORecoveryKey {
                 This parameter can be passed in from the pipeline.
         #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        [Alias('Name')]
+        [Alias('ComputerName', 'Name')]
         $Computer
     )
 
@@ -47,6 +47,10 @@ function Get-ePORecoveryKey {
                 }
                 ErrorAction = 'Stop'
             }
+
+            if ($Computer) {
+                $Computer = $Computer.Split(',').Trim()
+            }
         } catch {
             Write-Information $_ -Tags Exception
             Throw $_
@@ -57,37 +61,47 @@ function Get-ePORecoveryKey {
         foreach ($Comp in $Computer) {
             if ($Comp -is [ePOComputer]) {
                 Write-Verbose 'Computer is an ePOComputer object'
+                $CompResponse = $Comp
             } else {
                 Write-Verbose 'Computer is not an ePOComputer object. Searching for...'
-                $Comp = Get-ePOComputer -Computer $Comp -ErrorAction Stop
+                $CompResponse = Get-ePOComputer -Computer $Comp -ErrorAction Stop
             }
 
-            $QueryRequest = @{
-                Table       = 'MneVolumes'
-                Select      = @(
-                    'MneFvRecoveryKeys.DisplayName',
-                    'MneVolumes.MountPoint'
-                )
-                Where       = @{
-                    eq = @{
-                        'MneVolumes.EPOLeafNodeId' = $Comp.ParentID
+            foreach ($Item in $CompResponse) {
+                $QueryRequest = @{
+                    Table       = 'MneVolumes'
+                    Select      = @(
+                        'MneFvRecoveryKeys.DisplayName',
+                        'MneVolumes.MountPoint'
+                    )
+                    Where       = @{
+                        eq = @{
+                            'MneVolumes.EPOLeafNodeId' = $Item.ParentID
+                        }
                     }
+                    ErrorAction = 'Stop'
                 }
-                ErrorAction = 'Stop'
-            }
 
-            $MountPoints = Invoke-ePOQuery @QueryRequest
+                try {
+                    $MountPoints = Invoke-ePOQuery @QueryRequest
+                } catch {
+                    Write-Warning ('Failed to find mount points for {0}' -f $Item.ComputerName)
+                    continue
+                }
 
-            foreach ($MountPoint in $MountPoints) {
-                Write-Verbose ('Getting recovery key for mount point: {0}' -f $MountPoint.'MneFvRecoveryKeys.DisplayName')
-                $Request.Query.serialNumber = $MountPoint.'MneFvRecoveryKeys.DisplayName'
+                foreach ($MountPoint in $MountPoints) {
+                    Write-Verbose ('Getting recovery key for mount point: {0}' -f $MountPoint.'MneFvRecoveryKeys.DisplayName')
+                    $Request.Query.serialNumber = $MountPoint.'MneFvRecoveryKeys.DisplayName'
 
-                $RecoveryKey = Invoke-ePORequest @Request
-                $RecoveryKeyObject = [ePORecoveryKey]::new($Comp.ComputerName, $MountPoint.'MneVolumes.MountPoint', $RecoveryKey)
-                Write-Output $RecoveryKeyObject
+                    $RecoveryKey = Invoke-ePORequest @Request
+                    $RecoveryKeyObject = [ePORecoveryKey]::new($Item.ComputerName, $MountPoint.'MneVolumes.MountPoint', $RecoveryKey)
+                    Write-Output $RecoveryKeyObject
+                }
             }
         }
     }
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePORecoveryKey' -Alias 'Get-ePOwerShellMneRecoveryKey', 'Get-ePOMneRecoveryKey'

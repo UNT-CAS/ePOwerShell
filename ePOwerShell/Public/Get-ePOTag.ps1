@@ -72,3 +72,5 @@ function Get-ePOTag {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Get-ePOTag' -Alias 'Find-ePOwerShellTag','Find-ePOTag'

@@ -116,3 +116,5 @@ function Remove-ePOTag {
 
     end {}
 }
+
+Export-ModuleMember -Function 'Remove-ePOTag' -Alias 'Clear-ePOwerShellTag', 'Clear-ePOTag'

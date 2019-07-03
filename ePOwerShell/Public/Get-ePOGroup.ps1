@@ -5,7 +5,7 @@
     .DESCRIPTION
         Finds all available groups from the ePO server as an ePOGroup object. If a group name is specifed,
         it searches for only the one group from the server. If a group is not specified, then it will
-        return a list of all available groups on the ePO server. 
+        return a list of all available groups on the ePO server.
 
     .EXAMPLE
         Returns array of ePOGroup objects containing group information
@@ -82,3 +82,5 @@ function Get-ePOGroup {
 
     end {}
 }
+
+Export-ModuleMember -Function Get-ePOGroup -Alias 'Find-ePOwerShellGroups','Find-ePOGroups'
