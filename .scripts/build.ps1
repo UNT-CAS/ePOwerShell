@@ -187,7 +187,7 @@ Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends In
 
     Write-Host "[BUILD TestModule] Uploading CodeCov.io Report ..." -ForegroundColor Magenta
     Push-Location $script:PSScriptRootParent
-    & "${env:Temp}\Codecov\codecov.exe" -f $exportCodeCovIoJson.Path
+    & "${env:Temp}\Codecov\codecov.exe" -f $exportCodeCovIoJson.Path -t $env:CODECOV_TOKEN
     Pop-Location
 
     Write-Host "[BUILD TestModule] Adding Results to Artifacts..." -ForegroundColor Magenta
