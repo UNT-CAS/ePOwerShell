@@ -167,7 +167,7 @@ Task InvokePester -Description 'Runs Pester tests against compiled module' -Depe
     }
 }
 
-Task CompressModule -Description "Compress module for easy download from GitHub" -Depends CodeCoverage {
+Task CompressModule -Description "Compress module for easy download from GitHub" -Depends InvokePester {
     Write-Host "[BUILD CompressModule] Import-Module ${env:Temp}\CodeCovIo.psm1" -ForegroundColor Magenta
     Compress-Archive -Path $script:ParentModulePath -DestinationPath "${script:ParentModulePath}.zip"
 
