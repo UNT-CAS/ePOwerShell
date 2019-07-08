@@ -1,6 +1,7 @@
 image: WMF 5
 
-version: 0.3.{build}
+version: 0.3.{build}-{branch}
+skip_tags: true
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
@@ -26,21 +27,6 @@ install:
 
 build_script:
 - ps: Invoke-psake '.\.scripts\build.ps1' -Properties @{'SkipBootStrap' = $true}
-
-
-
-# deploy:
-#   release: v$(APPVEYOR_BUILD_VERSION)
-#   description: ePOwerShell v$(appveyor_build_version)
-#   provider: GitHub
-#   auth_token:
-#     secure: EHLdOgH35OJQ/AAj6dXn/iQ9datyBKgai5JGB+Lbh9Yaltk4wLefi2MIfGZ5N2ca
-#   artifact: /.*\.zip/
-#   draft: false
-#   prerelease: true
-#   on:
-#     branch: master                 # release from master branch only
-#     appveyor_repo_tag: false        # deploy except on tag push only
 
 
 
