@@ -40,7 +40,6 @@ $script:ResourceModulePath = $null
 $script:SystemModuleLocation = $null
 $script:DependsBootstrap = if ($Properties.Keys -contains 'SkipBootstrap' -and $Properties.SkipBootstrap) { $null } else { 'Bootstrap' }
 $script:VersionBuild = $null
-$script:PesterResults = @{}
 
 if (-not $env:CI) {
     Get-Module $Manifest.ModuleName -ListAvailable -Refresh | Uninstall-Module -Force -ErrorAction 'SilentlyContinue'
@@ -166,33 +165,6 @@ Task InvokePester -Description 'Runs Pester tests against compiled module' -Depe
     if ($Pester.FailedCount -gt 0) {
         Throw "$($Pester.FailedCount) tests failed."
     }
-
-    $Script:PesterResults.Add('CodeCoverage', $Pester.CodeCoverage)
-    $Script:PesterResults.Add('OutputFile', $InvokePester.OutputFile)
-
-}
-
-Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends InvokePester {
-    Write-Host "[BUILD TestModule] Import-Module ${env:Temp}\CodeCovIo.psm1" -ForegroundColor Magenta
-    Import-Module ${env:Temp}\CodeCovIo.psm1
-
-    $exportCodeCovIoJson = @{
-        CodeCoverage = $PesterResults.CodeCoverage
-        RepoRoot     = $PSScriptRootParent
-        Path         = ($PesterResults.OutputFile).Replace('.xml', '.json')
-    }
-
-    Write-Host "[BUILD TestModule] Export-CodeCovIoJson: $($exportCodeCovIoJson | ConvertTo-Json)" -ForegroundColor Magenta
-    Export-CodeCovIoJson @exportCodeCovIoJson
-
-    Write-Host "[BUILD TestModule] Uploading CodeCov.io Report ..." -ForegroundColor Magenta
-    Push-Location $script:PSScriptRootParent
-    & "${env:Temp}\Codecov\codecov.exe" -f $exportCodeCovIoJson.Path -t $env:CODECOV_TOKEN
-    Pop-Location
-
-    Write-Host "[BUILD TestModule] Adding Results to Artifacts..." -ForegroundColor Magenta
-    Push-AppveyorArtifact (Resolve-Path $PesterResults.OutputFile)
-    Push-AppveyorArtifact (Resolve-Path $exportCodeCovIoJson.Path)
 }
 
 Task CompressModule -Description "Compress module for easy download from GitHub" -Depends CodeCoverage {
