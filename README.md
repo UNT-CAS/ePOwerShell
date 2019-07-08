@@ -9,9 +9,10 @@
 Import-Module ePOwerShell
 
 $ePOwerShellServer = @{
-    Server = 'your-epo-server.com'
+    Server = 'https://your-epo-server.com'
     Port = 1234
     Credentials = (Get-Credential)
+    AllowSelfSignedCerts = $True
 }
 
 Set-ePOwerShellServer @ePOwershellServer
@@ -20,7 +21,7 @@ Set-ePOwerShellServer @ePOwershellServer
 From here, you're able to use the rest of the functions:
 
 ```powershell
-$Computer = Find-ePOwerShellComputerSystem $env:ComputerName
+$Computer = Get-ePOComputer $env:ComputerName
 ```
 
 The rest of the functions are detailed further in [the wiki](../../wiki).
