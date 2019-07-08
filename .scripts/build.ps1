@@ -191,7 +191,6 @@ Task CodeCoverage -Description 'Exports code coverage to CodeCov.io' -Depends In
     Pop-Location
 
     Write-Host "[BUILD TestModule] Adding Results to Artifacts..." -ForegroundColor Magenta
-    # (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Resolve-Path $invokePester.OutputFile))
     Push-AppveyorArtifact (Resolve-Path $PesterResults.OutputFile)
     Push-AppveyorArtifact (Resolve-Path $exportCodeCovIoJson.Path)
 }
