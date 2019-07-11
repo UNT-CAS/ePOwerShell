@@ -33,5 +33,5 @@ build_script:
 on_success:
 # If build was started by pushed tag; deploy it.
   - ps: |
-    Write-Host "[AppVeyor] On Success; deploying ..." -Foregroundcolor Green
-    Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force
+      Write-Host "[AppVeyor] On Success; deploying ..." -Foregroundcolor Green
+      Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force
