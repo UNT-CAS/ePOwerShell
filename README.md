@@ -14,7 +14,7 @@ $ePOwerShellServer = @{
     AllowSelfSignedCerts = $True
 }
 
-Set-ePOwerShellServer @ePOwershellServer
+Set-ePOConfig @ePOwershellServer
 ```
 
 From here, you're able to use the rest of the functions:
