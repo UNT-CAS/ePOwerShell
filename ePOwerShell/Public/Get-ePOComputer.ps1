@@ -9,52 +9,68 @@
         MAC Address, IP Address, Tags, and Usernames.
 
     .EXAMPLE
-        Returns all computers in the ePO system
-        ```powershell
         $Computer = Get-ePOComputer -All
-        ```
+
+        Returns all computers in the ePO system
 
     .EXAMPLE
-        Returns ePO computer object searching by hostname
-        ```powershell
         $Computer = Get-ePOComputer -ComputerName 'Computer1'
-        ```
+
+        Returns ePO computer object searching by hostname
 
     .EXAMPLE
-        Returns ePO computer object searching by hostname with wildcard
-        ```powershell
         $Computer = Get-ePOComputer -ComputerName 'Computer*' -ForceWildcardHandling
-        ```
+
+        Returns ePO computer object searching by hostname with wildcard
 
     .EXAMPLE
-        Returns ePO computer object searching by Agent Guid
-        ```powershell
         $Computer = Get-ePOComputer -AgentGuid 5b273b72-977b-4566-9cb4-9af816ac222b
-        ```
+
+        Returns ePO computer object searching by Agent Guid
 
     .EXAMPLE
-        Returns ePO computer object searching by MAC Address
-        ```powershell
         $Computer = Get-ePOComputer -MacAddress 00-05-9A-3C-7A-00
-        ```
+
+        Returns ePO computer object searching by MAC Address
 
     .EXAMPLE
-        Returns ePO computer object searching by IP Address
-        ```powershell
         $Computer = Get-ePOComputer -IPAddress 192.168.32.46
-        ```
+
+        Returns ePO computer object searching by IP Address
 
     .EXAMPLE
-        Returns ePO computer object searching by Username
-        ```powershell
         $Computer = Get-ePOComputer -Username MyUsername
-        ```
+
+        Returns ePO computer object searching by Username
 
     .EXAMPLE
-        Returns ePO computer objects searching by Tag
-        ```powershell
         $Computer = Get-ePOComputer -Tag ePOTag1
-        ```
+
+        Returns ePO computer objects searching by Tag
+
+    .PARAMETER AgentGuid
+        Specifies the computers Agent Guid to be found on the ePO server
+
+    .PARAMETER Computer
+        Specifies a computer system to be found on the ePO server
+
+    .PARAMETER ForceWildcardHandling
+        Allows for wildcards to be used when searching by computer name
+
+    .PARAMETER MACAddress
+        Specifies the computers MAC Address to be found on the ePO server
+
+    .PARAMETER IPAddress
+        Specifies the computers IPAddress to be found on the ePO server
+
+    .PARAMETER Tag
+        Specifies the tag a computer might have applied to be found on the ePO server
+
+    .PARAMETER Username
+        Specifies the computers Username to be found on the ePO server
+
+    .PARAMETER All
+        Returns all computers in the ePO server
 #>
 
 function Get-ePOComputer {
@@ -62,61 +78,29 @@ function Get-ePOComputer {
     [Alias('Find-ePOwerShellComputerSystem', 'Find-ePOComputerSystem')]
     [OutputType([System.Object[]])]
     param (
-        <#
-            .PARAMETER AgentGuid
-                Specifies the computers Agent Guid to be found on the ePO server
-        #>
         [Parameter(ParameterSetName = 'AgentGuid')]
         $AgentGuid,
 
-        <#
-            .PARAMETER Computer
-                Specifies a computer system to be found on the ePO server
-        #>
         [Parameter(ParameterSetName = 'ComputerName', Position = 1, ValueFromPipeline = $True)]
         [Alias('hostname', 'name', 'computername')]
         $Computer,
 
-        <#
-            .PARAMETER ForceWildcardHandling
-                Allows for wildcards to be used when searching by computer name
-        #>
         [Parameter(ParameterSetName = 'ComputerName')]
         [Switch]
         $ForceWildcardHandling,
 
-        <#
-            .PARAMETER MACAddress
-                Specifies the computers MAC Address to be found on the ePO server
-        #>
         [Parameter(ParameterSetName = 'MACAddress')]
         $MACAddress,
 
-        <#
-            .PARAMETER IPAddress
-                Specifies the computers IPAddress to be found on the ePO server
-        #>
         [Parameter(ParameterSetName = 'IPAddress')]
         $IPAddress,
 
-        <#
-            .PARAMETER Tag
-                Specifies the tag a computer might have applied to be found on the ePO server
-        #>
         [Parameter(ParameterSetName = 'Tag')]
         $Tag,
 
-        <#
-            .PARAMETER Username
-                Specifies the computers Username to be found on the ePO server
-        #>
         [Parameter(ParameterSetName = 'Username')]
         $Username,
 
-        <#
-            .PARAMETER All
-                Returns all computers in the ePO server
-        #>
         [Parameter(ParameterSetName = 'All')]
         [Switch]
         $All

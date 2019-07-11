@@ -13,26 +13,23 @@
         The function will then return an array containing all ePOHelp objects.
 
     .EXAMPLE
-        Get all help objects on the ePO servers core.help page.
-        ```powershell
         $Help = Get-ePOHelp
-        ```
+
+        Get all help objects on the ePO servers core.help page.
 
     .EXAMPLE
-        Get a single help object from the ePO servers core.help page.
-        ```powershell
         $FindHelp = Get-ePOHelp -Command 'system.find'
-        ```
+
+        Get a single help object from the ePO servers core.help page.
+
+    .PARAMETER Command
+        Specifies a command the be queried from the ePO server
 #>
 
 function Get-ePOHelp {
     [CmdletBinding()]
     [Alias('Get-ePOwerShellCoreHelp', 'Get-ePOCoreHelp')]
     param (
-        <#
-            .PARAMETER Command
-                Specifies a command the be queried from the ePO server
-        #>
         [Parameter(Position = 0, ValueFromPipeline = $True)]
         $Command
     )

@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Saves the stored ePOwerShell settings to your environment for future use
+        Saves the stored ePOwerShell settings to your environment for future use.
 
     .DESCRIPTION
         Rather than typing in your credentials to ePOwerShell anytime you open your shell, you can store
@@ -8,18 +8,12 @@
         require `Set-ePOConfig` to be run first.
 
     .EXAMPLE
-        Set and store ePOwerShell settings
-        ```powershell
-        PS> $env:ePOwerShell = @{
-                Server               = 'My-ePO-Server.domain.com'
-                Port                 = 1234
-                Credentials          = (Get-Credential)
-                AllowSelfSignedCerts = $True
-            }
-        PS> Set-ePOConfig
-        PS> Save-ePOConfig
-        PS>
-        ```
+        PS > Save-ePOConfig
+
+        Save ePOwerShell settings in your user environment.
+
+    .NOTES
+        Requires Set-ePOConfig to be run first.
 #>
 
 function Save-ePOConfig {

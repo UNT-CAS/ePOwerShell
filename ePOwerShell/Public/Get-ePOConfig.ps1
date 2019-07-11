@@ -6,10 +6,9 @@
         Returns an ePOConfig object of the saved information necessary to communicate with the ePO server
 
     .EXAMPLE
-        Returns the currently set configuration for connecting to the ePO server.
-        ```powershell
         $Config = Get-ePOConfig
-        ```
+
+        Returns the currently set configuration for connecting to the ePO server.
 #>
 
 function Get-ePOConfig {

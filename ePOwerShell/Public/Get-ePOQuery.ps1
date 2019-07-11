@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         Finds available predefined queries on the ePO server.
 
@@ -7,10 +7,9 @@
         and an array containing all objects will be returned.
 
     .EXAMPLE
-        Get all predefined queries in ePO
-        ```powershell
         $Queries = Get-ePOQuery
-        ```
+
+        Get all predefined queries in ePO
 #>
 
 function Get-ePOQuery {

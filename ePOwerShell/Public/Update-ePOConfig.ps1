@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         Updates ePOwerShell config options individually, rather than setting everything at once.
 
@@ -10,41 +10,39 @@
         json as an environment variable, $env:ePOwerShell.
 
     .EXAMPLE
-        Update ePOwerShell to target a new server:
-        ```powershell
         Update-ePOwerShellServer -Server 'My-ePO-Server.domain.com'
-        ```
+
+        Update ePOwerShell to target a new server
+
+    .PARAMETER Server
+        URL to the ePO server
+
+    .PARAMETER Port
+        Specifies the port necessary to communicate with the ePO server
+
+    .PARAMETER Credentials
+        Credentials with access to the ePO server
+
+    .PARAMETER AllowSelfSignedCerts
+        Specifies if you'd like to allow ePOwerShell to allow self signed certificates on the ePO server
+
+    .OUTPUTS
+        None
 #>
 
 function Update-ePOConfig {
     [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Low")]
     [Alias('Update-ePOwerShellServer', 'Update-ePOServer')]
     param (
-        <#
-            .PARAMETER Server
-                URL to the ePO server
-        #>
         [System.String]
         $Server = ($Script:ePOwerShell.Server),
 
-        <#
-            .PARAMETER Port
-                Specifies the port necessary to communicate with the ePO server
-        #>
         [System.Int32]
         $Port = ($Script:ePOwerShell.Port),
 
-        <#
-            .PARAMETER Credentials
-                Credentials with access to the ePO server
-        #>
         [System.Management.Automation.PSCredential]
         $Credentials = ($Script:ePOwerShell.Credentials),
 
-        <#
-            .PARAMETER AllowSelfSignedCerts
-                Specifies if you'd like to allow ePOwerShell to allow self signed certificates on the ePO server
-        #>
         [Switch]
         $AllowSelfSignedCerts = ($Script:ePOwerShell.AllowSelfSignedCerts)
     )

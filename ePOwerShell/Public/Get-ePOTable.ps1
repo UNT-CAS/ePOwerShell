@@ -1,20 +1,19 @@
 <#
 .SYNOPSIS
-
-    Finds available queries on the ePO server
+    Finds available tables in the ePO database
 
 .DESCRIPTION
-
-    Finds all available queries from the ePO server.
+    Finds all available tables from the ePO database. Number of tables accessable may depend on your security permissions.
 
 .EXAMPLE
+    $Tables = Get-ePOTable
 
-    Get-ePOTable
-
+    Gets all available tables
 #>
 
 function Get-ePOTable {
     [CmdletBinding()]
+    [OutputType([System.Object[]])]
     param ()
 
     begin {

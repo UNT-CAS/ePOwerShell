@@ -8,22 +8,30 @@
         return a list of all available groups on the ePO server.
 
     .EXAMPLE
-        Returns array of ePOGroup objects containing group information
-        ```powershell
         $Groups = Get-ePOGroup
-        ```
+
+        Returns array of ePOGroup objects containing group information
 
     .EXAMPLE
-        Returns array of ePOGroup objects containing requested group information with matching group name
-        ```powershell
         $Groups = Get-ePOGroup 'Group1'
-        ```
+
+        Returns array of ePOGroup objects containing requested group information with matching group name
 
     .EXAMPLE
-        Returns array of ePOGroup objects containing requested group information with matching group name by wildcard
-        ```powershell
         $Groups = Get-ePOGroup 'Group*' -ForceWildcardHandling
-        ```
+
+        Returns array of ePOGroup objects containing requested group information with matching group name by wildcard
+
+    .PARAMETER Group
+        Specifies a group name to be found on the ePO server. This parameter can be provider by either:
+
+            * an ePOGroup object
+            * a group name
+
+        This parameter can be passed in from the pipeline.
+
+    .PARAMETER ForceWildcardHandling
+        Allows for wildcards to be used when searching by group name
 #>
 
 function Get-ePOGroup {
@@ -31,23 +39,10 @@ function Get-ePOGroup {
     [Alias('Find-ePOwerShellGroups','Find-ePOGroups')]
     [OutputType([System.Object[]])]
     param (
-        <#
-            .PARAMETER Group
-                Specifies a group name to be found on the ePO server. This parameter can be provider by either:
-
-                    * an ePOGroup object
-                    * a group name
-
-                This parameter can be passed in from the pipeline.
-        #>
         [Parameter(Position = 0, ValueFromPipeline = $True)]
         [Alias('GroupName')]
         $Group = '',
 
-        <#
-            .PARAMETER ForceWildcardHandling
-                Allows for wildcards to be used when searching by group name
-        #>
         [Switch]
         $ForceWildcardHandling
     )

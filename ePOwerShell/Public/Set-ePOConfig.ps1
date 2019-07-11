@@ -10,63 +10,48 @@
         json as an environment variable, $env:ePOwerShell.
 
     .EXAMPLE
-        Set ePO config after reading settings from an Environment variable
-        ```powershell
-        $env:ePOwerShell = @{
-            Server               = 'My-ePO-Server.domain.com'
-            Port                 = 1234
-            Credentials          = (Get-Credential)
-            AllowSelfSignedCerts = $True
-        }
+        Set-ePOConfig -Server 'My-ePO-Server.domain.com' -Port 1234 -Credentials (Get-Credential) -AllowSelfSignedCerts
 
-        Set-ePOConfig
-        ```
-    .EXAMPLE
-        Set ePO config by manually specifying values each time
-        ```powershell
-        Set-ePOConfig -Server 'My-ePO-Server.domain.com' -Port 1234 -Credentials (Get-Credential)
-        ```
+        Set ePO config
+
+    .PARAMETER Server
+        URL to the ePO server
+
+    .PARAMETER Credentials
+        Credentials with access to the ePO server
+
+    .PARAMETER Port
+        Specifies the port necessary to communicate with the ePO server
+
+    .PARAMETER AllowSelfSignedCerts
+        Specifies if you'd like to allow ePOwerShell to allow self signed certificates on the ePO server
+
+    .PARAMETER ePOwerShellSettings
+        Specifies a path to a json containing all information necessary to connect to an ePO server
+
+    .OUTPUTS
+        None
 #>
 
 function Set-ePOConfig {
     [CmdletBinding(DefaultParameterSetName = 'Env', SupportsShouldProcess = $True)]
     [Alias('Set-ePOServer')]
     param (
-        <#
-            .PARAMETER Server
-                URL to the ePO server
-        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [String]
         $Server,
 
-        <#
-            .PARAMETER Credentials
-                Credentials with access to the ePO server
-        #>
         [Parameter(Mandatory = $True, ParameterSetName = 'ManualEntry')]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
-        <#
-            .PARAMETER Port
-                Specifies the port necessary to communicate with the ePO server
-        #>
         [Parameter(Mandatory = $False, ParameterSetName = 'ManualEntry')]
         [Int]
         $Port,
 
-        <#
-            .PARAMETER AllowSelfSignedCerts
-                Specifies if you'd like to allow ePOwerShell to allow self signed certificates on the ePO server
-        #>
         [Switch]
         $AllowSelfSignedCerts = ($Script:ePOwerShell.AllowSelfSignedCerts),
 
-        <#
-            .PARAMETER ePOwerShellSettings
-                Specifies a path to a json containing all information necessary to connect to an ePO server
-        #>
         [Parameter(ParameterSetName = 'Env')]
         [String]
         $ePOwerShellSettings = (${env:ePOwerShell})

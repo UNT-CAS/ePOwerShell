@@ -13,10 +13,17 @@
         and recovery key.
 
     .EXAMPLE
-        Fetch the recovery key for a system:
-        ```powershell
         $RecoveyKey = Get-ePORecoveryKey -Computer 'My-ComputerName'
-        ```
+
+        Fetch the recovery key for a system
+
+    .PARAMETER Computer
+        Specifies the computer we're finding the recovery key for. Can be provided as:
+
+            * An ePOComputer object
+            * A computer name
+
+        This parameter can be passed in from the pipeline.
 #>
 
 function Get-ePORecoveryKey {
@@ -24,15 +31,6 @@ function Get-ePORecoveryKey {
     [Alias('Get-ePOwerShellMneRecoveryKey', 'Get-ePOMneRecoveryKey')]
     [OutputType([System.Object[]])]
     param (
-        <#
-            .PARAMETER Computer
-                Specifies the computer we're finding the recovery key for. Can be provided as:
-
-                    * An ePOComputer object
-                    * A computer name
-
-                This parameter can be passed in from the pipeline.
-        #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName', 'Name')]
         $Computer
@@ -68,6 +66,7 @@ function Get-ePORecoveryKey {
             }
 
             foreach ($Item in $CompResponse) {
+                Write-Verbose ('Detecting mount points for {0}' -f $Item.ComputerName)
                 $QueryRequest = @{
                     Table       = 'MneVolumes'
                     Select      = @(
@@ -82,12 +81,16 @@ function Get-ePORecoveryKey {
                     ErrorAction = 'Stop'
                 }
 
-                try {
-                    $MountPoints = Invoke-ePOQuery @QueryRequest
-                } catch {
-                    Write-Warning ('Failed to find mount points for {0}' -f $Item.ComputerName)
+                Write-Debug ('Mount point query request: {0}' -f ($QueryRequest | ConvertTo-Json))
+
+                $MountPoints = Invoke-ePOQuery @QueryRequest
+
+                if ($MountPoints.Count -eq 0) {
+                    Write-Error ('Failed to find mount points for {0}, {1}' -f $Item.ComputerName, $Item.ParentID)
                     continue
                 }
+
+                Write-Debug ('Mount points: {0}' -f ($MountPoints -join ', '))
 
                 foreach ($MountPoint in $MountPoints) {
                     Write-Verbose ('Getting recovery key for mount point: {0}' -f $MountPoint.'MneFvRecoveryKeys.DisplayName')

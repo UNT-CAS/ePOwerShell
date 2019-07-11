@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         Finds available tags on the ePO server
 
@@ -8,16 +8,22 @@
         objects from the ePO server. Each tag contains an ID, Name, and Description.
 
     .EXAMPLE
-        Get all tags from the ePO server
-        ```powershell
         $Tags = Get-ePOTag
-        ```
+
+        Get all tags from the ePO server
 
     .EXAMPLE
-        Get a single tag from the ePO server
-        ```powershell
         $Tag = Get-ePOTag 'Tag1'
-        ```
+
+        Get a single tag from the ePO server
+
+    .PARAMETER Tag
+        This parameter is used to request a specific tag. This can be provided as:
+
+            * An ePOTag object
+            * A tag name
+
+        This value can be passed in from the pipeline.
 #>
 
 function Get-ePOTag {
@@ -25,15 +31,6 @@ function Get-ePOTag {
     [Alias('Find-ePOwerShellTag','Find-ePOTag')]
     [OutputType([System.Object[]])]
     param (
-        <#
-            .PARAMETER Tag
-                This parameter is used to request a specific tag. This can be provided as:
-
-                    * An ePOTag object
-                    * A tag name
-
-                This value can be passed in from the pipeline.
-        #>
         [Parameter(Position = 0, ValueFromPipeline = $True)]
         [Alias('TagName')]
         $Tag = ''

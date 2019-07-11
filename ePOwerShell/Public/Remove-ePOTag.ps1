@@ -1,4 +1,4 @@
-<#
+﻿<#
     .SYNOPSIS
         Removes tags from computers managed in ePO
 
@@ -7,52 +7,48 @@
         specified. Tags or Computers can be passed in through the pipeline, but not both at the same time.
 
     .EXAMPLE
-        Remove a single tag on a single computer
-        ```powershell
-        $Tag = Get-ePOTag -Tag 'Tag1'
-        $Computer = Get-ePOComputer -Computer 'Computer1'
         Remove-ePOTag -Computer $Computer -Tag $Tag
-        ```
+
+        Remove a single tag on a single computer
 
     .EXAMPLE
+        Remove-ePOTag -Computer @(Computer1, Computer2) -Tag Tag1
+
         Remove one tag on two computers
-        ```powershell
-        Remove-ePOTag @(Computer1, Computer2) Tag1
-        ```
 
     .EXAMPLE
-        Remove two tags to a single computer:
-        ```powershell
         Remove-ePOTag Computer1 @(Tag1, Tag2)
-        ```
+
+        Remove two tags to a single computer
+
+    .PARAMETER Computer
+        Specifies the name of the computer managed by ePO to have a tag applied to it. This can be provided by:
+
+            * An ePOComputer object
+            * A computer name
+
+        This parameter can be provided through the pipeline
+
+    .PARAMETER Tag
+        Specifies the name of the tag to be applied. This can be provided by:
+
+            * An ePOTag object
+            * A tag name
+
+        This parameter can be provided through the pipeline
+
+    .OUTPUTS
+        None
 #>
 
 function Remove-ePOTag {
     [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "High")]
     [Alias('Clear-ePOwerShellTag', 'Clear-ePOTag')]
     param (
-        <#
-            .PARAMETER Computer
-                Specifies the name of the computer managed by ePO to have a tag applied to it. This can be provided by:
-
-                    * An ePOComputer object
-                    * A computer name
-
-                This parameter can be provided through the pipeline
-        #>
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        [Alias('Computer', 'cn', 'Name')]
-        $ComputerName,
+        [Alias('ComputerName', 'cn', 'Name')]
+        $Computer,
 
-        <#
-            .PARAMETER Tag
-                Specifies the name of the tag to be applied. This can be provided by:
-
-                    * An ePOTag object
-                    * A tag name
-
-                This parameter can be provided through the pipeline
-        #>
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [Alias('Tag')]
         $TagName
@@ -75,14 +71,14 @@ function Remove-ePOTag {
 
     process {
         try {
-            foreach ($Computer in $ComputerName) {
+            foreach ($Comp in $Computer) {
                 foreach ($Tag in $TagName) {
-                    if ($Computer -is [ePOComputer]) {
-                        $Request.Query.names = $Computer.ComputerName
-                    } elseif ($Computer -is [ePOTag]) {
-                        $Request.Query.tagName = $Computer.Name
+                    if ($Comp -is [ePOComputer]) {
+                        $Request.Query.names = $Comp.ComputerName
+                    } elseif ($Comp -is [ePOTag]) {
+                        $Request.Query.tagName = $Comp.Name
                     } else {
-                        $Request.Query.names = $Computer
+                        $Request.Query.names = $Comp
                     }
 
                     if ($Tag -is [ePOTag]) {
@@ -100,11 +96,11 @@ function Remove-ePOTag {
                         $Result = Invoke-ePORequest @Request
 
                         if ($Result -eq 0) {
-                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Computer)
+                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Comp)
                         } elseif ($Result -eq 1) {
-                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Computer)
+                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Comp)
                         } else {
-                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Computer, $Result)
+                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Comp, $Result)
                         }
                     }
                 }
