@@ -148,7 +148,11 @@ Task CompileModule -Description 'Compiles all funcitons into a single .psm1 file
 }
 
 Task ImportModule -Description 'Imports the compiled module' -Depends CompileModule, CompileManifest {
-    Import-Module "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1"
+    try {
+        Import-Module "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1" -Global -Force
+    } catch {
+        Throw $_
+    }
 }
 
 Task InvokePester -Description 'Runs Pester tests against compiled module' -Depends ImportModule {
