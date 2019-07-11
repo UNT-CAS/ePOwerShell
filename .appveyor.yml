@@ -1,7 +1,6 @@
 image: WMF 5
 
 version: 0.3.{build}
-skip_tags: true
 
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
@@ -13,6 +12,7 @@ environment:
     secure: 19uAs7mfu9YRkwTvHIymJuSyXGjUUXCR+jsaRvo3ST44NmgZG2HZkOjuabTe/Cyu
   CODECOV_TOKEN:
     secure: 2zRKXm7Sw+GlVonpMOerfEBjeYc05cJinePPX8nJl7c7j1PzNAbrNHAbi7y1RALU
+  
 
 
 
@@ -26,12 +26,12 @@ install:
 
 
 build_script:
-- ps: Invoke-psake '.\.scripts\build.ps1' -Properties @{'SkipBootStrap' = $true}
+- ps: Invoke-psake '.\.scripts\build.ps1'
 
 
 
 on_success:
 # If build was started by pushed tag; deploy it.
-- ps: |
+  - ps: |
     Write-Host "[AppVeyor] On Success; deploying ..." -Foregroundcolor Green
     Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force
