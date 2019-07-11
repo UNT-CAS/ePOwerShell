@@ -162,6 +162,7 @@ Task InvokePester -Description 'Runs Pester tests against compiled module' -Depe
         PassThru     = $True
         OutputFormat = 'NUnitXml'
         OutputFile   = ([IO.FileInfo] '{0}\dev\CodeCoverage.xml' -f $PSScriptRootParent)
+        EnableExit   = $True
     }
 
     $Pester = Invoke-Pester @InvokePester
