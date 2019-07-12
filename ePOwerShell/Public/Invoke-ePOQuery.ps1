@@ -1,0 +1,168 @@
+﻿<#
+    .SYNOPSIS
+        Either runs a predefined query or a custom query against the ePO server
+
+    .DESCRIPTION
+        Based off the Query Name or ID, runs the query and returns the output.
+
+    .EXAMPLE
+        $Query = Get-ePOQuery
+        $Query = $Query | Where-Object { $_.Name -eq 'My Awesome Query' }
+        $Results = Invoke-ePOQuery -Query $Query
+
+        Run a predefined query saved on the ePO server
+
+    .PARAMETER Query
+        Specifies a predefined query that is stored on the ePO server. Can be provided by:
+
+            * An ePOQuery object
+            * A query ID
+            * A query Name
+
+        This parameter can be passed in from the pipeline.
+
+    .PARAMETER Table
+        Specifies the table on the ePO server you would like to query against. Run Get-ePOTable to see available tables and values.
+
+    .PARAMETER Select
+        Specifies the items from tables you're specifically looking for. If a table name is not specified in your select string, then `$Table` is prepended to the beginning of your select item.
+
+    .PARAMETER Where
+        A hashtable used to limit the query to items meeting only specific criteria
+
+    .PARAMETER Database
+        Optional parameter. Specifies a separate database to query, other than the default one.
+
+    .OUTPUTS
+        `[System.Object[]]`
+#>
+
+function Invoke-ePOQuery {
+    [CmdletBinding()]
+    [Alias('Invoke-ePOwerShellQuery')]
+    param (
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ParameterSetName = 'PremadeQuery')]
+        $Query,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
+        [System.String]
+        $Table,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
+        [System.String[]]
+        $Select,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'CustomQuery')]
+        [HashTable]
+        $Where,
+
+        [Parameter(ParameterSetName = 'CustomQuery')]
+        [Parameter(ParameterSetName = 'PremadeQuery')]
+        [System.String]
+        $Database
+    )
+
+    begin {
+        try {
+            switch ($PSCmdlet.ParameterSetName) {
+                'PremadeQuery' {
+                    $Request = @{
+                        Name  = 'core.executeQuery'
+                        Query = @{
+                            queryId = ''
+                        }
+                    }
+                }
+
+                'CustomQuery' {
+                    $Request = @{
+                        Name  = 'core.executeQuery'
+                        Query = @{
+                            target = $Table
+                        }
+                    }
+                }
+
+                Default {
+                    Write-Error 'Failed to determine parameter set' -ErrorAction Stop
+                }
+            }
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
+    }
+
+    process {
+        try {
+            switch ($PSCmdlet.ParameterSetName) {
+                'PremadeQuery' {
+                    foreach ($QueryItem in $Query) {
+                        Write-Debug 'Using a premade query'
+                        if ($QueryItem -is [ePOQuery]) {
+                            Write-Debug 'ePOQuery object specified'
+                            $Request.Query.queryId = $QueryItem.ID
+                        } elseif ($QueryItem -is [Int32]) {
+                            Write-Debug 'Query ID specified'
+                            $Request.Query.queryId = $QueryItem
+                        } else {
+                            Write-Debug 'Query Name specified'
+
+                            if (-not ($ePOQuery = Get-ePOQuery | Where-Object { $_.name -eq $QueryItem })) {
+                                Write-Error ('Failed to find a query for: {0}' -f $QueryItem) -ErrorAction Stop
+                            }
+
+                            $Request.Query.queryId = $ePOQuery.ID
+                        }
+
+                        if ($Database) {
+                            [Void] $Request.Query.Add('database', $Database)
+                        }
+
+                        Write-Debug "Request: $($Request | ConvertTo-Json)"
+                        if (-not ($QueryResults = Invoke-ePORequest @Request)) {
+                            Throw "Failed to find any ePO query results"
+                        }
+
+                        Write-Debug "Results: $($QueryResults | Out-String)"
+                        Write-Output $QueryResults
+                    }
+                }
+
+                'CustomQuery' {
+                    $Select = foreach ($Item in $Select) {
+                        if ($Item -Match '^(\S+\.){1,}\S+$') {
+                            $Item
+                        } else {
+                            $Table + '.' + $Item
+                        }
+                    }
+
+                    $Select = '(select ' + ($Select -Join ' ') + ')'
+                    [Void] $Request.Query.Add('select', $Select)
+
+                    if ($Where) {
+                        $WhereString = Write-ePOWhere $Where
+                        Write-Debug ('Where String: {0}' -f $WhereString)
+                        [Void] $Request.Query.Add('where', $WhereString)
+                    }
+
+                    Write-Debug "Request: $($Request | ConvertTo-Json)"
+                    if (-not ($QueryResults = Invoke-ePORequest @Request)) {
+                        Throw "Failed to find any ePO query results"
+                    }
+
+                    Write-Debug "Results: $($QueryResults | Out-String)"
+                    Write-Output $QueryResults
+                }
+            }
+        } catch {
+            Write-Information $_ -Tags Exception
+            Throw $_
+        }
+    }
+
+    end {}
+}
+
+Export-ModuleMember -Function 'Invoke-ePOQuery' -Alias 'Invoke-ePOwerShellQuery'

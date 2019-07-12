@@ -1,1 +1,4 @@
 settings.json
+/*.code-workspace
+./dev/*
+/dev

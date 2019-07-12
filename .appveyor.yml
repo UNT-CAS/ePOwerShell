@@ -12,6 +12,7 @@ environment:
     secure: 19uAs7mfu9YRkwTvHIymJuSyXGjUUXCR+jsaRvo3ST44NmgZG2HZkOjuabTe/Cyu
   CODECOV_TOKEN:
     secure: 2zRKXm7Sw+GlVonpMOerfEBjeYc05cJinePPX8nJl7c7j1PzNAbrNHAbi7y1RALU
+  
 
 
 
@@ -25,27 +26,12 @@ install:
 
 
 build_script:
-- ps: Invoke-psake '.\.scripts\build.ps1' -Properties @{'SkipBootStrap' = $true}
-
-
-
-# deploy:
-#   release: v$(APPVEYOR_BUILD_VERSION)
-#   description: ePOwerShell v$(appveyor_build_version)
-#   provider: GitHub
-#   auth_token:
-#     secure: EHLdOgH35OJQ/AAj6dXn/iQ9datyBKgai5JGB+Lbh9Yaltk4wLefi2MIfGZ5N2ca
-#   artifact: /.*\.zip/
-#   draft: false
-#   prerelease: true
-#   on:
-#     branch: master                 # release from master branch only
-#     appveyor_repo_tag: false        # deploy except on tag push only
+- ps: Invoke-psake '.\.scripts\build.ps1'
 
 
 
 on_success:
 # If build was started by pushed tag; deploy it.
-- ps: |
-    Write-Host "[AppVeyor] On Success; deploying ..." -Foregroundcolor Green
-    Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force
+  - ps: |
+      Write-Host "[AppVeyor] On Success; deploying ..." -Foregroundcolor Green
+      Invoke-PSDeploy -Path '.\.scripts\deploy.ps1' -Force

@@ -8,10 +8,7 @@ Write-Host "[Deploy] APPVEYOR_PROJECT_NAME: ${env:APPVEYOR_PROJECT_NAME}" -Foreg
 Write-Host "[Deploy] APPVEYOR_REPO_TAG: ${env:APPVEYOR_REPO_TAG}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
 Write-Host "[Deploy] APPVEYOR_REPO_BRANCH: ${env:APPVEYOR_REPO_BRANCH}" -Foregroundcolor 'Blue' -BackgroundColor 'Magenta'
 
-if (
-    ($env:APPVEYOR_REPO_TAG -eq 'true') -and
-    ($env:APPVEYOR_REPO_BRANCH -eq 'master')
-) {
+if (($env:APPVEYOR_REPO_TAG -eq 'true') -and ($env:APPVEYOR_REPO_BRANCH -eq 'master')) {
     Write-Host "Deploying to PSGallery"
     Deploy Module {
         By PSGalleryModule ePOwerShell {
