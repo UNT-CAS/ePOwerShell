@@ -81,14 +81,21 @@ Task default -Depends CompressModule
 
 Task Clean -Description 'Cleans the build environment' {
     if (Test-Path $ParentModulePath) {
+        Write-Host "[BUILD Clean] Parent module path exists: $ParentModulePath" -ForegroundColor Magenta
+
         if ((Get-ChildItem $ParentModulePath | Measure-Object).Count -ne 0) {
+            Write-Host "[BUILD Clean] Parent module path is not empty: $(Get-ChildItem $ParentModulePath)" -ForegroundColor Magenta
             Remove-Item "$ParentModulePath\*" -Recurse -Force
         }
     } else {
+        Write-Host "[BUILD Clean] Parent module path does not exist: $ParentModulePath" -ForegroundColor Magenta
+
         New-Item -ItemType Directory -Path $ParentModulePath -Force
     }
 
     if (Get-Module -Name $script:thisModuleName) {
+        Write-Host "[BUILD Clean] Module is imported: $(Get-Module -Name $script:thisModuleName)" -ForegroundColor Magenta
+
         Remove-Module -Name $script:thisModuleName -Force
     }
 }
@@ -105,7 +112,7 @@ Task CompileManifest -Description 'Created the module .psd1 manifest file' -Depe
     } else {
         $script:Manifest.ModuleVersion = $script:Version
     }
-    Write-Host "[BUILD SetupModule] New-ModuleManifest: $($script:Manifest | ConvertTo-Json -Compress)" -ForegroundColor Magenta
+    Write-Host "[BUILD CompileManifest] New-ModuleManifest: $($script:Manifest | ConvertTo-Json -Compress)" -ForegroundColor Magenta
     New-ModuleManifest @script:Manifest
 }
 
@@ -138,13 +145,14 @@ Task PSScriptAnalyzer -Description 'Runs PSScriptAnalyzer against compiled modul
 }
 
 Task CompileModule -Description 'Compiles all funcitons into a single .psm1 file' -Depends PSScriptAnalyzer {
-    $ModuleManifest = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1"
+    $CompiledModule = "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1"
     $Files = Get-ChildItem -Path "${PSScriptRootParent}\${thisModuleName}" -Recurse -File
     $FileContents = foreach ($File in $Files) {
         Get-Content $File.FullName -Force
     }
 
-    $FileContents | Out-File -FilePath $ModuleManifest -Force
+    $FileContents | Out-File -FilePath $CompiledModule -Force
+    Write-Host "[BUILD CompileModule] Module: $CompiledModule" -ForegroundColor Magenta
 }
 
 Task ImportModule -Description 'Imports the compiled module' -Depends CompileModule, CompileManifest {
