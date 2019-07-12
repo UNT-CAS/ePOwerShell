@@ -149,7 +149,7 @@ Task CompileModule -Description 'Compiles all funcitons into a single .psm1 file
 
 Task ImportModule -Description 'Imports the compiled module' -Depends CompileModule, CompileManifest {
     try {
-        Import-Module "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1" -Global -Force
+        Import-Module "${script:ParentModulePath}\${script:Manifest_ModuleName}.psm1" -Force
     } catch {
         Throw $_
     }
