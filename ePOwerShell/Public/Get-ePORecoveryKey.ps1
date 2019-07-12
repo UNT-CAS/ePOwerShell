@@ -86,7 +86,7 @@ function Get-ePORecoveryKey {
                 $MountPoints = Invoke-ePOQuery @QueryRequest
 
                 if ($MountPoints.Count -eq 0) {
-                    Write-Error ('Failed to find mount points for {0}, {1}' -f $Item.ComputerName, $Item.ParentID)
+                    Write-Warning ('Failed to find mount points for {0}, Parent ID {1}' -f $Item.ComputerName, $Item.ParentID)
                     continue
                 }
 
