@@ -42,7 +42,7 @@ function Invoke-ePOWakeUpAgent {
     param (
         [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName')]
-        $Comp,
+        $Computer,
 
         [Switch]
         $ForceFullPolicyUpdate,
