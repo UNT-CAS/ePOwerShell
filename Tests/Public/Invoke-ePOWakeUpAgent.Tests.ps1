@@ -38,15 +38,15 @@ Describe $FunctionName {
                 return $Content
             }
             
-            Mock Find-ePOwerShellComputerSystem {
-                if ($File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $ComputerName)) {
+            Mock Get-ePOComputer {
+                if ($File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Computer)) {
                     return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
                 }
                 return $Null
             }
 
             Mock Write-Error {
-                Throw "SHIT"
+                Throw $_
             }
 
             Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue
