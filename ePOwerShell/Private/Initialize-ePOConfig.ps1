@@ -51,10 +51,10 @@ function Initialize-ePOConfig {
     }
 
     $Script:ePOwerShell = @{
-        Port            = $Port
-        Server          = $Server
-        Credentials     = $Credentials
-        AllowSelfSigned = $AllowSelfSignedCerts
+        Port                 = $Port
+        Server               = $Server
+        Credentials          = $Credentials
+        AllowSelfSignedCerts = $AllowSelfSignedCerts
     }
 
     try {
