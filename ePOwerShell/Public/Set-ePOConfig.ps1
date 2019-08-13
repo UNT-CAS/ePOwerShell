@@ -99,8 +99,9 @@ function Set-ePOConfig {
             $Credentials = New-Object @GetCredentials
 
             $ePOwerShellVariables = @{
-                Server      = $Settings.Server
-                Credentials = $Credentials
+                Server               = $Settings.Server
+                Credentials          = $Credentials
+                AllowSelfSignedCerts = $Settings.AllowSelfSignedCerts.IsPresent
             }
 
             if ($settings.Port) {
