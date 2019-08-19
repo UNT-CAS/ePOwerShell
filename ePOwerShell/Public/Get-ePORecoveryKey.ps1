@@ -27,13 +27,16 @@
 #>
 
 function Get-ePORecoveryKey {
-    [CmdletBinding(DefaultParametersetname = 'Computer')]
+    [CmdletBinding(DefaultParameterSetName = 'ComputerName')]
     [Alias('Get-ePOwerShellMneRecoveryKey', 'Get-ePOMneRecoveryKey')]
     [OutputType([System.Object[]])]
     param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(ParameterSetName = 'ComputerName', Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName', 'Name')]
-        $Computer
+        $Computer,
+
+        [Parameter(ParameterSetName = 'AgentGuid', Mandatory = $True)]
+        $AgentGuid
     )
 
     begin {
@@ -56,51 +59,106 @@ function Get-ePORecoveryKey {
     }
 
     process {
-        foreach ($Comp in $Computer) {
-            if ($Comp -is [ePOComputer]) {
-                Write-Verbose 'Computer is an ePOComputer object'
-                $CompResponse = $Comp
-            } else {
-                Write-Verbose 'Computer is not an ePOComputer object. Searching for...'
-                $CompResponse = Get-ePOComputer -Computer $Comp -ErrorAction Stop
-            }
+        try {
+            switch ($PSCmdlet.ParameterSetName) {
+                'Computer' {
+                    foreach ($Comp in $Computer) {
+                        if ($Comp -is [ePOComputer]) {
+                            Write-Verbose 'Computer is an ePOComputer object'
+                            $CompResponse = $Comp
+                        } else {
+                            Write-Verbose 'Computer is not an ePOComputer object. Searching for...'
+                            $CompResponse = Get-ePOComputer -Computer $Comp -ErrorAction Stop
+                        }
 
-            foreach ($Item in $CompResponse) {
-                Write-Verbose ('Detecting mount points for {0}' -f $Item.ComputerName)
-                $QueryRequest = @{
-                    Table       = 'MneVolumes'
-                    Select      = @(
-                        'MneFvRecoveryKeys.DisplayName',
-                        'MneVolumes.MountPoint'
-                    )
-                    Where       = @{
-                        eq = @{
-                            'MneVolumes.EPOLeafNodeId' = $Item.ParentID
+                        foreach ($Item in $CompResponse) {
+                            Write-Verbose ('Detecting mount points for {0}' -f $Item.ComputerName)
+                            $QueryRequest = @{
+                                Table       = 'MneVolumes'
+                                Select      = @(
+                                    'MneFvRecoveryKeys.DisplayName',
+                                    'MneVolumes.MountPoint'
+                                )
+                                Where       = @{
+                                    eq = @{
+                                        'MneVolumes.EPOLeafNodeId' = $Item.ParentID
+                                    }
+                                }
+                                ErrorAction = 'Stop'
+                            }
+
+                            Write-Debug ('Mount point query request: {0}' -f ($QueryRequest | ConvertTo-Json))
+
+                            $MountPoints = Invoke-ePOQuery @QueryRequest
+
+                            if ($MountPoints.Count -eq 0) {
+                                Write-Warning ('Failed to find mount points for {0}, Parent ID {1}' -f $Item.ComputerName, $Item.ParentID)
+                                continue
+                            }
+
+                            Write-Debug ('Mount points: {0}' -f ($MountPoints -join ', '))
+
+                            foreach ($MountPoint in $MountPoints) {
+                                Write-Verbose ('Getting recovery key for mount point: {0}' -f $MountPoint.'MneFvRecoveryKeys.DisplayName')
+                                $Request.Query.serialNumber = $MountPoint.'MneFvRecoveryKeys.DisplayName'
+
+                                $RecoveryKey = Invoke-ePORequest @Request
+                                $RecoveryKeyObject = [ePORecoveryKey]::new($Item.ComputerName, $MountPoint.'MneVolumes.MountPoint', $RecoveryKey)
+                                Write-Output $RecoveryKeyObject
+                            }
                         }
                     }
-                    ErrorAction = 'Stop'
                 }
 
-                Write-Debug ('Mount point query request: {0}' -f ($QueryRequest | ConvertTo-Json))
+                'AgentGuid' {
+                    foreach ($Guid in $AgentGuid) {
+                        Write-Verbose ('Checking for system via Agent Guid: {0}' -f $Guid)
 
-                $MountPoints = Invoke-ePOQuery @QueryRequest
+                        if (-not ($CompResponse = Get-ePOComputer -AgentGuid $Guid)) {
+                            Write-Error ('Failed to find system via Agent Guid')
+                            continue
+                        }
 
-                if ($MountPoints.Count -eq 0) {
-                    Write-Warning ('Failed to find mount points for {0}, Parent ID {1}' -f $Item.ComputerName, $Item.ParentID)
-                    continue
-                }
+                        Write-Verbose ('Detecting mount points for {0}' -f $CompResponse.ComputerName)
 
-                Write-Debug ('Mount points: {0}' -f ($MountPoints -join ', '))
+                        $QueryRequest = @{
+                            Table       = 'MneVolumes'
+                            Select      = @(
+                                'MneFvRecoveryKeys.DisplayName',
+                                'MneVolumes.MountPoint'
+                            )
+                            Where       = @{
+                                eq = @{
+                                    'MneVolumes.EPOLeafNodeId' = $CompResponse.ParentID
+                                }
+                            }
+                            ErrorAction = 'Stop'
+                        }
 
-                foreach ($MountPoint in $MountPoints) {
-                    Write-Verbose ('Getting recovery key for mount point: {0}' -f $MountPoint.'MneFvRecoveryKeys.DisplayName')
-                    $Request.Query.serialNumber = $MountPoint.'MneFvRecoveryKeys.DisplayName'
+                        Write-Debug ('Mount point query request: {0}' -f ($QueryRequest | ConvertTo-Json))
 
-                    $RecoveryKey = Invoke-ePORequest @Request
-                    $RecoveryKeyObject = [ePORecoveryKey]::new($Item.ComputerName, $MountPoint.'MneVolumes.MountPoint', $RecoveryKey)
-                    Write-Output $RecoveryKeyObject
+                        $MountPoints = Invoke-ePOQuery @QueryRequest
+
+                        if ($MountPoints.Count -eq 0) {
+                            Write-Warning ('Failed to find mount points for {0}, Parent ID {1}' -f $CompResponse.ComputerName, $Item.ParentID)
+                            continue
+                        }
+
+                        Write-Debug ('Mount points: {0}' -f ($MountPoints -join ', '))
+
+                        foreach ($MountPoint in $MountPoints) {
+                            Write-Verbose ('Getting recovery key for mount point: {0}' -f $MountPoint.'MneFvRecoveryKeys.DisplayName')
+                            $Request.Query.serialNumber = $MountPoint.'MneFvRecoveryKeys.DisplayName'
+
+                            $RecoveryKey = Invoke-ePORequest @Request
+                            $RecoveryKeyObject = [ePORecoveryKey]::new($Item.ComputerName, $MountPoint.'MneVolumes.MountPoint', $RecoveryKey)
+                            Write-Output $RecoveryKeyObject
+                        }
+                    }
                 }
             }
+        } catch {
+            Write-Information $_ -Tags Exception
         }
     }
 
