@@ -124,87 +124,147 @@ function Get-ePOComputer {
         try {
             switch ($PSCmdlet.ParameterSetName) {
                 "ComputerName" {
-                    $Request.Query.searchText = $Computer
+                    foreach ($Comp in $Computer) {
+                        Write-Debug ('Searching by computer name for: {0}' -f $Comp)
+                        if ($Comp -is [ePOComputer]) {
+                            Write-Verbose 'Using ePOComputer object'
+                            Write-Output $Comp
+                        } else {
+                            if ($ForceWildcardHandling) {
+                                if (-not ($script:AllePOComputers)) {
+                                    $Request.Query.searchText = ''
+                                    $script:AllePOComputers = Invoke-ePORequest @Request
+                                }
+
+                                foreach ($ePOComputer in $script:AllePOComputers) {
+                                    if ($ePOComputer.'EPOComputerProperties.ComputerName' -like $Comp) {
+                                        $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                                        Write-Output $ePOComputerObject
+                                    }
+                                }
+                            } else {
+                                $Request.Query.searchText = $Comp
+                                $ePOComputers = Invoke-ePORequest @Request
+
+                                foreach ($ePOComputer in $ePOComputers) {
+                                    if ($ePOComputer.'EPOComputerProperties.ComputerName' -eq $Comp) {
+                                        $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                                        Write-Output $ePOComputerObject
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 "MACAddress" {
-                    $MACAddress = $MACAddress.ToUpper()
+                    foreach ($Address in $MACAddress) {
+                        $Address = $Address.ToUpper()
 
-                    switch -Regex ($MACAddress) {
-                        '^([0-9a-f]{2}:){5}([0-9a-f]{2})$' {
-                            Write-Verbose 'Delimiter: Colons'
-                            $MACAddress = $MACAddress.Replace(':', '')
-                            break
+                        switch -Regex ($Address) {
+                            '^([0-9a-f]{2}:){5}([0-9a-f]{2})$' {
+                                Write-Verbose 'Delimiter: Colons'
+                                $Address = $Address.Replace(':', '')
+                                break
+                            }
+
+                            '^([0-9a-f]{2}-){5}([0-9a-f]{2})$' {
+                                Write-Verbose 'Delimiter: Dashs'
+                                $Address = $Address.Replace('-', '')
+                                break
+                            }
+
+                            '^([0-9a-f]{2}\.){5}([0-9a-f]{2})$' {
+                                Write-Verbose 'Delimiter: Periods'
+                                $Address = $Address.Replace('.', '')
+                                break
+                            }
+
+                            '^([0-9a-f]{2}\s){5}([0-9a-f]{2})$' {
+                                Write-Verbose 'Delimiter: Spaces'
+                                $Address = $Address.Replace(' ', '')
+                                break
+                            }
+
+                            '^([0-9a-f]{12})$' {
+                                Write-Verbose 'Delimiter: None'
+                                break
+                            }
+
+                            default {
+                                Write-Error ('MAC Address does not match known format: {0}' -f $Address)
+                                continue
+                            }
                         }
 
-                        '^([0-9a-f]{2}-){5}([0-9a-f]{2})$' {
-                            Write-Verbose 'Delimiter: Dashs'
-                            $MACAddress = $MACAddress.Replace('-', '')
-                            break
-                        }
+                        $Request.Query.searchText = $Address
+                        $ePOComputers = Invoke-ePORequest @Request
 
-                        '^([0-9a-f]{2}\.){5}([0-9a-f]{2})$' {
-                            Write-Verbose 'Delimiter: Periods'
-                            $MACAddress = $MACAddress.Replace('.', '')
-                            break
-                        }
-
-                        '^([0-9a-f]{2}\s){5}([0-9a-f]{2})$' {
-                            Write-Verbose 'Delimiter: Spaces'
-                            $MACAddress = $MACAddress.Replace(' ', '')
-                            break
-                        }
-
-                        '^([0-9a-f]{12})$' {
-                            Write-Verbose 'Delimiter: None'
-                            break
-                        }
-
-                        default {
-                            Throw ('MAC Address does not match known format: {0}' -f $MACAddress)
+                        foreach ($ePOComputer in $ePOComputers) {
+                            $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                            Write-Output $ePOComputerObject
                         }
                     }
-
-                    $Request.Query.searchText = $MACAddress
                 }
 
                 "IPAddress" {
-                    $Request.Query.searchText = $IPAddress
+                    foreach ($Address in $IPAddress) {
+                        $Request.Query.searchText = $Address
+                        $ePOComputers = Invoke-ePORequest @Request
+
+                        foreach ($ePOComputer in $ePOComputers) {
+                            $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                            Write-Output $ePOComputerObject
+                        }
+                    }
                 }
 
                 "Tag" {
-                    $Request.Query.searchText = $Tag
+                    foreach ($T in $Tag) {
+                        if ($T -is [ePOTag]) {
+                            $Request.Query.searchText = $T.Name
+                        } else {
+                            $Request.Query.searchText = $T
+                        }
+                        $ePOComputers = Invoke-ePORequest @Request
+
+                        foreach ($ePOComputer in $ePOComputers) {
+                            $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                            Write-Output $ePOComputerObject
+                        }
+                    }
                 }
 
                 "AgentGuid" {
-                    $Request.Query.searchText = $AgentGuid
+                    foreach ($Guid in $AgentGuid) {
+                        $Request.Query.searchText = $Guid
+                        $ePOComputers = Invoke-ePORequest @Request
+
+                        foreach ($ePOComputer in $ePOComputers) {
+                            $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                            Write-Output $ePOComputerObject
+                        }
+                    }
                 }
 
                 "Username" {
-                    $Request.Query.searchText = $Username
+                    foreach ($User in $Username) {
+                        $Request.Query.searchText = $User
+                        $ePOComputers = Invoke-ePORequest @Request
+
+                        foreach ($ePOComputer in $ePOComputers) {
+                            $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
+                            Write-Output $ePOComputerObject
+                        }
+                    }
                 }
 
                 "All" {
                     $Request.Query.searchText = ''
-                }
-            }
+                    $ePOComputers = Invoke-ePORequest @Request
 
-            if ($PSCmdlet.ParameterSetName -eq 'ComputerName' -and $Computer -is [ePOComputer]) {
-                Write-Verbose 'Using pipelined ePOComputer object'
-                Write-Output $Computer
-            } else {
-                Write-Verbose 'Either not pipelined, or pipeline object is not an ePOComputer object'
-                $ePOComputers = Invoke-ePORequest @Request
-
-                foreach ($ePOComputer in $ePOComputers) {
-                    $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
-                    if ($PSCmdlet.ParameterSetName -eq 'ComputerName') {
-                        if ($ForceWildcardHandling) {
-                            Write-Output $ePOComputerObject
-                        } elseif ($ePOComputer.'EPOComputerProperties.ComputerName' -eq $Computer) {
-                            Write-Output $ePOComputerObject
-                        }
-                    } else {
+                    foreach ($ePOComputer in $ePOComputers) {
+                        $ePOComputerObject = ConvertTo-ePOComputer $ePOComputer
                         Write-Output $ePOComputerObject
                     }
                 }
@@ -214,7 +274,11 @@ function Get-ePOComputer {
         }
     }
 
-    end {}
+    end {
+        if (Get-Variable 'AllePOComputers' -Scope Script -ErrorAction SilentlyContinue) {
+            Remove-Variable -Name 'AllePOComputers' -Scope Script
+        }
+    }
 }
 
 Export-ModuleMember -Function 'Get-ePOComputer' -Alias 'Find-ePOwerShellComputerSystem', 'Find-ePOComputerSystem'
