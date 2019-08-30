@@ -42,12 +42,15 @@
 #>
 
 function Remove-ePOTag {
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "High")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "High", DefaultParameterSetName = 'Computer')]
     [Alias('Clear-ePOwerShellTag', 'Clear-ePOTag')]
     param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ParameterSetName = 'Computer')]
         [Alias('ComputerName', 'cn', 'Name')]
         $Computer,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'AgentGuid')]
+        $AgentGuid,
 
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [Alias('Tag')]
@@ -59,8 +62,8 @@ function Remove-ePOTag {
             $Request = @{
                 Name  = 'system.clearTag'
                 Query = @{
-                    names   = ''
-                    tagName = ''
+                    ids   = ''
+                    tagID = ''
                 }
             }
         } catch {
@@ -71,36 +74,73 @@ function Remove-ePOTag {
 
     process {
         try {
-            foreach ($Comp in $Computer) {
-                foreach ($Tag in $TagName) {
-                    if ($Comp -is [ePOComputer]) {
-                        $Request.Query.names = $Comp.ComputerName
-                    } elseif ($Comp -is [ePOTag]) {
-                        $Request.Query.tagName = $Comp.Name
-                    } else {
-                        $Request.Query.names = $Comp
+            switch ($PSCmdlet.ParameterSetName) {
+                'Computer' {
+                    foreach ($Comp in $Computer) {
+                        foreach ($Tag in $TagName) {
+                            if ($Comp -is [ePOComputer]) {
+                                $Request.Query.ids = $Comp.ParentID
+                            } elseif ($Comp -is [ePOTag]) {
+                                $Request.Query.tagID = $Comp.ID
+                            } else {
+                                Write-Error 'Failed to determine computer or tag ID'
+                                continue
+                            }
+
+                            if ($Tag -is [ePOTag]) {
+                                $Request.Query.tagID = $Tag.ID
+                            } elseif ($T -is [ePOComputer]) {
+                                $Request.Query.ids = $Tag.ParentID
+                            } else {
+                                Write-Error 'Failed to determine computer or tag ID'
+                                continue
+                            }
+
+                            if ($PSCmdlet.ShouldProcess("Remove ePO tag $($Request.Query.tagName) from $($Request.Query.names)")) {
+                                $Result = Invoke-ePORequest @Request
+
+                                if ($Result -eq 0) {
+                                    Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Comp)
+                                } elseif ($Result -eq 1) {
+                                    Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Comp)
+                                } else {
+                                    Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Comp, $Result)
+                                }
+                            }
+                        }
                     }
+                }
 
-                    if ($Tag -is [ePOTag]) {
-                        $Request.Query.tagName = $Tag.Name
-                    } elseif ($T -is [ePOComputer]) {
-                        $Request.Query.names = $Tag.ComputerName
-                    } else {
-                        $Request.Query.tagName = $Tag
-                    }
+                'AgentGuid' {
+                    foreach ($Guid in $AgentGuid) {
+                        if (-not ($ePOComputer = Get-ePOComputer -AgentGuid $Guid)) {
+                            Write-Error ('Failed to find system via Agent Guid: {0}' -f $Guid)
+                            continue
+                        }
 
-                    Write-Verbose ('Computer Name: {0}' -f $Request.Query.names)
-                    Write-Verbose ('Tag Name: {0}' -f $Request.Query.tagName)
+                        foreach ($Comp in $ePOComputer) {
+                            foreach ($Tag in $TagName) {
+                                $Request.Query.ids = $Comp.ParentID
 
-                    if ($PSCmdlet.ShouldProcess("Remove ePO tag $($Request.Query.tagName) from $($Request.Query.names)")) {
-                        $Result = Invoke-ePORequest @Request
+                                if ($Tag -is [ePOTag]) {
+                                    $Request.Query.tagID = $Tag.ID
+                                } else {
+                                    Write-Error 'Failed to determine tag ID'
+                                    continue
+                                }
 
-                        if ($Result -eq 0) {
-                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Comp)
-                        } elseif ($Result -eq 1) {
-                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Comp)
-                        } else {
-                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Comp, $Result)
+                                if ($PSCmdlet.ShouldProcess("Remove ePO tag $($Tag.Name) from $($Comp.ComputerName)")) {
+                                    $Result = Invoke-ePORequest @Request
+
+                                    if ($Result -eq 0) {
+                                        Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Comp)
+                                    } elseif ($Result -eq 1) {
+                                        Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Comp)
+                                    } else {
+                                        Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Comp, $Result)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
