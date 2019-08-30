@@ -1,6 +1,6 @@
 @{
     Parameters = @{
-        ComputerName = "Computer"
+        ComputerName = "Computer*"
         ForceWildcardHandling = $True
     }
     Output     = @{
