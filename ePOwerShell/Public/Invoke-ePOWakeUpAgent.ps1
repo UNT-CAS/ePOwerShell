@@ -37,12 +37,15 @@
 #>
 
 function Invoke-ePOWakeUpAgent {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Computer')]
     [Alias('Invoke-ePOwerShellWakeUpAgent')]
     param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(ParameterSetName = 'Computer', Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName')]
         $Computer,
+
+        [Parameter(ParameterSetName = 'AgentGuid', Mandatory = $True)]
+        $AgentGuid,
 
         [Switch]
         $ForceFullPolicyUpdate,
@@ -70,62 +73,120 @@ function Invoke-ePOWakeUpAgent {
 
     process {
         try {
-            foreach ($Comp in $Computer) {
-                if ($Comp -is [ePOComputer]) {
-                    Write-Verbose "Computer was pipelined with an ePOComputer object"
-                    $ePOComputer = $Comp
-                } else {
-                    Write-Verbose "Confirming computer is in ePO: $Comp"
+            switch ($PSCmdlet.ParameterSetName) {
+                'Computer' {
+                    foreach ($Comp in $Computer) {
+                        if ($Comp -is [ePOComputer]) {
+                            Write-Verbose "Computer was pipelined with an ePOComputer object"
+                            $ePOComputer = $Comp
+                        } else {
+                            Write-Verbose "Confirming computer is in ePO: $Comp"
 
-                    if (-not ($ePOComputer = Get-ePOComputer -Computer $Comp)) {
-                        Write-Error ("Failed to find computer system '{0}' in ePO" -f $Comp) -ErrorAction Stop
-                        continue
+                            if (-not ($ePOComputer = Get-ePOComputer -Computer $Comp)) {
+                                Write-Error ("Failed to find computer system '{0}' in ePO" -f $Comp) -ErrorAction Stop
+                                continue
+                            }
+                        }
+
+                        Write-Verbose ('Found computer system in ePO: {0}' -f ($ePOComputer | Out-String))
+
+                        if (-not ($ePOComputer.ManagedState)) {
+                            Write-Error ('Computer System is not in a managed state: {0}' -f $Comp) -ErrorAction Stop
+                            continue
+                        }
+
+                        Write-Verbose ('Computer System is in a managed state: {0}' -f $Comp)
+
+                        $Request = @{
+                            Name  = 'system.wakeupAgent'
+                            Query = @{
+                                names                 = $ePOComputer.ComputerName
+                                fullProps             = $FullProps
+                                forceFullPolicyUpdate = $ForceFullPolicyUpdate
+                                abortAfterMinutes     = $AbortAfter
+                                retryIntervalSeconds  = $RetryIntervalSeconds
+                                attempts              = $NumberOfAttempts
+                                randomMinutes         = $RandomMinutes
+                                superAgent            = $SuperAgent
+                            }
+                        }
+
+                        Write-Verbose "Request: $($Request | ConvertTo-Json)"
+                        $Response = Invoke-ePORequest @Request
+
+                        $Results = @{}
+                        foreach ($Item in (($Response | ConvertTo-Json).Split('\n').Replace('"', ''))) {
+                            if ($Item) {
+                                $ItemName = ($Item.Split(':')[0].Trim())
+                                $ItemResults = ([Boolean]($Item.Split(':')[1].Trim() -as [Int]))
+                                $Results.Add($ItemName, $ItemResults)
+                            }
+                        }
+
+                        if ($Results.Completed) {
+                            Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName)
+                        } elseif ($Results.Failed) {
+                            Throw ('Failed to wake up {0}' -f $ePOComputer.ComputerName)
+                        } elseif ($Results.Expired) {
+                            Throw ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName)
+                        } else {
+                            Throw ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName)
+                        }
                     }
                 }
 
-                Write-Verbose ('Found computer system in ePO: {0}' -f ($ePOComputer | Out-String))
+                'AgentGuid' {
+                    foreach ($Guid in $AgentGuid) {
+                        if (-not ($ePOComputer = Get-ePOComputer -AgentGuid $Guid)) {
+                            Write-Error ('Failed to find system via Agent Guid: {0}' -f $Guid)
+                            continue
+                        }
 
-                if (-not ($ePOComputer.ManagedState)) {
-                    Write-Error ('Computer System is not in a managed state: {0}' -f $Comp) -ErrorAction Stop
-                    continue
-                }
+                        Write-Verbose ('Found computer system in ePO: {0}' -f ($ePOComputer | Out-String))
 
-                Write-Verbose ('Computer System is in a managed state: {0}' -f $Comp)
+                        if (-not ($ePOComputer.ManagedState)) {
+                            Write-Error ('Computer System is not in a managed state: {0}' -f $Comp) -ErrorAction Stop
+                            continue
+                        }
 
-                $Request = @{
-                    Name  = 'system.wakeupAgent'
-                    Query = @{
-                        names                 = $ePOComputer.ComputerName
-                        fullProps             = $FullProps
-                        forceFullPolicyUpdate = $ForceFullPolicyUpdate
-                        abortAfterMinutes     = $AbortAfter
-                        retryIntervalSeconds  = $RetryIntervalSeconds
-                        attempts              = $NumberOfAttempts
-                        randomMinutes         = $RandomMinutes
-                        superAgent            = $SuperAgent
+                        Write-Verbose ('Computer System is in a managed state: {0}' -f $Comp)
+
+                        $Request = @{
+                            Name  = 'system.wakeupAgent'
+                            Query = @{
+                                names                 = $ePOComputer.ComputerName
+                                fullProps             = $FullProps
+                                forceFullPolicyUpdate = $ForceFullPolicyUpdate
+                                abortAfterMinutes     = $AbortAfter
+                                retryIntervalSeconds  = $RetryIntervalSeconds
+                                attempts              = $NumberOfAttempts
+                                randomMinutes         = $RandomMinutes
+                                superAgent            = $SuperAgent
+                            }
+                        }
+
+                        Write-Verbose "Request: $($Request | ConvertTo-Json)"
+                        $Response = Invoke-ePORequest @Request
+
+                        $Results = @{}
+                        foreach ($Item in (($Response | ConvertTo-Json).Split('\n').Replace('"', ''))) {
+                            if ($Item) {
+                                $ItemName = ($Item.Split(':')[0].Trim())
+                                $ItemResults = ([Boolean]($Item.Split(':')[1].Trim() -as [Int]))
+                                $Results.Add($ItemName, $ItemResults)
+                            }
+                        }
+
+                        if ($Results.Completed) {
+                            Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName)
+                        } elseif ($Results.Failed) {
+                            Throw ('Failed to wake up {0}' -f $ePOComputer.ComputerName)
+                        } elseif ($Results.Expired) {
+                            Throw ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName)
+                        } else {
+                            Throw ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName)
+                        }
                     }
-                }
-
-                Write-Verbose "Request: $($Request | ConvertTo-Json)"
-                $Response = Invoke-ePORequest @Request
-
-                $Results = @{}
-                foreach ($Item in (($Response | ConvertTo-Json).Split('\n').Replace('"', ''))) {
-                    if ($Item) {
-                        $ItemName = ($Item.Split(':')[0].Trim())
-                        $ItemResults = ([Boolean]($Item.Split(':')[1].Trim() -as [Int]))
-                        $Results.Add($ItemName, $ItemResults)
-                    }
-                }
-
-                if ($Results.Completed) {
-                    Write-Verbose ('Successfully woke up {0}' -f $ePOComputer.ComputerName)
-                } elseif ($Results.Failed) {
-                    Throw ('Failed to wake up {0}' -f $ePOComputer.ComputerName)
-                } elseif ($Results.Expired) {
-                    Throw ('Failed to wake up {0}. Session expired.' -f $ePOComputer.ComputerName)
-                } else {
-                    Throw ('Failed to wake up {0}. Unknown error' -f $ePOComputer.ComputerName)
                 }
             }
         } catch {
