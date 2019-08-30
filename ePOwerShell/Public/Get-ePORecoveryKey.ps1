@@ -27,11 +27,11 @@
 #>
 
 function Get-ePORecoveryKey {
-    [CmdletBinding(DefaultParameterSetName = 'ComputerName')]
+    [CmdletBinding(DefaultParameterSetName = 'Computer')]
     [Alias('Get-ePOwerShellMneRecoveryKey', 'Get-ePOMneRecoveryKey')]
     [OutputType([System.Object[]])]
     param (
-        [Parameter(ParameterSetName = 'ComputerName', Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
+        [Parameter(ParameterSetName = 'Computer', Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
         [Alias('ComputerName', 'Name')]
         $Computer,
 
