@@ -117,3 +117,5 @@ function Remove-ePOComputer {
         }
     }
 }
+
+Export-ModuleMember -Function 'Remove-ePOComputer'
