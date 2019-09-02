@@ -96,11 +96,11 @@ function Set-ePOTag {
                         $Result = Invoke-ePORequest @Request
 
                         if ($Result -eq 0) {
-                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Computer)
+                            Write-Verbose ('Tag [{0}] is already applied to computer {1}' -f $Tag, $Computer)
                         } elseif ($Result -eq 1) {
-                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Computer)
+                            Write-Verbose ('Successfully applied tag [{0}] to computer {1}' -f $Tag, $Computer)
                         } else {
-                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Computer, $Result) -ErrorAction Stop
+                            Write-Error ('Unknown response while applying tag [{0}] to {1}: {2}' -f $Tag, $Computer, $Result) -ErrorAction Stop
                         }
                     }
                 }
