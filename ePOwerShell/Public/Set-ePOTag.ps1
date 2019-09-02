@@ -61,6 +61,7 @@ function Set-ePOTag {
                 Query = @{
                     names   = ''
                     tagName = ''
+                    ids     = ''
                 }
             }
         } catch {
@@ -74,7 +75,7 @@ function Set-ePOTag {
             foreach ($Computer in $ComputerName) {
                 foreach ($Tag in $TagName) {
                     if ($Computer -is [ePOComputer]) {
-                        $Request.Query.names = $Computer.ComputerName
+                        $Request.Query.ids = $Computer.ParentID
                     } elseif ($Computer -is [ePOTag]) {
                         $Request.Query.tagName = $Computer.Name
                     } else {
@@ -84,15 +85,16 @@ function Set-ePOTag {
                     if ($Tag -is [ePOTag]) {
                         $Request.Query.tagName = $Tag.Name
                     } elseif ($Tag -is [ePOComputer]) {
-                        $Request.Query.names = $Tag.ComputerName
+                        $Request.Query.ids = $Tag.ParentID
                     } else {
                         $Request.Query.tagName = $Tag
                     }
 
-                    Write-Verbose ('Computer Name: {0}' -f $Request.Query.names)
+                    if (!($Request.Query.names -eq '')) { Write-Verbose ('Computer Name: {0}' -f $Request.Query.names) }
+                    if (!($Request.Query.ids -eq '')) { Write-Verbose ('Computer ID: {0}' -f $Request.Query.ParentID) }
                     Write-Verbose ('Tag Name: {0}' -f $Request.Query.tagName)
 
-                    if ($PSCmdlet.ShouldProcess("Set ePO tag $($Request.Query.tagName) from $($Request.Query.names)")) {
+                    if ($PSCmdlet.ShouldProcess("Apply ePO tag $($Request.Query.tagName) to $($Request.Query.names)")) {
                         $Result = Invoke-ePORequest @Request
 
                         if ($Result -eq 0) {
@@ -111,7 +113,7 @@ function Set-ePOTag {
         }
     }
 
-    end {}
+    end { }
 }
 
 Export-ModuleMember -Function 'Set-ePOTag' -Alias 'Set-ePOwerShellTag'

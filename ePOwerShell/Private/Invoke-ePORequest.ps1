@@ -19,7 +19,7 @@ function Invoke-ePORequest {
                 Specifies the query parameters to be used against the ePO server
         #>
         [Hashtable]
-        $Query = @{}
+        $Query = @{ }
     )
 
     if (-not ($Script:ePOwerShell)) {
@@ -39,7 +39,9 @@ function Invoke-ePORequest {
     [System.Collections.ArrayList] $QueryString = @()
 
     foreach ($Item in $Query.GetEnumerator()) {
-        [Void] $QueryString.Add("$($Item.Name)=$($Item.Value)")
+        if (!($Item.Value -eq '')) {
+            [Void] $QueryString.Add("$($Item.Name)=$($Item.Value)")
+        }
     }
 
     $RequestUrl = ('{0}?{1}' -f $Url, ($QueryString -join '&'))
@@ -48,7 +50,7 @@ function Invoke-ePORequest {
 
     if (-not ([Net.ServicePointManager]::SecurityProtocol -eq 'Tls12')) {
         [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor
-            [Net.SecurityProtocolType]::Tls12
+        [Net.SecurityProtocolType]::Tls12
     }
 
     $InvokeWebRequest = @{
@@ -63,7 +65,7 @@ function Invoke-ePORequest {
             Write-Verbose 'PSVersion is -le 5'
             Write-Debug 'Allowing self signed certs'
 
-Add-Type @"
+            Add-Type @"
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 public class TrustAllCertsPolicy : ICertificatePolicy {
