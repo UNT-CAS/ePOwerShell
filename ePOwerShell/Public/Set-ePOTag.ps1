@@ -90,6 +90,7 @@ function Set-ePOTag {
                                     Write-Error ('Failed to find a computer with provided name: {0}' -f $Comp)
                                     continue Computer
                                 }
+                                $Request.Query.ids = $Comp.ParentID
                             } else {
                                 Write-Error 'Failed to interpret computer'
                                 continue Computer
@@ -102,6 +103,7 @@ function Set-ePOTag {
                                     Write-Error ('Failed to find a tag with provided name: {0}' -f $Tag)
                                     continue Tag
                                 }
+                                $Request.Query.tagID = $Tag.ID
                             } else {
                                 Write-Error 'Failed to interpret tag'
                                 continue Tag
@@ -145,6 +147,7 @@ function Set-ePOTag {
                                         Write-Error ('Failed to find a tag with provided name: {0}' -f $Tag)
                                         continue Tag
                                     }
+                                    $Request.Query.tagID = $Tag.ID
                                 } else {
                                     Write-Error 'Failed to interpret tag'
                                     continue Tag

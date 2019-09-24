@@ -33,15 +33,24 @@ Describe $FunctionName {
     foreach ($Global:Test in $Tests) {
         InModuleScope ePOwerShell {
             Mock Invoke-ePORequest {
-                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.ids))) {
-                    Throw "Error 1: Invalid computer results"
+                if (-not ($ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html')) {
+                    Throw "Failed to find computer objects"
                 }
-                
-                $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                $Found = foreach ($File in $ComputerFiles) {
+                    $File = ConvertTo-ePOComputer ((Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
+                    if ($File.ParentID -eq $Query.ids) {
+                        Write-Output $File
+                    }
+                }
+
+                if (-not ($Found) -or ($Found.Count -ne 1)) {
+                    Throw 'Failed to find computer'
+                }
 
                 if ($Test.Unknown) {
                     return 4
-                } elseif (-not ($Computer.'EPOLeafNode.Tags'.Split(',').Trim() | ? { $_ -eq $Tag.tagName })) {
+                } elseif (-not ($Computer.Tags | ? { $_ -eq $Tag.tagName })) {
                     return 0
                 } else {
                     return 1
@@ -53,7 +62,7 @@ Describe $FunctionName {
                     Throw "Error 1: Invalid computername"
                 }
 
-                $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                $Computer = ConvertTo-ePOComputer ((Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
                 Write-Output $Computer
             }
 

@@ -86,12 +86,13 @@ function Remove-ePOTag {
                             if ($Comp -is [ePOComputer]) {
                                 $Request.Query.ids = $Comp.ParentID
                             } elseif ($Comp -is [String]) {
-                                Write-Host ('Searching for computer based off of name: {0}' -f $Comp)
+                                Write-Verbose ('Searching for computer based off of name: {0}' -f $Comp)
 
                                 if (-not ($Comp = Get-ePOComputer -Computer $Comp)) {
                                     Write-Error 'Failed to find a computer with provided name'
                                     continue Computer
                                 }
+                                $Request.Query.ids = $Comp.ParentID
                             } else {
                                 Write-Error 'Failed to interpret computer'
                                 continue Computer
@@ -106,6 +107,7 @@ function Remove-ePOTag {
                                     Write-Error 'Failed to find a tag with provided name'
                                     continue Tag
                                 }
+                                $Request.Query.tagID = $Tag.ID
                             } else {
                                 Write-Error 'Failed to interpret tag'
                                 continue Tag
@@ -151,6 +153,7 @@ function Remove-ePOTag {
                                         Write-Error 'Failed to find a tag with provided name'
                                         continue Tag
                                     }
+                                    $Request.Query.tagID = $Tag.ID
                                 } else {
                                     Write-Error 'Failed to interpret tag'
                                     continue Tag
