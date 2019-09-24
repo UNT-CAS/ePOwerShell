@@ -33,23 +33,37 @@ Describe $FunctionName {
     foreach ($Global:Test in $Tests) {
         InModuleScope ePOwerShell {
             Mock Invoke-ePORequest {
-                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.names))) {
-                    Throw "Error 1: Invalid computername"
+                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.ids))) {
+                    Throw "Error 1: Invalid computer results"
                 }
-                if (-not ($TagFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.tagName))) {
-                    Throw "Error 1: Invalid tag"
-                }
-
+                
                 $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-                $Tag = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
 
                 if ($Test.Unknown) {
                     return 4
-                } elseif ($Computer.'EPOLeafNode.Tags'.Split(',').Trim() | ? { $_ -eq $Tag.tagName }) {
+                } elseif (-not ($Computer.'EPOLeafNode.Tags'.Split(',').Trim() | ? { $_ -eq $Tag.tagName })) {
                     return 0
                 } else {
                     return 1
                 }
+            }
+
+            Mock Get-ePOComputer {
+                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Computer))) {
+                    Throw "Error 1: Invalid computername"
+                }
+
+                $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                Write-Output $Computer
+            }
+
+            Mock Get-ePOTag {
+                if (-not ($TagFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Tag))) {
+                    Throw "Error 1: Invalid tag"
+                }
+
+                $Tag = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                Write-Output $Tag
             }
 
             Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue

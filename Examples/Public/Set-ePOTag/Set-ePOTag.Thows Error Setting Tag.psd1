@@ -1,6 +1,6 @@
 @{
     Parameters = @{
-        ComputerName = 'Computer10'
+        Computer = 'Computer10'
         TagName = 'Tag1'
     }
     Output = @{

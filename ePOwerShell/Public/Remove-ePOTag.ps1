@@ -76,8 +76,8 @@ function Remove-ePOTag {
         try {
             switch ($PSCmdlet.ParameterSetName) {
                 'Computer' {
-                    foreach ($Comp in $Computer) {
-                        foreach ($Tag in $TagName) {
+                    :Computer foreach ($Comp in $Computer) {
+                        :Tag foreach ($Tag in $TagName) {
                             if ($Comp -is [ePOTag] -and $Tag -is [ePOComputer]) {
                                 Write-Verbose 'Computer and tag objects are mismatched. Swapping...'
                                 $Comp, $Tag = $Tag, $Comp
@@ -86,7 +86,7 @@ function Remove-ePOTag {
                             if ($Comp -is [ePOComputer]) {
                                 $Request.Query.ids = $Comp.ParentID
                             } elseif ($Comp -is [String]) {
-                                Write-Verbose ('Searching for computer based off of name: {0}' -f $Comp)
+                                Write-Host ('Searching for computer based off of name: {0}' -f $Comp)
 
                                 if (-not ($Comp = Get-ePOComputer -Computer $Comp)) {
                                     Write-Error 'Failed to find a computer with provided name'

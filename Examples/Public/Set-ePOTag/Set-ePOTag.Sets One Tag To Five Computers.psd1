@@ -1,6 +1,6 @@
 @{
     Parameters = @{
-        ComputerName = @(
+        Computer = @(
             'Computer1',
             'Computer2',
             'Computer3',
