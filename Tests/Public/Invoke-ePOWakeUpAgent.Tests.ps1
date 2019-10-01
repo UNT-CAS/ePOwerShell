@@ -39,10 +39,21 @@ Describe $FunctionName {
             }
             
             Mock Get-ePOComputer {
-                if ($File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Computer)) {
-                    return (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*Results.html' }
+
+                foreach ($File in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    
+                    if ($Computer) {
+                        if ($Computer -eq $ComputerObject.ComputerName) {
+                            Write-Output $ComputerObject
+                        }
+                    } elseif ($AgentGuid) {
+                        if ($AgentGuid -eq $ComputerObject.AgentGuid) {
+                            Write-Output $ComputerObject
+                        }
+                    }
                 }
-                return $Null
             }
 
             Mock Write-Error {
@@ -56,12 +67,12 @@ Describe $FunctionName {
 
                 if ($Test.Output.Throws) {
                     if ($Test.Pipeline) {
-                        It "Invoke-ePOwerShellWakeUpAgent Throws through pipeline" {
-                            { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Throw
+                        It "Invoke-ePOWakeUpAgent Throws through pipeline" {
+                            { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOWakeUpAgent } | Should Throw
                         }
                     } else {
-                        It "Invoke-ePOwerShellWakeUpAgent Throws" {
-                            { $script:RequestResponse = Invoke-ePOwerShellWakeUpAgent @parameters } | Should Throw
+                        It "Invoke-ePOWakeUpAgent Throws" {
+                            { $script:RequestResponse = Invoke-ePOWakeUpAgent @parameters } | Should Throw
                         }
                     }
 
@@ -69,12 +80,12 @@ Describe $FunctionName {
                 }
 
                 if ($Test.Pipeline) {
-                    It "Invoke-ePOwerShellWakeUpAgent through pipeline" {
-                        { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOwerShellWakeUpAgent } | Should Not Throw
+                    It "Invoke-ePOWakeUpAgent through pipeline" {
+                        { $script:RequestResponse = $Parameters.ComputerName | Invoke-ePOWakeUpAgent } | Should Not Throw
                     }
                 } else {
-                    It "Invoke-ePOwerShellWakeUpAgent" {
-                        { $script:RequestResponse = Invoke-ePOwerShellWakeUpAgent @parameters } | Should Not Throw
+                    It "Invoke-ePOWakeUpAgent" {
+                        { $script:RequestResponse = Invoke-ePOWakeUpAgent @parameters } | Should Not Throw
                     }
                 }
                 

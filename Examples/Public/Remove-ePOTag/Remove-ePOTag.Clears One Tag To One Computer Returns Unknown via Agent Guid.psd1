@@ -1,7 +1,7 @@
 @{
     Parameters = @{
-        Computer = 'Computer1'
-        TagName  = 'Tag1'
+        AgentGuid = '20f1477f-ff4d-4c6f-915d-9984d25fd65b'
+        TagName   = 'Tag1'
     }
     Output     = @{
         Throws = $True

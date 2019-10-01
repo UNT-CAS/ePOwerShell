@@ -1,6 +1,6 @@
 @{
     Parameters = @{
-        Computer = 'Computer3'
+        Computer = 'Computer5'
     }
     Output     = @{
         Throws = $True

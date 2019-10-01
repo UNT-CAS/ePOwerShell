@@ -115,11 +115,13 @@ function Remove-ePOTag {
 
                             Write-Verbose ('Computer Name: {0}' -f $Comp.ComputerName)
                             Write-Verbose ('Computer ID: {0}' -f $Comp.ParentID)
-                            Write-Verbose ('Tag Name: {0}' -f $Tag.Name)
-                            Write-Verbose ('Tag ID: {0}' -f $Tag.ID)
+                            Write-Verbose ('Tag Name: {0}' -f $Tag.TagName)
+                            Write-Verbose ('Tag ID: {0}' -f $Tag.TagId)
 
                             if ($PSCmdlet.ShouldProcess("Remove ePO tag $($Tag.Name) from $($Comp.ComputerName)")) {
                                 $Result = Invoke-ePORequest @Request
+
+                                Write-Verbose ('Results: {0}' -f $Result)
 
                                 if ($Result -eq 0) {
                                     Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag.Name, $Comp.ComputerName)

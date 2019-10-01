@@ -1,6 +1,7 @@
 @{
     Parameters = @{
-        Computer = 'Computer3'
+        Computer = 'Computer10'
+        TagName  = 'Tag9'
     }
     Output     = @{
         Throws = $True
