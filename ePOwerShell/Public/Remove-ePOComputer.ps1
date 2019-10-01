@@ -80,10 +80,10 @@ function Remove-ePOComputer {
                             if ($PSCmdlet.ShouldProcess("Remove ePO computer: $($C.ComputerName)")) {
                                 $Result = Invoke-ePORequest @Request
 
-                                if ($Result -eq 0) {
+                                if ($Result.Status -eq 0) {
                                     Write-Verbose ('Deleted computer: {0}' -f $C.ComputerName)
                                 } else {
-                                    Throw ('Unknown response while deleting computer {0} from ePO: {1}' -f $C.ComputerName, $Result)
+                                    Throw ('Unknown response while deleting computer {0} from ePO: {1}' -f $C.ComputerName, ($Result | Out-String))
                                 }
                             }
                         }
@@ -105,10 +105,10 @@ function Remove-ePOComputer {
                             if ($PSCmdlet.ShouldProcess("Remove ePO computer: $($C.ComputerName)")) {
                                 $Result = Invoke-ePORequest @Request
 
-                                if ($Result -eq 0) {
+                                if ($Result.Status -eq 0) {
                                     Write-Verbose ('Deleted computer: {0}' -f $C.ComputerName)
                                 } else {
-                                    Throw ('Unknown response while deleting computer {0} from ePO: {1}' -f $C.ComputerName, $Result)
+                                    Throw ('Unknown response while deleting computer {0} from ePO: {1}' -f $C.ComputerName, ($Result | Out-String))
                                 }
                             }
                         }
