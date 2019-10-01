@@ -32,47 +32,66 @@ $Tests = foreach ($Example in $Examples) {
 Describe $FunctionName {
     foreach ($Global:Test in $Tests) {
         InModuleScope ePOwerShell {
-            Mock Invoke-ePORequest {
-                if (-not ($ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html')) {
-                    Throw "Failed to find computer objects"
-                }
+            Mock Get-ePOComputer {
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*Results.html' }
 
-                $Found = foreach ($File in $ComputerFiles) {
-                    $File = ConvertTo-ePOComputer ((Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
-                    if ($File.ParentID -eq $Query.ids) {
-                        Write-Output $File
+                foreach ($File in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    $ComputerObject = ConvertTo-ePOComputer $ComputerObject
+
+                    if ($Computer) {
+                        if ($Computer -eq $ComputerObject.ComputerName) {
+                            Write-Output $ComputerObject
+                        }
+                    } elseif ($AgentGuid) {
+                        if ($AgentGuid -eq $ComputerObject.AgentGuid) {
+                            Write-Output $ComputerObject
+                        }
                     }
                 }
-
-                if (-not ($Found) -or ($Found.Count -ne 1)) {
-                    Throw 'Failed to find computer'
-                }
-
-                if ($Test.Unknown) {
-                    return 4
-                } elseif (-not ($Computer.Tags | ? { $_ -eq $Tag.tagName })) {
-                    return 0
-                } else {
-                    return 1
-                }
-            }
-
-            Mock Get-ePOComputer {
-                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Computer))) {
-                    Throw "Error 1: Invalid computername"
-                }
-
-                $Computer = ConvertTo-ePOComputer ((Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
-                Write-Output $Computer
             }
 
             Mock Get-ePOTag {
-                if (-not ($TagFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Tag))) {
-                    Throw "Error 1: Invalid tag"
+                $TagFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Tag*.html' -File
+
+                foreach ($File in $TagFiles) {
+                    $TagObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                    if ($TagObject.TagName -eq $Tag) {
+                        Write-Output $TagObject
+                    }
                 }
 
-                $Tag = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-                Write-Output $Tag
+            }
+
+            Mock Invoke-ePORequest {
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*Results.html' }
+                $TagFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Tag*.html' -File
+
+                foreach ($ComputerFile in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    $ComputerObject = ConvertTo-ePOComputer $ComputerObject
+
+                    if ($ComputerObject.ParentID -eq $Query.ids) {
+                        break
+                    }
+                }
+
+                foreach ($TagFile in $TagFiles) {
+                    $TagObject = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                    if ($TagObject.tagId -eq $Query.tagID) {
+                        break
+                    }
+                }
+
+                if ($Test.Unknown) {
+                    Write-Output 4
+                } elseif ($ComputerObject.Tags -contains $TagObject.tagName) {
+                    Write-Output 1
+                } else {
+                    Write-Output 0
+                }
             }
 
             Remove-Variable -Scope 'Script' -Name 'RequestResponse' -Force -ErrorAction SilentlyContinue

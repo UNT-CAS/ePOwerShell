@@ -121,7 +121,7 @@ Describe $FunctionName {
                 It "Remove-ePOTag" {
                     { $script:RequestResponse = Remove-ePOTag @parameters -Confirm:$False } | Should Not Throw
                 }
-                
+
                 It "Output Type: $($Test.Output.Type)" {
                     $script:RequestResponse | Should BeNullOrEmpty
                 }
