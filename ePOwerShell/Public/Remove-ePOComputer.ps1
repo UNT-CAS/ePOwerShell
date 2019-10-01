@@ -63,15 +63,18 @@ function Remove-ePOComputer {
                 'Computer' {
                     foreach ($Comp in $Computer) {
                         if ($Comp -is [ePOComputer]) {
-                            Write-Debug ('Specified computer is an ePOComputer: -f {0}' -f $Comp)
+                            Write-Verbose ('Specified computer is an ePOComputer: {0}' -f $Comp)
                         } else {
-                            Write-Debug ('Specified computer is a string: -f {0}' -f $Comp)
-                            $Comp = Get-ePOComputer $Comp
+                            Write-Verbose ('Specified computer is a string: {0}' -f $Comp)
+                            if (-not ($Comp = Get-ePOComputer $Comp)) {
+                                Write-Error ('Failed to find system: {0}' -f $Comp)
+                                continue
+                            }
                         }
 
                         foreach ($C in $Comp) {
-                            Write-Verbose ('Computer Name: {0}' -f $C.ComputerName)
-                            Write-Verbose ('Computer ID: {0}' -f $C.ParentID)
+                            Write-Debug ('Computer Name: {0}' -f $C.ComputerName)
+                            Write-Debug ('Computer ID: {0}' -f $C.ParentID)
 
                             $Request.Query.ids = $C.ParentID
                             if ($PSCmdlet.ShouldProcess("Remove ePO computer: $($C.ComputerName)")) {
@@ -95,8 +98,8 @@ function Remove-ePOComputer {
                         }
 
                         foreach ($C in $Comp) {
-                            Write-Verbose ('Computer Name: {0}' -f $C.ComputerName)
-                            Write-Verbose ('Computer ID: {0}' -f $C.ParentID)
+                            Write-Debug ('Computer Name: {0}' -f $C.ComputerName)
+                            Write-Debug ('Computer ID: {0}' -f $C.ParentID)
 
                             $Request.Query.ids = $C.ParentID
                             if ($PSCmdlet.ShouldProcess("Remove ePO computer: $($C.ComputerName)")) {

@@ -42,12 +42,21 @@ Describe $FunctionName {
             }
 
             Mock Get-ePOComputer {
-                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Computer))) {
-                    Throw "Error 1: Invalid computername"
-                }
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*Results.html' }
 
-                $Computer = ConvertTo-ePOComputer ((Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
-                Write-Output $Computer
+                foreach ($File in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    
+                    if ($Computer) {
+                        if ($Computer -eq $ComputerObject.ComputerName) {
+                            Write-Output $ComputerObject
+                        }
+                    } elseif ($AgentGuid) {
+                        if ($AgentGuid -eq $ComputerObject.AgentGuid) {
+                            Write-Output $ComputerObject
+                        }
+                    }
+                }
             }
 
             Mock Write-Warning {

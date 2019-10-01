@@ -35,19 +35,35 @@ Describe $FunctionName {
     foreach ($Global:Test in $Tests) {
         InModuleScope ePOwerShell {
             Mock Get-ePOComputer {
-                if ($File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Test.Parameters.Computer) -File) {
-                    return ((Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
-                }
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*MountPoints.html' }
 
-                return $Null
+                foreach ($File in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    
+                    if ($Computer) {
+                        if ($Computer -eq $ComputerObject.ComputerName) {
+                            Write-Output $ComputerObject
+                        }
+                    } elseif ($AgentGuid) {
+                        if ($AgentGuid -eq $ComputerObject.AgentGuid) {
+                            Write-Output $ComputerObject
+                        }
+                    }
+                }
             }
             
             Mock Invoke-ePOQuery {
-                if ($File = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}MountPoints.html' -f $Test.Parameters.Computer) -File) {
-                    return ((Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json)
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*MountPoints.html' }
+
+                foreach ($File in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                    if ($ComputerObject.ParentID -eq $Where.eq.'MneVolumes.EPOLeafNodeId') {
+                        $MountPointFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}MountPoints.html' -f $ComputerObject.ComputerName) -File
+                        $MountPointObject = (Get-Content $MountPointFiles.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                        Write-Output $MountPointObject
+                    }
                 }
-                
-                return $Null
             }
             
             Mock Invoke-ePORequest {

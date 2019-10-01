@@ -32,23 +32,65 @@ $Tests = foreach ($Example in $Examples) {
 Describe $FunctionName {
     foreach ($Global:Test in $Tests) {
         InModuleScope ePOwerShell {
-            Mock Invoke-ePORequest {
-                if (-not ($ComputerFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.names))) {
-                    Throw "Error 1: Invalid computername"
+            Mock Get-ePOComputer {
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*Results.html' }
+
+                foreach ($File in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    $ComputerObject = ConvertTo-ePOComputer $ComputerObject
+
+                    if ($Computer) {
+                        if ($Computer -eq $ComputerObject.ComputerName) {
+                            Write-Output $ComputerObject
+                        }
+                    } elseif ($AgentGuid) {
+                        if ($AgentGuid -eq $ComputerObject.AgentGuid) {
+                            Write-Output $ComputerObject
+                        }
+                    }
                 }
-                if (-not ($TagFile = Get-ChildItem $ReferenceDirectory.FullName -Filter ('{0}.html' -f $Query.tagName))) {
-                    Throw "Error 1: Invalid tag"
+            }
+
+            Mock Get-ePOTag {
+                $TagFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Tag*.html' -File
+
+                foreach ($File in $TagFiles) {
+                    $TagObject = (Get-Content $File.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                    if ($TagObject.TagName -eq $Tag) {
+                        Write-Output $TagObject
+                    }
                 }
 
-                $Computer = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
-                $Tag = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+            }
+
+            Mock Invoke-ePORequest {
+                $ComputerFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Computer*.html' -File | Where-Object { $_.Name -notlike '*Results.html' }
+                $TagFiles = Get-ChildItem $ReferenceDirectory.FullName -Filter 'Tag*.html' -File
+
+                foreach ($ComputerFile in $ComputerFiles) {
+                    $ComputerObject = (Get-Content $ComputerFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+                    $ComputerObject = ConvertTo-ePOComputer $ComputerObject
+
+                    if ($ComputerObject.ParentID -eq $Query.ids) {
+                        break
+                    }
+                }
+
+                foreach ($TagFile in $TagFiles) {
+                    $TagObject = (Get-Content $TagFile.FullName | Out-String).Substring(3).Trim() | ConvertFrom-Json
+
+                    if ($TagObject.tagId -eq $Query.tagID) {
+                        break
+                    }
+                }
 
                 if ($Test.Unknown) {
-                    return 4
-                } elseif ($Computer.'EPOLeafNode.Tags'.Split(',').Trim() | ? { $_ -eq $Tag.tagName }) {
-                    return 0
+                    Write-Output 4
+                } elseif ($ComputerObject.Tags -contains $TagObject.tagName) {
+                    Write-Output 1
                 } else {
-                    return 1
+                    Write-Output 0
                 }
             }
 

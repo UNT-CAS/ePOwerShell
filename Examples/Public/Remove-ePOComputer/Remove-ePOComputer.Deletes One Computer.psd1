@@ -1,6 +1,6 @@
 @{
     Parameters = @{
-        ComputerName = 'Computer1'
+        Computer = 'Computer1'
     }
     Output     = @{
         Type = 'System.Void'

@@ -42,12 +42,15 @@
 #>
 
 function Set-ePOTag {
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium", DefaultParameterSetName = 'Computer')]
     [Alias('Set-ePOwerShellTag')]
     param (
-        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True)]
-        [Alias('Computer', 'cn')]
-        $ComputerName,
+        [Parameter(Mandatory = $True, Position = 0, ValueFromPipeline = $True, ParameterSetName = 'Computer')]
+        [Alias('ComputerName', 'cn')]
+        $Computer,
+
+        [Parameter(Mandatory = $True, ParameterSetName = 'AgentGuid')]
+        $AgentGuid,
 
         [Parameter(Mandatory = $True, Position = 1, ValueFromPipeline = $True)]
         [Alias('Tag')]
@@ -59,8 +62,8 @@ function Set-ePOTag {
             $Request = @{
                 Name  = 'system.applyTag'
                 Query = @{
-                    names   = ''
-                    tagName = ''
+                    ids   = ''
+                    tagID = ''
                 }
             }
         } catch {
@@ -71,36 +74,102 @@ function Set-ePOTag {
 
     process {
         try {
-            foreach ($Computer in $ComputerName) {
-                foreach ($Tag in $TagName) {
-                    if ($Computer -is [ePOComputer]) {
-                        $Request.Query.names = $Computer.ComputerName
-                    } elseif ($Computer -is [ePOTag]) {
-                        $Request.Query.tagName = $Computer.Name
-                    } else {
-                        $Request.Query.names = $Computer
+            switch ($PSCmdlet.ParameterSetName) {
+                'Computer' {
+                    :Computer foreach ($Comp in $Computer) {
+                        :Tag foreach ($Tag in $TagName) {
+                            if ($Comp -is [ePOTag] -and $Tag -is [ePOComputer]) {
+                                Write-Verbose 'Computer and tag objects are mismatched. Swapping...'
+                                $Comp, $Tag = $Tag, $Comp
+                            }
+
+                            if ($Comp -is [ePOComputer]) {
+                                $Request.Query.ids = $Comp.ParentID
+                            } elseif ($Comp -is [String]) {
+                                if (-not ($Comp = Get-ePOComputer -Computer $Comp)) {
+                                    Write-Error ('Failed to find a computer with provided name: {0}' -f $Comp)
+                                    continue Computer
+                                }
+                                $Request.Query.ids = $Comp.ParentID
+                            } else {
+                                Write-Error 'Failed to interpret computer'
+                                continue Computer
+                            }
+
+                            if ($Tag -is [ePOTag]) {
+                                $Request.Query.tagID = $Tag.ID
+                            } elseif ($Tag -is [String]) {
+                                if (-not ($Tag = Get-ePOTag -Tag $Tag)) {
+                                    Write-Error ('Failed to find a tag with provided name: {0}' -f $Tag)
+                                    continue Tag
+                                }
+                                $Request.Query.tagID = $Tag.ID
+                            } else {
+                                Write-Error 'Failed to interpret tag'
+                                continue Tag
+                            }
+
+                            Write-Verbose ('Computer Name: {0}' -f $Comp.ComputerName)
+                            Write-Verbose ('Computer ID: {0}' -f $Comp.ParentID)
+                            Write-Verbose ('Tag Name: {0}' -f $Tag.Name)
+                            Write-Verbose ('Tag ID: {0}' -f $Tag.ID)
+
+                            if ($PSCmdlet.ShouldProcess("Set ePO tag $($Tag.Name) to $($Comp.ComputerName)")) {
+                                $Result = Invoke-ePORequest @Request
+
+                                if ($Result -eq 0) {
+                                    Write-Verbose ('Tag [{0}] is already set to computer {1}' -f $Tag.Name, $Comp.ComputerName)
+                                } elseif ($Result -eq 1) {
+                                    Write-Verbose ('Successfully set tag [{0}] to computer {1}' -f $Tag.Name, $Comp.ComputerName)
+                                } else {
+                                    Write-Error ('Unknown response while setting tag [{0}] from {1}: {2}' -f $Tag.Name, $Comp.ComputerName, $Result) -ErrorAction Stop
+                                }
+                            }
+                        }
                     }
+                }
 
-                    if ($Tag -is [ePOTag]) {
-                        $Request.Query.tagName = $Tag.Name
-                    } elseif ($Tag -is [ePOComputer]) {
-                        $Request.Query.names = $Tag.ComputerName
-                    } else {
-                        $Request.Query.tagName = $Tag
-                    }
+                'AgentGuid' {
+                    foreach ($Guid in $AgentGuid) {
+                        if (-not ($ePOComputer = Get-ePOComputer -AgentGuid $Guid)) {
+                            Write-Error ('Failed to find system via Agent Guid: {0}' -f $Guid)
+                            continue
+                        }
 
-                    Write-Verbose ('Computer Name: {0}' -f $Request.Query.names)
-                    Write-Verbose ('Tag Name: {0}' -f $Request.Query.tagName)
+                        foreach ($Comp in $ePOComputer) {
+                            foreach ($Tag in $TagName) {
+                                $Request.Query.ids = $Comp.ParentID
 
-                    if ($PSCmdlet.ShouldProcess("Set ePO tag $($Request.Query.tagName) from $($Request.Query.names)")) {
-                        $Result = Invoke-ePORequest @Request
+                                if ($Tag -is [ePOTag]) {
+                                    $Request.Query.tagID = $Tag.ID
+                                } elseif ($Tag -is [String]) {
+                                    if (-not ($Tag = Get-ePOTag -Tag $Tag)) {
+                                        Write-Error ('Failed to find a tag with provided name: {0}' -f $Tag)
+                                        continue Tag
+                                    }
+                                    $Request.Query.tagID = $Tag.ID
+                                } else {
+                                    Write-Error 'Failed to interpret tag'
+                                    continue Tag
+                                }
 
-                        if ($Result -eq 0) {
-                            Write-Verbose ('Tag [{0}] is already cleared from computer {1}' -f $Tag, $Computer)
-                        } elseif ($Result -eq 1) {
-                            Write-Verbose ('Successfully cleared tag [{0}] to computer {1}' -f $Tag, $Computer)
-                        } else {
-                            Write-Error ('Unknown response while clearing tag [{0}] from {1}: {2}' -f $Tag, $Computer, $Result) -ErrorAction Stop
+                                Write-Verbose ('Computer Name: {0}' -f $Comp.ComputerName)
+                                Write-Verbose ('Computer ID: {0}' -f $Comp.ParentID)
+                                Write-Verbose ('Tag Name: {0}' -f $Tag.Name)
+                                Write-Verbose ('Tag ID: {0}' -f $Tag.ID)
+
+                                if ($PSCmdlet.ShouldProcess("Set ePO tag $($Tag.Name) to $($Comp.ComputerName)")) {
+                                    $Result = Invoke-ePORequest @Request
+
+                                    if ($Result -eq 0) {
+                                        Write-Verbose ('Tag [{0}] is already set from computer {1}' -f $Tag.Name, $Comp.ComputerName)
+                                    } elseif ($Result -eq 1) {
+                                        Write-Verbose ('Successfully set tag [{0}] to computer {1}' -f $Tag.Name, $Comp.ComputerName)
+                                    } else {
+                                        Write-Error ('Unknown response while set tag [{0}] from {1}: {2}' -f $Tag.Name, $Comp.ComputerName, $Result)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
