@@ -24,3 +24,9 @@ $Computer = Get-ePOComputer $env:ComputerName
 ```
 
 The rest of the functions are detailed further in [the wiki](../../wiki).
+
+# Tips and Tricks
+
+## Save ePO Config
+
+If you don't want to do `Set-ePOConfig` every time you load powershell, try [`Save-ePOConfig`](https://github.com/UNT-CAS/ePOwerShell/wiki/Save-ePOConfig).
